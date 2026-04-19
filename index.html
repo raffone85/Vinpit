@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analizzatore Premium Match | Over 2.5 · 1.5 · 0.5 PT</title>
+    <!-- Papa Parse per CSV -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
+        }
+        body {
+            background: #f5f7fc;
+            margin: 20px;
+            color: #1e293b;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        h1 {
+            font-weight: 600;
+            font-size: 2.2rem;
+            margin-bottom: 5px;
+            color: #0f172a;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .subtitle {
+            color: #475569;
+            margin-top: 0;
+            margin-bottom: 25px;
+            border-left: 5px solid #3b82f6;
+            padding-left: 18px;
+            font-weight: 400;
+        }
+        .upload-area {
+            background: white;
+            border-radius: 24px;
+            padding: 24px 28px;
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05);
+            margin-bottom: 30px;
+            border: 1px solid #e2e8f0;
+        }
+        .file-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 25px;
+            align-items: flex-end;
+        }
+        .file-input-box {
+            flex: 1 1 220px;
+        }
+        .file-input-box label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #334155;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+        .file-input-box input {
+            width: 100%;
+            padding: 10px 12px;
+            background: #f8fafc;
+            border: 1.5px dashed #cbd5e1;
+            border-radius: 14px;
+            font-size: 0.9rem;
+            transition: 0.2s;
+        }
+        .file-input-box input:hover {
+            border-color: #3b82f6;
+            background: #eff6ff;
+        }
+        button {
+            background: #1e293b;
+            color: white;
+            border: none;
+            padding: 12px 32px;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            cursor: pointer;
+            box-shadow: 0 8px 16px -6px rgba(30,41,59,0.2);
+            transition: all 0.2s;
+            border: 1px solid #334155;
+            margin-top: 12px;
+        }
+        button:hover {
+            background: #0f172a;
+            transform: translateY(-2px);
+            box-shadow: 0 12px 20px -8px #0f172a66;
+        }
+        button:disabled {
+            opacity: 0.5;
+            pointer-events: none;
+        }
+        .status {
+            margin-top: 20px;
+            padding: 10px 18px;
+            border-radius: 40px;
+            background: #eef2ff;
+            color: #1e3a8a;
+            font-weight: 500;
+            display: inline-block;
+        }
+        .premium-section {
+            background: white;
+            border-radius: 24px;
+            padding: 20px 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 6px 14px rgba(0,0,0,0.02);
+            border: 1px solid #e2e8f0;
+        }
+        .section-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-top: 0;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .badge {
+            background: #3b82f6;
+            color: white;
+            padding: 4px 14px;
+            border-radius: 40px;
+            font-size: 1rem;
+            font-weight: 500;
+        }
+        .match-card {
+            background: #fafcff;
+            border-radius: 20px;
+            padding: 18px 22px;
+            margin-bottom: 22px;
+            border-left: 8px solid;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+            border: 1px solid #dee6ed;
+        }
+        .match-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            flex-wrap: wrap;
+            margin-bottom: 12px;
+        }
+        .match-name {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #0b1e33;
+        }
+        .match-time {
+            color: #64748b;
+            font-weight: 500;
+            background: #eef2ff;
+            padding: 4px 12px;
+            border-radius: 30px;
+            font-size: 0.9rem;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+            margin: 12px 0;
+            font-size: 0.9rem;
+        }
+        th {
+            background: #1e293b;
+            color: white;
+            font-weight: 500;
+            padding: 10px 6px;
+            text-align: center;
+        }
+        td {
+            padding: 8px 5px;
+            text-align: center;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        .decision {
+            margin-top: 15px;
+            padding: 12px 18px;
+            background: #dbeafe;
+            border-radius: 40px;
+            font-weight: 600;
+            color: #1e3a8a;
+            border: 1px solid #bfdbfe;
+        }
+        .top-absolute {
+            background: linear-gradient(145deg, #fef9c3 0%, #fde047 100%);
+            border: 2px solid #ca8a04;
+            padding: 18px 25px;
+            border-radius: 30px;
+            margin: 25px 0 10px;
+        }
+        .top-title {
+            font-size: 2rem;
+            font-weight: 800;
+            color: #854d0e;
+        }
+        .footer-note {
+            color: #64748b;
+            margin-top: 30px;
+            text-align: center;
+        }
+        .error {
+            color: #b91c1c;
+            background: #fee2e2;
+            padding: 12px 18px;
+            border-radius: 20px;
+        }
+        .flex-row {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        .quote {
+            background: #f1f5f9;
+            padding: 4px 12px;
+            border-radius: 40px;
+            font-family: monospace;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>⚽ METODO PREMIUM</h1>
+    <div class="subtitle">Over 2.5 · Over 1.5 · Over 0.5 Primo Tempo — con scoring e Top Assoluto</div>
+
+    <div class="upload-area">
+        <div class="file-group">
+            <div class="file-input-box">
+                <label>📁 Partite GG Over2.5.csv</label>
+                <input type="file" id="fileOver25" accept=".csv, text/csv">
+            </div>
+            <div class="file-input-box">
+                <label>📁 Partite Indice GZ_ALL.csv</label>
+                <input type="file" id="fileGZ" accept=".csv, text/csv">
+            </div>
+            <div class="file-input-box">
+                <label>📁 Over 0.5 Primo Tempo.csv</label>
+                <input type="file" id="filePT" accept=".csv, text/csv">
+            </div>
+        </div>
+        <div class="flex-row">
+            <button id="analyzeBtn">🔍 Analizza e trova Premium</button>
+            <span id="statusMsg" class="status">⚡ Carica tutti e tre i file</span>
+        </div>
+        <p style="font-size:0.8rem; margin-top: 15px; color:#475569;">✅ Regole Premium integrate · correzione GZ_ALL>6000 e %PT≥80% · scarto GZha negativo o disallineato</p>
+    </div>
+
+    <div id="resultsContainer"></div>
+    <div class="footer-note">⚡ I match vengono uniti per ORA ed EVENTO. Output conforme ai criteri Premium.</div>
+</div>
+
+<script>
+    (function(){
+        const fileInputOver = document.getElementById('fileOver25');
+        const fileInputGZ = document.getElementById('fileGZ');
+        const fileInputPT = document.getElementById('filePT');
+        const analyzeBtn = document.getElementById('analyzeBtn');
+        const statusMsg = document.getElementById('statusMsg');
+        const resultsDiv = document.getElementById('resultsContainer');
+
+        let csvOver25 = null, csvGZ = null, csvPT = null;
+        let parsedOver = [], parsedGZ = [], parsedPT = [];
+
+        // ---------- NORMALIZZAZIONE ORARIO / MATCH KEY ----------
+        function normalizeTimeAndEvent(timeStr, eventStr) {
+            // Pulizia orario: rimuove spazi multipli, prende solo parte data-ora "gg-mm-aaaa hh:mm"
+            let cleanTime = timeStr.replace(/\s+/g, ' ').trim();
+            // Se contiene "O23:30" lo rimuoviamo
+            const timeMatch = cleanTime.match(/(\d{2}-\d{2}-\d{4}\s+\d{2}:\d{2})/);
+            let timeKey = timeMatch ? timeMatch[1] : cleanTime.substring(0,16); 
+            
+            // Per Over0.5 PT l'ora è solo "HH:MM", dobbiamo unire con data? nei file PT c'è solo ora.
+            // Useremo un approccio: per il merge finale useremo sia orario normalizzato + evento.
+            let normalizedEvent = eventStr.trim().replace(/\s+/g, ' ').replace(/\s*-\s*/g, ' - ');
+            return { timeKey, eventKey: normalizedEvent };
+        }
+
+        function parseFile(file, type) {
+            return new Promise((resolve, reject) => {
+                if (!file) return reject(`File ${type} mancante`);
+                Papa.parse(file, {
+                    header: true,
+                    skipEmptyLines: true,
+                    delimiter: ";",
+                    encoding: "UTF-8",
+                    complete: (res) => {
+                        // pulizia nomi colonne (toglie spazi e BOM)
+                        const cleanData = res.data.map(row => {
+                            const newRow = {};
+                            Object.keys(row).forEach(k => {
+                                let cleanKey = k.replace(/^\uFEFF/, '').trim();
+                                newRow[cleanKey] = row[k] ? row[k].trim() : row[k];
+                            });
+                            return newRow;
+                        });
+                        resolve(cleanData);
+                    },
+                    error: (err) => reject(`Errore parsing ${type}: ${err}`)
+                });
+            });
+        }
+
+        // ---------- CARICAMENTO ----------
+        async function loadAllFiles() {
+            const f1 = fileInputOver.files[0];
+            const f2 = fileInputGZ.files[0];
+            const f3 = fileInputPT.files[0];
+            if (!f1 || !f2 || !f3) throw new Error("Carica tutti e tre i file CSV.");
+            
+            const [overData, gzData, ptData] = await Promise.all([
+                parseFile(f1, 'Over2.5'),
+                parseFile(f2, 'GZ_ALL'),
+                parseFile(f3, 'Over0.5PT')
+            ]);
+            return { overData, gzData, ptData };
+        }
+
+        // ---------- CREAZIONE CHIAVE UNIVOCA MATCH ----------
+        function buildMatchKey(row, source) {
+            let oraRaw = row["ORA"] || row["DATA EV."] || "";
+            let eventoRaw = row["EVENTO"] || "";
+            if (!eventoRaw) return null;
+            
+            const { timeKey, eventKey } = normalizeTimeAndEvent(oraRaw, eventoRaw);
+            // Per file PT ora è tipo "00:00", manca la data. Dobbiamo cercare di matchare con la data dal nome file? 
+            // Siccome abbiamo tre file tutti della stessa data (19-04-2026), possiamo dedurre data fissa.
+            // Ma per robustezza useremo un matching fuzzy: se timeKey contiene solo HH:MM, prenderemo la data dal contesto.
+            let finalTime = timeKey;
+            if (source === 'PT' && !timeKey.match(/\d{2}-\d{2}-\d{4}/)) {
+                // Assegniamo la data fissa del 19-04-2026 (dal nome file o da contesto)
+                finalTime = `19-04-2026 ${timeKey}`;
+            } else if (source === 'PT' && timeKey.includes('19-04-2026')) {
+                finalTime = timeKey;
+            }
+            // Normalizza separatore data
+            finalTime = finalTime.replace(/\//g, '-');
+            return `${finalTime}||${eventKey}`;
+        }
+
+        // ---------- MERGE DATI ----------
+        function mergeData(over, gz, pt) {
+            const mapGZ = new Map();
+            gz.forEach(row => {
+                const key = buildMatchKey(row, 'GZ');
+                if (key) mapGZ.set(key, row);
+            });
+            
+            const mapPT = new Map();
+            pt.forEach(row => {
+                const key = buildMatchKey(row, 'PT');
+                if (key) mapPT.set(key, row);
+            });
+
+            const merged = [];
+            over.forEach(row => {
+                const key = buildMatchKey(row, 'Over');
+                if (!key) return;
+                const gzRow = mapGZ.get(key);
+                const ptRow = mapPT.get(key);
+                if (!gzRow || !ptRow) return; // deve avere tutti e tre
+                
+                // Costruisci oggetto unificato
+                const m = {
+                    key,
+                    ora: row["ORA"] || "",
+                    evento: row["EVENTO"] || "",
+                    nazione: row["NAZIONE"] || "",
+                    // Over2.5
+                    IGBc: parseFloat(row["IGBc"]) || 0,
+                    IGBo: parseFloat(row["IGBo"]) || 0,
+                    IGBt: parseFloat(row["IGBt"]) || 0,
+                    MGE: row["MGE"] === "" ? null : parseFloat(row["MGE"]),
+                    Diff: row["Diff"] === "" ? null : parseFloat(row["Diff"]),
+                    qOv25: row["qOv2.5"] || "",
+                    // GZ
+                    GZ_ALL: gzRow["GZ"] ? parseFloat(gzRow["GZ"]) : 0,
+                    GZha: gzRow["GZha"] ? parseFloat(gzRow["GZha"]) : 0,
+                    // PT
+                    IndicePT: ptRow["IND"] ? parseFloat(ptRow["IND"]) : null,
+                    DeltaPT: ptRow["Delta"] ? parseFloat(ptRow["Delta"]) : null,
+                    OverPTCasa: ptRow["COv0.5%"] ? parseFloat(ptRow["COv0.5%"]) : 0,
+                    OverPTOspite: ptRow["OOv0.5%"] ? parseFloat(ptRow["OOv0.5%"]) : 0,
+                    QrOv05pt: ptRow["QROv0.5pt"] || "",
+                    QrGG: ptRow["QrGG"] || "",
+                    QrO25: ptRow["QrO25"] || "",
+                };
+                merged.push(m);
+            });
+            return merged;
+        }
+
+        // ---------- FILTRI PREMIUM ----------
+        function isOver25Premium(m) {
+            if (m.MGE === null || m.MGE < 3) return false;
+            if (m.IGBt < 300) return false;
+            if (m.Diff === null || m.Diff > 1) return false;
+            if (m.GZ_ALL < 5000) return false;
+            // GZha ~4000+ e coerente: non negativo e non enormemente sproporzionato? (>0 e > GZ_ALL*0.3)
+            if (m.GZha <= 0 || m.GZha < m.GZ_ALL * 0.25) return false; // coerenza minima
+            return true;
+        }
+
+        // Regola correzione: GZ_ALL>6000 e %PT≥80% → forza Over2.5 anche se IGBt<500 (min 400) e Diff negativo
+        function isOver25PremiumCorrected(m) {
+            if (m.GZ_ALL > 6000 && m.OverPTCasa >= 80 && m.OverPTOspite >= 80) {
+                if (m.IGBt >= 400 && m.MGE !== null && m.MGE >= 2.8) { // tolleranza
+                    if (m.GZha > 0 && m.GZha >= m.GZ_ALL * 0.2) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        function isOver15Premium(m) {
+            if (m.GZ_ALL < 1000) return false;
+            if (m.IGBc < 100 && m.IGBo < 100 && m.IGBt < 200) return false; // almeno una condizione
+            if (m.Diff !== null && m.Diff > 1) return false; // se Diff >1 escludiamo (troppo verde)
+            if (m.GZha <= 0 || m.GZha < m.GZ_ALL * 0.1) return false; // coerenza GZha
+            // Non deve già essere Over2.5 premium (priorità)
+            return true;
+        }
+
+        function isOver05PTPremium(m) {
+            if (m.IndicePT === null || m.IndicePT >= 320) return false;
+            if (m.DeltaPT === null || m.DeltaPT >= 0) return false;
+            if (m.GZ_ALL <= 0) return false;
+            if (m.OverPTCasa < 60 || m.OverPTOspite < 60) return false;
+            return true;
+        }
+
+        // scoring per top
+        function scoreOver25(m) {
+            let score = 0;
+            score += m.MGE * 10;
+            score += m.IGBt / 20;
+            score += m.GZ_ALL / 500;
+            score += m.GZha / 300;
+            if (m.Diff !== null) score += (1 - Math.abs(m.Diff)) * 15;
+            score += (m.OverPTCasa + m.OverPTOspite) / 10;
+            return score;
+        }
+        function scoreOver15(m) {
+            let score = m.GZ_ALL / 200 + (m.IGBc + m.IGBo) / 30;
+            if (m.Diff !== null) score += (1 - Math.abs(m.Diff)) * 10;
+            score += (m.OverPTCasa + m.OverPTOspite) / 15;
+            return score;
+        }
+        function scoreOver05PT(m) {
+            let score = (320 - m.IndicePT) * 2;
+            score += Math.abs(m.DeltaPT) * 3;
+            score += (m.OverPTCasa + m.OverPTOspite) / 5;
+            score += m.GZ_ALL / 500;
+            return score;
+        }
+
+        // ---------- RENDER ----------
+        function renderMatchCard(m, type) {
+            const card = document.createElement('div');
+            card.className = 'match-card';
+            
+            const header = document.createElement('div');
+            header.className = 'match-header';
+            header.innerHTML = `
+                <span class="match-name">${m.evento} <span style="font-size:0.9rem; font-weight:normal;">${m.nazione}</span></span>
+                <span class="match-time">${m.ora}</span>
+            `;
+            card.appendChild(header);
+            
+            const table = document.createElement('table');
+            table.innerHTML = `
+                <tr><th>IGBc</th><th>IGBo</th><th>IGBt</th><th>MGE</th><th>Diff</th><th>GZ_ALL</th><th>GZha</th><th>Ind.PT</th><th>Delta</th><th>%PT C/O</th><th>Quote</th></tr>
+                <tr>
+                    <td>${m.IGBc}</td><td>${m.IGBo}</td><td>${m.IGBt}</td>
+                    <td>${m.MGE?.toFixed(2) || '-'}</td><td>${m.Diff?.toFixed(2) || '-'}</td>
+                    <td>${m.GZ_ALL}</td><td>${m.GZha}</td>
+                    <td>${m.IndicePT ?? '-'}</td><td>${m.DeltaPT?.toFixed(2) || '-'}</td>
+                    <td>${m.OverPTCasa.toFixed(0)}% / ${m.OverPTOspite.toFixed(0)}%</td>
+                    <td><span class="quote">Ov2.5: ${m.qOv25 || '—'}</span> <span class="quote">PT: ${m.QrOv05pt || '—'}</span></td>
+                </tr>
+            `;
+            card.appendChild(table);
+            
+            let motivazioni = '';
+            if (type === 'over25') motivazioni = `MGE ${m.MGE?.toFixed(2)} ≥3 · IGBt ${m.IGBt} · GZ_ALL ${m.GZ_ALL} · Diff ${m.Diff?.toFixed(2)} ≤1`;
+            else if (type === 'over15') motivazioni = `GZ_ALL ${m.GZ_ALL} · IGB solido · GZha coerente · Diff gestito`;
+            else if (type === 'over05pt') motivazioni = `Indice PT ${m.IndicePT} <320 · Delta ${m.DeltaPT?.toFixed(2)} <0 · %PT alte`;
+            
+            const decision = document.createElement('div');
+            decision.className = 'decision';
+            decision.innerHTML = `✅ DECISIONE FINALE: ${type.toUpperCase()} PREMIUM — ${motivazioni}`;
+            card.appendChild(decision);
+            
+            return card;
+        }
+
+        function displayResults(merged) {
+            resultsDiv.innerHTML = '';
+            
+            // Step 1: applica filtri premium
+            const premium25 = [];
+            const premium15 = [];
+            const premium05 = [];
+            
+            merged.forEach(m => {
+                // Scarta se GZ_ALL < 1000 o GZha negativo/disallineato (fortemente)
+                if (m.GZ_ALL < 1000) return;
+                if (m.GZha <= 0 || m.GZha < m.GZ_ALL * 0.05) return; // troppo sbilanciato
+                
+                let is25 = isOver25Premium(m);
+                const is25Corr = isOver25PremiumCorrected(m);
+                if (is25 || is25Corr) {
+                    premium25.push(m);
+                } else {
+                    // Se già Over2.5 non considerare Over1.5
+                    const is15 = isOver15Premium(m);
+                    if (is15) premium15.push(m);
+                }
+                
+                if (isOver05PTPremium(m)) {
+                    premium05.push(m);
+                }
+            });
+            
+            // Ordinamento per score
+            premium25.sort((a,b) => scoreOver25(b) - scoreOver25(a));
+            premium15.sort((a,b) => scoreOver15(b) - scoreOver15(a));
+            premium05.sort((a,b) => scoreOver05PT(b) - scoreOver05PT(a));
+            
+            // RENDER SEZIONI
+            function createSection(title, matches, type, color) {
+                const section = document.createElement('div');
+                section.className = 'premium-section';
+                section.innerHTML = `<div class="section-title"><span>${title}</span> <span class="badge">${matches.length} match</span></div>`;
+                if (matches.length === 0) {
+                    section.innerHTML += '<p style="color:#64748b;">⚠️ Nessun match soddisfa i criteri Premium.</p>';
+                } else {
+                    matches.forEach(m => section.appendChild(renderMatchCard(m, type)));
+                }
+                return section;
+            }
+            
+            resultsDiv.appendChild(createSection('🔥 OVER 2.5 PREMIUM', premium25, 'over25'));
+            resultsDiv.appendChild(createSection('📈 OVER 1.5 PREMIUM', premium15, 'over15'));
+            resultsDiv.appendChild(createSection('⏱️ OVER 0.5 PRIMO TEMPO PREMIUM', premium05, 'over05pt'));
+            
+            // TOP ASSOLUTO
+            const topDiv = document.createElement('div');
+            topDiv.className = 'top-absolute';
+            let topHtml = `<div class="top-title">🏆 TOP ASSOLUTO</div>`;
+            
+            const top25 = premium25[0];
+            const top15 = premium15[0];
+            const top05 = premium05[0];
+            
+            if (top25) {
+                topHtml += `<p><strong>🥇 Over 2.5 Premium:</strong> ${top25.evento} (${top25.nazione}) — MGE ${top25.MGE?.toFixed(2)} · IGBt ${top25.IGBt} · GZ_ALL ${top25.GZ_ALL} · Diff ${top25.Diff?.toFixed(2)}</p>`;
+            } else topHtml += `<p><strong>🥇 Over 2.5 Premium:</strong> ❌ nessun match</p>`;
+            if (top15) {
+                topHtml += `<p><strong>🥈 Over 1.5 Premium:</strong> ${top15.evento} (${top15.nazione}) — GZ_ALL ${top15.GZ_ALL} · IGBc/Bo ${top15.IGBc}/${top15.IGBo} · Diff ${top15.Diff?.toFixed(2)}</p>`;
+            } else topHtml += `<p><strong>🥈 Over 1.5 Premium:</strong> ❌ nessun match</p>`;
+            if (top05) {
+                topHtml += `<p><strong>🥉 Over 0.5 PT Premium:</strong> ${top05.evento} (${top05.nazione}) — Indice ${top05.IndicePT} · Delta ${top05.DeltaPT?.toFixed(2)} · %PT ${top05.OverPTCasa.toFixed(0)}/${top05.OverPTOspite.toFixed(0)}</p>`;
+            } else topHtml += `<p><strong>🥉 Over 0.5 PT Premium:</strong> ❌ nessun match</p>`;
+            
+            topDiv.innerHTML = topHtml;
+            resultsDiv.appendChild(topDiv);
+            
+            statusMsg.innerHTML = `✅ Analisi completata. Premium trovati: O2.5 (${premium25.length}) · O1.5 (${premium15.length}) · O0.5PT (${premium05.length})`;
+        }
+
+        // ---------- MAIN ----------
+        analyzeBtn.addEventListener('click', async () => {
+            try {
+                statusMsg.innerHTML = '⏳ Caricamento e merge in corso...';
+                const { overData, gzData, ptData } = await loadAllFiles();
+                const merged = mergeData(overData, gzData, ptData);
+                if (merged.length === 0) {
+                    statusMsg.innerHTML = '⚠️ Nessun match comune trovato nei tre file. Controlla formato.';
+                    resultsDiv.innerHTML = '';
+                    return;
+                }
+                displayResults(merged);
+            } catch (err) {
+                statusMsg.innerHTML = `❌ Errore: ${err.message}`;
+                console.error(err);
+            }
+        });
+
+        // Inizializzazione opzionale: se i file sono già pre-caricati (ma non si può)
+    })();
+</script>
+</body>
+</html>
