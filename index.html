@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Analisi Convergenza Over 2.5 / Gol - Completa</title>
+    <title>⚽ Over 2.5 / Gol · Analisi Completa 6 Fasi</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
     <style>
         * { box-sizing: border-box; font-family: 'Segoe UI', Roboto, sans-serif; }
         body { background: #f5f7fc; margin: 0; padding: 24px; display: flex; flex-direction: column; align-items: center; }
         .container { max-width: 1400px; width: 100%; background: white; border-radius: 24px; box-shadow: 0 12px 30px rgba(0,0,0,0.08); padding: 28px 32px; }
-        h1 { font-weight: 600; font-size: 28px; margin-top: 0; margin-bottom: 8px; color: #1e293b; }
+        h1 { font-weight: 600; font-size: 28px; margin-top: 0; margin-bottom: 8px; color: #1e293b; display: flex; align-items: center; gap: 10px; }
         .subtitle { color: #475569; margin-bottom: 28px; border-left: 4px solid #3b82f6; padding-left: 18px; }
         .upload-area { border: 2px dashed #cbd5e1; border-radius: 20px; padding: 28px; background: #fafcff; margin-bottom: 28px; text-align: center; }
         .file-label { background: #3b82f6; color: white; border-radius: 40px; padding: 12px 28px; font-weight: 500; cursor: pointer; display: inline-block; }
@@ -26,13 +26,13 @@
         .score-high { font-weight: 700; color: #0f172a; background: #dbeafe; padding: 4px 10px; border-radius: 30px; }
         .footer-actions { display: flex; gap: 16px; margin-top: 24px; }
         .btn-outline { background: white; border: 1px solid #cbd5e1; padding: 10px 20px; border-radius: 40px; font-weight: 500; cursor: pointer; }
-        .note { font-size: 13px; color: #64748b; margin-top: 16px; }
+        .note { font-size: 13px; color: #64748b; margin-top: 16px; background: #f8fafc; padding: 12px 18px; border-radius: 16px; }
     </style>
 </head>
 <body>
 <div class="container">
-    <h1>⚽ Over 2.5 / Gol · Analisi Completa <span style="font-size:16px; font-weight:400; margin-left:16px;">Fasi 1-2-3-4-5-6</span></h1>
-    <div class="subtitle">Carica i file CSV (incluso Ritardi Gol). Elaborazione locale, nessun dato inviato.</div>
+    <h1>⚽ Over 2.5 / Gol · Analisi Completa <small style="font-size:16px; font-weight:400; margin-left:16px;">Fasi 1-2-3-4-5-6</small></h1>
+    <div class="subtitle">Carica i 6 file CSV. Elaborazione locale, nessun dato inviato.</div>
 
     <div class="upload-area">
         <label class="file-label">
@@ -68,9 +68,9 @@
         </div>
     </div>
     <div class="note">
-        <strong>Fasi:</strong> 1) Partite GG Over2.5 · 2) Indice Gol Bio · 3) Differenziali Gol · <strong>4) Ritardi Gol (nuova)</strong> · 5) Data Mining · 6) Indice GZ<br>
+        <strong>✅ Fasi attive:</strong> 1) Partite GG Over2.5 · 2) Indice Gol Bio · 3) Differenziali Gol · <strong>4) Ritardi Gol</strong> · 5) Data Mining (OV25>60%) · 6) Indice GZ<br>
         <strong>Fase 4 (Ritardi):</strong> +1 se ritardo casa ≤3, +1 se ritardo ospite ≤3, +1 extra se entrambi ≤3.<br>
-        *Punteggi calcolati secondo specifiche. I file devono mantenere le intestazioni originali.
+        *Punteggi secondo specifiche. I file devono mantenere le intestazioni originali.
     </div>
 </div>
 
@@ -101,9 +101,21 @@
         // ---------- Helpers ----------
         function normalizeEventName(raw) {
             if (!raw) return '';
+            // Rimuove spazi multipli, tab, newline
             return raw.replace(/\s+/g, ' ').trim();
         }
 
+        // Converte stringa con virgola decimale in numero
+        function parseNumber(str) {
+            if (str === undefined || str === null || str === '') return 0;
+            if (typeof str === 'number') return str;
+            // Gestisce separatore delle migliaia (punto) e decimale virgola
+            let cleaned = str.toString().replace(/\./g, '').replace(',', '.');
+            let num = parseFloat(cleaned);
+            return isNaN(num) ? 0 : num;
+        }
+
+        // Parsing CSV con Papa Parse (delimitatore automatico)
         function parseCSV(file) {
             return new Promise((resolve, reject) => {
                 Papa.parse(file, {
@@ -111,129 +123,163 @@
                     skipEmptyLines: true,
                     encoding: "UTF-8",
                     complete: (results) => {
-                        const clean = results.data.map(row => {
+                        // Pulisci nomi colonne
+                        const cleanData = results.data.map(row => {
                             const newRow = {};
                             Object.keys(row).forEach(key => {
-                                const cleanKey = key.trim().replace(/^["']|["']$/g, '');
+                                let cleanKey = key.trim();
+                                // Rimuove eventuali virgolette iniziali/finali
+                                cleanKey = cleanKey.replace(/^["']|["']$/g, '');
                                 let val = row[key];
                                 if (typeof val === 'string') val = val.trim();
                                 newRow[cleanKey] = val;
                             });
                             return newRow;
-                        }).filter(row => Object.values(row).some(v => v !== '' && v !== null));
-                        resolve(clean);
+                        }).filter(row => Object.values(row).some(v => v !== '' && v !== null && v !== undefined));
+                        console.log(`✅ Parsed ${file.name}: ${cleanData.length} righe`);
+                        resolve(cleanData);
                     },
                     error: (err) => reject(err)
                 });
             });
         }
 
+        // Identificazione tipo file (case‑insensitive)
         function identifyFileType(fileName) {
             const n = fileName.toLowerCase();
-            if (n.includes('partite gg over')) return 'fase1';
-            if (n.includes('indice gol bio')) return 'fase2';
-            if (n.includes('differenziali gol')) return 'fase3';
-            if (n.includes('ritardi gol')) return 'fase4';
-            if (n.includes('data mining')) return 'fase5';
-            if (n.includes('indice gz')) return 'fase6';
+            if (n.includes('partite gg over') || n.includes('partite_gg_over')) return 'fase1';
+            if (n.includes('indice gol bio') || n.includes('indice_gol_bio')) return 'fase2';
+            if (n.includes('differenziali gol') || n.includes('differenziali_gol')) return 'fase3';
+            if (n.includes('ritardi gol') || n.includes('ritardi_gol')) return 'fase4';
+            if (n.includes('data mining') || n.includes('data_mining')) return 'fase5';
+            if (n.includes('indice gz') || n.includes('indice_gz')) return 'fase6';
             return 'unknown';
         }
 
-        // ---------- Scoring Functions ----------
+        // ---------- Scoring Functions (punteggi e dettagli) ----------
+        
+        // Fase 1: Partite GG Over2.5
         function scoreFase1(row) {
-            let score = 0, details = [];
-            const igbt = parseFloat(row['IGBt']?.replace(',', '.')) || 0;
-            if (igbt >= 400) { score += 2; details.push('IGBt≥400'); }
-            else if (igbt >= 300) { score += 1; details.push('IGBt≥300'); }
-            const mge = parseFloat(row['MGE']?.replace(',', '.')) || 0;
-            if (mge >= 2.8) { score += 1; details.push('MGE≥2.8'); }
-            const diff = parseFloat(row['Diff']?.replace(',', '.')) || 0;
-            if (diff < -0.6) { score += 3; details.push('Diff<-0.6'); }
-            else if (diff >= -0.6 && diff < 0) { score += 1; details.push('-0.6≤Diff<0'); }
-            const qOv = parseFloat(row['qOv2.5']?.replace(',', '.')) || 999;
-            if (qOv < 1.9) { score += 1; details.push('qOv<1.9'); }
-            const s1s2 = parseFloat(row['S1-S2']?.replace(',', '.')) || 9999;
-            if (s1s2 < 300) { score += 1; details.push('S1-S2<300'); }
-            const igbc = parseFloat(row['IGBc']?.replace(',', '.')) || 0;
-            const igbo = parseFloat(row['IGBo']?.replace(',', '.')) || 0;
-            if (igbc > 399) { score += 1; details.push('IGBc>399'); }
-            if (igbo > 399) { score += 1; details.push('IGBo>399'); }
-            return { score, details: details.join(', ') };
-        }
-
-        function scoreFase2(row) {
-            let score = 0, details = [];
-            const igbh = parseFloat(row['IGBH']?.replace(',', '.')) || 0;
-            if (igbh >= 300) { score += 2; details.push('IGBH≥300'); }
-            else if (igbh >= 200) { score += 1; details.push('IGBH≥200'); }
-            const diffH = parseFloat(row['Diff H']?.replace(',', '.')) || 0;
-            if (diffH < 0) { score += 1; details.push('Diff H<0'); }
-            const igba = parseFloat(row['IGBA']?.replace(',', '.')) || 0;
-            if (igba >= 300) { score += 2; details.push('IGBA≥300'); }
-            else if (igba >= 200) { score += 1; details.push('IGBA≥200'); }
-            const diffA = parseFloat(row['Diff A']?.replace(',', '.')) || 0;
-            if (diffA < 0) { score += 3; details.push('Diff A<0'); }
-            return { score, details: details.join(', ') };
-        }
-
-        function scoreFase3(row) {
-            let score = 0, details = [];
-            const mge = parseFloat(row['MGE']?.replace(',', '.')) || 0;
-            if (mge > 3.0) { score += 2; details.push('MGE>3.0'); }
-            else if (mge > 2.7 && mge <= 3.0) { score += 1; details.push('MGE 2.7-3.0'); }
-            const dg = parseFloat(row['DG']?.replace(',', '.')) || 0;
-            const dgt = parseFloat(row['DGT']?.replace(',', '.')) || 0;
-            if (dg < 0) { score += 3; details.push('DG<0'); }
-            if (dgt < 0) { score += 2; details.push('DGT<0'); }
-            const qt = parseFloat(row['Qt']?.replace(',', '.')) || 0;
-            const qr = parseFloat(row['Qr']?.replace(',', '.')) || 0;
-            if (qt > qr) { score += 1; details.push('Qt>Qr'); }
-            return { score, details: details.join(', ') };
-        }
-
-        function scoreFase4(row) {
-            // Estrazione euristica dei ritardi casa e ospite dal file Ritardi Gol
             let score = 0;
-            const details = [];
-            // I valori dopo il match: il primo numero intero è ritardo casa, poi dopo alcune percentuali c'è ritardo ospite
-            const values = Object.values(row).filter(v => v && v.trim() !== '').slice(4); // salta Ora,Paese,Lega,Match
-            if (values.length < 14) return { score: 0, details: 'Dati insufficienti' };
+            let details = [];
+            const igbt = parseNumber(row['IGBt']);
+            if (igbt >= 400) { score += 2; details.push(`IGBt≥400`); }
+            else if (igbt >= 300) { score += 1; details.push(`IGBt≥300`); }
             
-            // Il primo valore numerico intero (ritardo casa)
-            let ritardoCasa = null, ritardoOspite = null;
-            for (let i = 0; i < values.length; i++) {
-                const num = parseInt(values[i], 10);
-                if (!isNaN(num) && values[i] == num) { // è un intero
-                    if (ritardoCasa === null) ritardoCasa = num;
-                    else if (ritardoOspite === null && i > 6) { // il secondo intero dopo un po'
-                        ritardoOspite = num;
-                        break;
+            const mge = parseNumber(row['MGE']);
+            if (mge >= 2.8) { score += 1; details.push(`MGE≥2.8`); }
+            
+            const diff = parseNumber(row['Diff']);
+            if (diff < -0.6) { score += 3; details.push(`Diff<-0.6`); }
+            else if (diff >= -0.6 && diff < 0) { score += 1; details.push(`-0.6≤Diff<0`); }
+            
+            const qOv = parseNumber(row['qOv2.5']);
+            if (qOv < 1.9 && qOv > 0) { score += 1; details.push(`qOv<1.9`); }
+            
+            const s1s2 = parseNumber(row['S1-S2']);
+            if (s1s2 < 300 && s1s2 > 0) { score += 1; details.push(`S1-S2<300`); }
+            
+            const igbc = parseNumber(row['IGBc']);
+            const igbo = parseNumber(row['IGBo']);
+            if (igbc > 399) { score += 1; details.push(`IGBc>399`); }
+            if (igbo > 399) { score += 1; details.push(`IGBo>399`); }
+            
+            return { score, details: details.join(', ') };
+        }
+
+        // Fase 2: Indice Gol Bio
+        function scoreFase2(row) {
+            let score = 0;
+            let details = [];
+            const igbh = parseNumber(row['IGBH']);
+            if (igbh >= 300) { score += 2; details.push(`IGBH≥300`); }
+            else if (igbh >= 200) { score += 1; details.push(`IGBH≥200`); }
+            
+            const diffH = parseNumber(row['Diff H']);
+            if (diffH < 0) { score += 1; details.push(`Diff H<0`); }
+            
+            const igba = parseNumber(row['IGBA']);
+            if (igba >= 300) { score += 2; details.push(`IGBA≥300`); }
+            else if (igba >= 200) { score += 1; details.push(`IGBA≥200`); }
+            
+            const diffA = parseNumber(row['Diff A']);
+            if (diffA < 0) { score += 3; details.push(`Diff A<0`); }
+            
+            return { score, details: details.join(', ') };
+        }
+
+        // Fase 3: Differenziali Gol
+        function scoreFase3(row) {
+            let score = 0;
+            let details = [];
+            const mge = parseNumber(row['MGE']);
+            if (mge > 3.0) { score += 2; details.push(`MGE>3.0`); }
+            else if (mge > 2.7 && mge <= 3.0) { score += 1; details.push(`MGE 2.7-3.0`); }
+            
+            const dg = parseNumber(row['DG']);
+            const dgt = parseNumber(row['DGT']);
+            if (dg < 0) { score += 3; details.push(`DG<0`); }
+            if (dgt < 0) { score += 2; details.push(`DGT<0`); }
+            
+            const qt = parseNumber(row['Qt']);
+            const qr = parseNumber(row['Qr']);
+            if (qt > qr) { score += 1; details.push(`Qt>Qr`); }
+            
+            return { score, details: details.join(', ') };
+        }
+
+        // Fase 4: Ritardi Gol (nuova logica robusta)
+        function scoreFase4(row) {
+            // Estrae i ritardi cercando i primi due numeri interi ragionevoli (<100) dopo l'inizio dei dati
+            let score = 0;
+            let details = [];
+            
+            // Prendi tutti i valori delle celle (ignorando Ora,Paese,Lega,Match)
+            const values = Object.values(row).filter(v => v && v.toString().trim() !== '');
+            // I primi 4 campi sono Ora, Paese, Lega, Match -> li saltiamo
+            const dataValues = values.slice(4);
+            
+            // Cerca numeri interi positivi (ritardi) nell'ordine
+            let ritardoCasa = null;
+            let ritardoOspite = null;
+            for (let val of dataValues) {
+                let str = val.toString().trim();
+                // Se è un numero intero (senza % o virgole) e compreso tra 0 e 99
+                if (/^\d+$/.test(str)) {
+                    let num = parseInt(str, 10);
+                    if (num >= 0 && num <= 99) {
+                        if (ritardoCasa === null) {
+                            ritardoCasa = num;
+                        } else if (ritardoOspite === null) {
+                            ritardoOspite = num;
+                            break;
+                        }
                     }
                 }
             }
-            // Fallback se non trovato: prendi il primo e l'ottavo valore numerico
-            if (ritardoCasa === null) {
-                const nums = values.map(v => parseFloat(v)).filter(n => !isNaN(n));
-                ritardoCasa = nums[0] || 99;
-                ritardoOspite = nums[7] || 99;
-            } else if (ritardoOspite === null) {
-                const nums = values.map(v => parseFloat(v)).filter(n => !isNaN(n));
-                ritardoOspite = nums[7] || 99;
+            
+            // Fallback: se non trovati, prendi primo e ottavo valore numerico (euristica)
+            if (ritardoCasa === null || ritardoOspite === null) {
+                const allNumbers = dataValues.map(v => parseNumber(v)).filter(n => !isNaN(n) && n >= 0);
+                ritardoCasa = allNumbers[0] ?? 99;
+                ritardoOspite = allNumbers[7] ?? 99;
             }
-
+            
             const rc = ritardoCasa ?? 99;
             const ro = ritardoOspite ?? 99;
             details.push(`Rit.C=${rc}, Rit.O=${ro}`);
             
-            if (rc <= 3) { score += 1; details.push('Rit.C≤3'); }
-            if (ro <= 3) { score += 1; details.push('Rit.O≤3'); }
-            if (rc <= 3 && ro <= 3) { score += 1; details.push('Entrambi≤3 (+1)'); }
+            if (rc <= 3) { score += 1; details.push('C≤3'); }
+            if (ro <= 3) { score += 1; details.push('O≤3'); }
+            if (rc <= 3 && ro <= 3) { score += 1; details.push('Entrambi≤3'); }
             
             return { score, details: details.join(' ') };
         }
 
+        // Fase 5: Data Mining (OV25 > 60%)
         function scoreFase5(row) {
-            let score = 0, details = [];
+            let score = 0;
+            let details = [];
             let ov25Str = row['OV25'] || row['OV25%'] || '0';
             ov25Str = ov25Str.replace('%', '').replace(',', '.');
             const ov25 = parseFloat(ov25Str) || 0;
@@ -241,14 +287,16 @@
             return { score, details: details.join('') };
         }
 
+        // Fase 6: Indice GZ
         function scoreFase6(row) {
-            let score = 0, details = [];
-            const gz = parseFloat(row['GZ']?.replace(',', '.')) || 0;
-            const gzha = parseFloat(row['GZha']?.replace(',', '.')) || 0;
-            if (gz > 5000) { score = 3; details.push('GZ>5000'); }
-            else if (gz > 1000 && gz <= 5000) { score = 2; details.push('GZ>1000'); }
-            else if (gz > 0 && gz <= 1000) { score = 1; details.push('GZ>0'); }
-            else { details.push('GZ≤0'); }
+            let score = 0;
+            let details = [];
+            const gz = parseNumber(row['GZ']);
+            const gzha = parseNumber(row['GZha']);
+            if (gz > 5000) { score = 3; details.push(`GZ>5000`); }
+            else if (gz > 1000 && gz <= 5000) { score = 2; details.push(`GZ>1000`); }
+            else if (gz > 0 && gz <= 1000) { score = 1; details.push(`GZ>0`); }
+            else { details.push(`GZ≤0`); }
             details.push(`(ha=${gzha.toFixed(0)})`);
             return { score, details: details.join(' ') };
         }
@@ -256,12 +304,15 @@
         // ---------- Process All ----------
         function processAllData() {
             const matchesMap = new Map();
+            
             function addPhase(phaseData, phaseName, scorer) {
                 if (!phaseData || !Array.isArray(phaseData)) return;
                 phaseData.forEach(row => {
+                    // Cerca il nome evento in varie colonne possibili
                     let eventName = row['EVENTO'] || row['Match'] || row['EVENT'] || '';
                     eventName = normalizeEventName(eventName);
                     if (!eventName) return;
+                    
                     if (!matchesMap.has(eventName)) {
                         matchesMap.set(eventName, {
                             event: eventName,
@@ -293,6 +344,7 @@
                 if (total >= 8 && active >= 3) qualified.push(match);
             }
             qualified.sort((a,b) => b.total - a.total);
+            console.log(`📊 Match qualificati: ${qualified.length}`);
             return qualified;
         }
 
@@ -300,7 +352,7 @@
         function renderResults(matches) {
             resultsTbody.innerHTML = '';
             if (!matches.length) {
-                resultsTbody.innerHTML = '<tr><td colspan="9" style="text-align:center; padding:32px;">Nessun match qualificato.</td></tr>';
+                resultsTbody.innerHTML = '<tr><td colspan="9" style="text-align:center; padding:32px;">Nessun match qualificato con i criteri attuali.</td></tr>';
                 matchCountBadge.textContent = '0 match';
                 return;
             }
@@ -318,12 +370,12 @@
                     <td><strong>${m.event}</strong></td>
                     <td><span class="score-high">${m.total}</span></td>
                     <td>${fasi.join(', ')}</td>
-                    <td>${m.details.fase1 || '-'} ${m.scores.fase1?`(${m.scores.fase1}pt)`:''}</td>
-                    <td>${m.details.fase2 || '-'} ${m.scores.fase2?`(${m.scores.fase2}pt)`:''}</td>
-                    <td>${m.details.fase3 || '-'} ${m.scores.fase3?`(${m.scores.fase3}pt)`:''}</td>
-                    <td>${m.details.fase4 || '-'} ${m.scores.fase4?`(${m.scores.fase4}pt)`:''}</td>
+                    <td>${m.details.fase1 || '-'} ${m.scores.fase1?`(${m.scores.fase1}pt)` : ''}</td>
+                    <td>${m.details.fase2 || '-'} ${m.scores.fase2?`(${m.scores.fase2}pt)` : ''}</td>
+                    <td>${m.details.fase3 || '-'} ${m.scores.fase3?`(${m.scores.fase3}pt)` : ''}</td>
+                    <td>${m.details.fase4 || '-'} ${m.scores.fase4?`(${m.scores.fase4}pt)` : ''}</td>
                     <td>${m.details.fase5 || '-'}</td>
-                    <td>${m.details.fase6 || '-'} ${m.scores.fase6?`(${m.scores.fase6}pt)`:''}</td>
+                    <td>${m.details.fase6 || '-'} ${m.scores.fase6?`(${m.scores.fase6}pt)` : ''}</td>
                 `;
                 resultsTbody.appendChild(tr);
             });
@@ -337,26 +389,39 @@
             }
             statusArea.innerText = '⏳ Analisi in corso...';
             analyzeBtn.disabled = true;
+            
+            // Reset
             parsedData = { fase1:null, fase2:null, fase3:null, fase4:null, fase5:null, fase6:null };
 
             try {
                 for (let file of uploadedFiles) {
                     const type = identifyFileType(file.name);
+                    console.log(`File: ${file.name} → ${type}`);
                     if (type === 'unknown') {
-                        console.warn(`File non riconosciuto: ${file.name}`);
+                        console.warn(`⚠️ File non riconosciuto: ${file.name} (verrà ignorato)`);
                         continue;
                     }
                     const data = await parseCSV(file);
                     parsedData[type] = data;
                 }
+
+                // Verifica presenza dati
+                const hasAny = Object.values(parsedData).some(d => d && d.length > 0);
+                if (!hasAny) {
+                    statusArea.innerText = '❌ Nessun dato valido trovato nei file caricati.';
+                    analyzeBtn.disabled = false;
+                    return;
+                }
+
                 const qualified = processAllData();
                 renderResults(qualified);
                 resultsSection.style.display = 'block';
                 statusArea.innerText = `✅ Analisi completata. ${qualified.length} match qualificati.`;
                 window.lastQualified = qualified;
+
             } catch (error) {
                 console.error(error);
-                statusArea.innerText = '❌ Errore: ' + error.message;
+                statusArea.innerText = '❌ Errore durante l\'analisi: ' + error.message;
             } finally {
                 analyzeBtn.disabled = false;
             }
@@ -392,12 +457,13 @@
 
         // Download
         document.getElementById('downloadHtmlBtn').addEventListener('click', function() {
-            if (!window.lastQualified?.length) { alert('Nessun risultato.'); return; }
+            if (!window.lastQualified?.length) { alert('Nessun risultato da esportare.'); return; }
             let html = '<html><head><meta charset="UTF-8"><title>Report Over 2.5</title></head><body>';
             html += '<h2>Report Analisi Convergenza</h2><table border="1" cellpadding="5">';
             html += '<tr><th>Match</th><th>Tot</th><th>Fasi</th><th>F1</th><th>F2</th><th>F3</th><th>F4</th><th>F5</th><th>F6</th></tr>';
             window.lastQualified.forEach(m => {
-                html += `<tr><td>${m.event}</td><td>${m.total}</td><td>${Object.entries(m.scores).filter(([k,v])=>v>0).map(([k])=>k).join(',')}</td>`;
+                const fasi = Object.entries(m.scores).filter(([k,v])=>v>0).map(([k])=>k).join(',');
+                html += `<tr><td>${m.event}</td><td>${m.total}</td><td>${fasi}</td>`;
                 html += `<td>${m.details.fase1||''}</td><td>${m.details.fase2||''}</td><td>${m.details.fase3||''}</td><td>${m.details.fase4||''}</td><td>${m.details.fase5||''}</td><td>${m.details.fase6||''}</td></tr>`;
             });
             html += '</table></body></html>';
@@ -406,7 +472,7 @@
         });
 
         document.getElementById('downloadCsvBtn').addEventListener('click', function() {
-            if (!window.lastQualified?.length) { alert('Nessun dato.'); return; }
+            if (!window.lastQualified?.length) { alert('Nessun dato da esportare.'); return; }
             let csv = "Match,Punteggio Totale,Fasi Coinvolte,F1,F2,F3,F4,F5,F6\n";
             window.lastQualified.forEach(m => {
                 const fasi = Object.entries(m.scores).filter(([k,v])=>v>0).map(([k])=>k).join(';');
@@ -417,6 +483,7 @@
             const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'report_over25.csv'; a.click();
         });
 
+        // Inizializza
         updateFileList();
     })();
 </script>
