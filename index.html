@@ -6,13 +6,14 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="theme-color" content="#0b0d12">
-  <title>Match Analyzer Pro – Dashboard Rapida</title>
+  <title>Match Analyzer Pro – Dashboard Completa</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <script defer src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script defer src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
   <style>
+    /* === STILI COMPLETI (identici all'originale, inclusi modale, dashboard, ecc.) === */
     *{margin:0;padding:0;box-sizing:border-box}
     :root{
       --bg:#0b0d12;--s1:#141720;--s2:#1a1e2a;--s3:#252a38;
@@ -85,7 +86,6 @@
     .m-name{font:600 .95rem var(--S);color:#fff;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
     .m-sub{font:.78rem var(--S);color:var(--t3);margin-top:2px;display:flex;gap:6px;flex-wrap:wrap}
     .m-right{display:flex;align-items:center;gap:8px;flex-shrink:0;justify-content:flex-end}
-    .m-rpt{font:600 .8rem var(--M);color:var(--grn);min-width:34px;text-align:center}
     .m-ind{font:700 .82rem var(--M);padding:4px 10px;border-radius:6px}
     .ind-g{color:var(--grn);background:var(--grn-bg)}
     .ind-o{color:var(--amb);background:var(--amb-bg)}
@@ -132,6 +132,18 @@
     .mini.dim{background:var(--s2);color:var(--t2)}
     .btn.ghost{background:transparent;border:1px solid var(--brd);padding:8px 12px;border-radius:8px;color:var(--t2)}
     .btn.danger{color:var(--red);border-color:var(--red)}
+    .dg{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px}
+    .dc{background:var(--bg);border-radius:10px;padding:12px;border:1px solid rgba(255,255,255,.03)}
+    .dc-l{font:.7rem var(--S);color:var(--t3);text-transform:uppercase;letter-spacing:.5px;font-weight:700;margin-bottom:3px}
+    .dc-v{font:700 .98rem var(--M);word-break:break-word}
+    .bk{margin-top:14px;padding-top:14px;border-top:1.5px solid var(--brd)}
+    .bk-t{font:.75rem var(--S);color:var(--t3);text-transform:uppercase;letter-spacing:.5px;font-weight:700;margin-bottom:8px}
+    .bk-r{display:flex;justify-content:space-between;gap:12px;padding:6px 0;font:.85rem var(--S)}
+    .bk-tot{display:flex;justify-content:space-between;padding:10px 0 0;margin-top:6px;border-top:1.5px solid var(--brd);font:700 .95rem var(--S)}
+    .note{margin-top:8px;color:var(--t3);font:.8rem var(--S);line-height:1.5}
+    .prob-bar-container{display:flex;align-items:center;gap:8px;margin:4px 0}
+    .prob-bar{flex:1;height:6px;background:var(--s3);border-radius:3px;overflow:hidden}
+    .prob-fill{height:100%;background:var(--grn);border-radius:3px}
   </style>
 </head>
 <body>
@@ -176,7 +188,6 @@
     histStatus:'all', histCategory:'all',
     backtestStats: { ov05: { correct: 0, total: 0 }, gg: { correct: 0, total: 0 }, o25: { correct: 0, total: 0 }, u25: { correct: 0, total: 0 }, mg13: { correct: 0, total: 0 } },
     det: null, detMarket: null, detSide: null,
-    // Filtri temporanei per currentRows (usati da generateTopList)
     sub: 'all', iaCat: 'all', plSub: 'cards', league: 'all', sortMode: 'score',
     quoteFilter: 'all', gzFilter: 'all', gzSort: 'value'
   };
@@ -207,11 +218,10 @@
   function diffLabel(d){if(d===null||d===undefined||isNaN(d))return ['N/D','n'];if(d===0)return ['0.00','n'];const v=(d>0?'+':'')+d.toFixed(2);const tag=d<0?' (sotto)':d>0.5?' (sovra+)':d>0?' (sovra)':'';const c=d<0?'g':d>0.5?'w':'n';return [v+tag,c];}
   function getLeagueOptions(data,key){const vals=[...new Set(data.map(r=>String(r[key]||'').trim()).filter(v=>v&&v.length>1))].sort((a,b)=>a.localeCompare(b));return vals;}
   function fmt(n,d=2){if(n===null||n===undefined||Number.isNaN(n))return 'N/D';return Number(n).toFixed(d);}
-  function csvCell(v){if(v===null||v===undefined)return '';const s=String(v);return /[;",\n]/.test(s)?'"'+s.replace(/"/g,'""')+'"':s;}
   function parseCsvLines(t){return t.replace(/^\uFEFF/,'').trim().replace(/\r\n/g,'\n').replace(/\r/g,'\n').split('\n');}
   function splitCsvLine(line, sep){const out=[];let cur='';let q=false;for(let i=0;i<line.length;i++){const ch=line[i];if(ch==='"'){if(q&&line[i+1]==='"'){cur+='"';i++;}else q=!q;}else if(ch===sep&&!q){out.push(cur);cur='';}else cur+=ch;} out.push(cur); return out;}
 
-  // ==================== PARSING ====================
+  // ==================== PARSING (COMPLETO) ====================
   function parseOv05(t){const L=parseCsvLines(t);if(L.length<2)return[];const sep=L[0].includes(';')?';':',';const s=x=>(x||'').replace(/^"|"$/g,'').trim();const h=splitCsvLine(L[0],sep).map(s);const hi={};h.forEach((x,i)=>hi[x]=i);const g=(r,k)=>s(r[hi[k]]||'');const pf=x=>parseFloat((x||'0').replace(',','.').replace('%',''))||0;const pu=x=>{if(!x)return[0,0];const p=x.split('|').map(v=>parseInt(v)||0);return[p[0]||0,p[1]||0]};const R=[];for(let i=1;i<L.length;i++){const f=splitCsvLine(L[i],sep).map(s);if(f.length<5)continue;R.push({ora:g(f,'ORA'),evento:g(f,'EVENTO'),rpt:g(f,'Rpt'),ind:parseInt(g(f,'IND'))||999,qrOv05:pf(g(f,'QROv0.5pt')),delta:pf(g(f,'Delta')),u5:pu(g(f,'U5[C|O]')),u5ct:pu(g(f,'U5CT[C|O]')),diff:pf(g(f,'Diff')),mge:pf(g(f,'MGE')),cov05:pf(g(f,'COv0.5%')),oov05:pf(g(f,'OOv0.5%')),qrGG:pf(g(f,'QrGG')),qrO25:pf(g(f,'QrO25')),u5Raw:g(f,'U5[C|O]'),u5ctRaw:g(f,'U5CT[C|O]'),cov05R:g(f,'COv0.5%'),oov05R:g(f,'OOv0.5%')});}return R;}
   function parseGGOv25(t){const L=parseCsvLines(t);if(L.length<2)return[];const sep=L[0].includes(';')?';':',';const s=x=>(x||'').replace(/^"|"$/g,'').trim();const h=splitCsvLine(L[0],sep).map(s);const hi={};h.forEach((x,i)=>hi[x]=i);const g=(r,k)=>s(r[hi[k]]||'');const pf=x=>parseFloat((x||'0').replace(',','.').replace('%',''))||0;const R=[];for(let i=1;i<L.length;i++){const f=splitCsvLine(L[i],sep).map(s);if(f.length<5)continue;let oR=g(f,'ORA'),ev=g(f,'EVENTO');const tm=oR.match(/(\d{1,2}:\d{2})/),dt=oR.match(/(\d{2}-\d{2})/);const oD=(dt?dt[1].replace('-','/')+' ':'')+(tm?tm[1]:'');ev=ev.split(/\s{3,}/)[0]||ev;R.push({ora:oD.trim(),evento:ev,nazione:g(f,'NAZIONE'),lega:g(f,'LEGA')||g(f,'NAZIONE'),rpt:g(f,'RIS.'),igbc:parseInt(pf(g(f,'IGBc'))),igbo:parseInt(pf(g(f,'IGBo'))),igbt:parseInt(pf(g(f,'IGBt'))),mge:pf(g(f,'MGE')),diff:pf(g(f,'Diff')),pgg:pf(g(f,'PGG')),s12:parseInt(pf(g(f,'S1-S2'))),qov25:pf(g(f,'qOv2.5'))});}return R;}
   function parseMG13(t){const L=parseCsvLines(t);if(L.length<2)return[];const sep=L[0].includes(';')?';':',';const s=x=>(x||'').replace(/^"|"$/g,'').trim();const h=splitCsvLine(L[0],sep).map(s);const hi={};h.forEach((x,i)=>hi[x]=i);const g=(r,k)=>s(r[hi[k]]||'');const pf=x=>parseFloat((x||'0').replace(',','.'))||0;const R=[];for(let i=1;i<L.length;i++){const f=splitCsvLine(L[i],sep).map(s);if(f.length<5)continue;R.push({ora:g(f,'ORA'),evento:g(f,'EVENTO'),rpt:g(f,'R'),ich:parseInt(pf(g(f,'ICH'))),varc:pf(g(f,'VarC')),vu5c:pf(g(f,'VU5C')),ritc:parseInt(pf(g(f,'RitC'))),mgfc:pf(g(f,'MGFC')),mgso:pf(g(f,'MGSO')),q1:pf(g(f,'Q1')),qo25:pf(g(f,'QO25')),q2:pf(g(f,'Q2')),ica:parseInt(pf(g(f,'ICA'))),varo:pf(g(f,'VarO')),vu5o:pf(g(f,'VU5O')),rito:parseInt(pf(g(f,'RitO'))),mgfo:pf(g(f,'MGFO')),mgsc:pf(g(f,'MGSC'))});}return R;}
@@ -259,7 +269,7 @@
     return R;
   }
 
-  // ==================== SCORING ====================
+  // ==================== SCORING (COMPLETO) ====================
   function isMG24(dm){ return dm && dm.pOV15 > 60 && dm.pUN35 > 60; }
   function getDMFactor(dm, market) { if (!dm) return 1.0; const np = dm.np; let perc = 0; switch (market) { case 'ov05': perc = dm.pOV05pt; break; case 'gg': perc = dm.pGG; break; case 'o25': perc = dm.pOV25; break; case 'u25': perc = dm.pUN35; break; case 'mg13': return Math.min(1 + (np / 100), 1.3); default: return 1.0; } const npWeight = Math.min(np / 50, 1.2); const percWeight = 0.8 + (perc / 100) * 0.6; return npWeight * percWeight; }
   function getDMBadgeClass(dm, market) { if (!dm) return ''; const np = dm.np; let perc = 0; switch (market) { case 'ov05': perc = dm.pOV05pt; break; case 'gg': perc = dm.pGG; break; case 'o25': perc = dm.pOV25; break; case 'u25': perc = dm.pUN35; break; default: return 'neu'; } if (np >= 30 && perc >= (market === 'u25' ? 60 : 55)) return 'dm-green'; if (np >= 15 && perc >= (market === 'u25' ? 50 : 45)) return 'dm-yellow'; return 'dm-red'; }
@@ -314,58 +324,7 @@
   function scoreAmm(r){const b=[];if(r.amm>=.4)b.push({n:'Amm/p >= 0.40',p:3});else if(r.amm>=.3)b.push({n:'Amm/p 0.30-0.39',p:2.5});else if(r.amm>=.2)b.push({n:'Amm/p 0.20-0.29',p:1.5});else b.push({n:'Amm/p < 0.20',p:0});if(r.falli>=2.5)b.push({n:'Falli >= 2.5',p:2.5});else if(r.falli>=2)b.push({n:'Falli 2.0-2.49',p:2});else if(r.falli>=1.5)b.push({n:'Falli 1.5-1.99',p:1});else b.push({n:'Falli < 1.5',p:0});if(r.rit>=5)b.push({n:'Ritardo >= 5',p:2});else if(r.rit>=3)b.push({n:'Ritardo 3-4',p:1.5});else if(r.rit>=1)b.push({n:'Ritardo 1-2',p:.5});else b.push({n:'Ritardo 0',p:0});if(r.tackle>=2)b.push({n:'Tackle >= 2.0',p:1.5});else if(r.tackle>=1)b.push({n:'Tackle 1.0-1.99',p:.75});else b.push({n:'Tackle < 1.0',p:0});if(r.min>=70)b.push({n:'Minuti >= 70',p:.5});else b.push({n:'Minuti < 70',p:0});const tot=b.reduce((s,x)=>s+x.p,0);return {breakdown:b,total:tot,max:9.5,level:tot>=7?'hot':tot>=5?'warm':'mild'};}
   function scoreGol(r){const b=[];if(r.gol>=.4)b.push({n:'Gol/p >= 0.40',p:3});else if(r.gol>=.25)b.push({n:'Gol/p 0.25-0.39',p:2});else if(r.gol>=.15)b.push({n:'Gol/p 0.15-0.24',p:1});else b.push({n:'Gol/p < 0.15',p:0});if(r.tiriPorta>=2)b.push({n:'TiP >= 2.0',p:2.5});else if(r.tiriPorta>=1.5)b.push({n:'TiP 1.5-1.99',p:1.5});else if(r.tiriPorta>=1)b.push({n:'TiP 1.0-1.49',p:1});else b.push({n:'TiP < 1.0',p:0});if(r.rit>=5)b.push({n:'Ritardo >= 5',p:2});else if(r.rit>=3)b.push({n:'Ritardo 3-4',p:1.5});else if(r.rit>=1)b.push({n:'Ritardo 1-2',p:.5});else b.push({n:'Ritardo 0',p:0});if(r.tiriTot>=3)b.push({n:'TT >= 3.0',p:1.5});else if(r.tiriTot>=2)b.push({n:'TT 2.0-2.99',p:1});else b.push({n:'TT < 2.0',p:0});if(r.min>=70)b.push({n:'Minuti >= 70',p:.5});else b.push({n:'Minuti < 70',p:0});const tot=b.reduce((s,x)=>s+x.p,0);return {breakdown:b,total:tot,max:9.5,level:tot>=7?'hot':tot>=5?'warm':'mild'};}
 
-  function hubAdvice(h){
-    const tips=[]; const hasTopPlusPotential = h.coverage >= 4 && h.conflicts === 0 && h.dm && h.dm.np >= 40;
-    if(h.o25&&h.o25.aff>=4&&h.gzOver&&h.qvForGoals) tips.push({market:'Ov 2.5', tier: hasTopPlusPotential?'TOP+':'TOP', score:(h.o25?.score||0)+(h.conv||0)+(hasTopPlusPotential?0.5:0), reason:'IGBt e MGE forti con conferma GZ over e 1X2 coerente'});
-    if(h.gg&&h.gg.aff>=4&&h.gzOver) tips.push({market:'GG', tier: hasTopPlusPotential?'TOP+':'TOP', score:(h.gg?.score||0)+(h.conv||0)*0.8+(hasTopPlusPotential?0.4:0), reason:'Segnale offensivo sostenuto da GZ over e indicatori GG'});
-    if(h.ov05&&h.ov05.aff>=4) tips.push({market:'Ov 0.5 PT', tier: hasTopPlusPotential?'TOP+':'SAFE', score:(h.ov05?.score||0)+(h.gzOver?0.6:0)+(h.qvForGoals?0.3:0)+(hasTopPlusPotential?0.3:0), reason:'Linea prudente supportata dall indicatore primo tempo'});
-    if(h.u25&&h.u25.aff>=4&&h.gzUnder) tips.push({market:'U 2.5', tier: hasTopPlusPotential?'TOP+':'TOP', score:(h.u25?.score||0)+(h.conv||0)+(hasTopPlusPotential?0.5:0), reason:'Profilo da under confermato da GZ'});
-    if(h.mg13&&h.mg13.aff>=4) tips.push({market:'MG 1-3', tier: hasTopPlusPotential?'TOP+':'SMART', score:(h.mg13?.score||0)+(h.gzMid?0.4:0)+(h.qvTight?0.3:0)+(hasTopPlusPotential?0.3:0), reason:'Mercato mirato per match controllato o equilibrio'});
-    if(!tips.length){
-      if(h.o25&&h.o25.aff>=4) tips.push({market:'Ov 2.5',tier:'WATCH',score:(h.o25?.score||0)+(h.gzOver?0.4:0),reason:'Buon segnale statistico, manca convergenza totale'});
-      if(h.gg&&h.gg.aff>=4) tips.push({market:'GG',tier:'WATCH',score:(h.gg?.score||0)+(h.gzOver?0.3:0),reason:'GG interessante ma non completamente confermato'});
-      if(h.ov05&&h.ov05.aff>=4) tips.push({market:'Ov 0.5 PT',tier:'SAFE',score:(h.ov05?.score||0)+(h.gzOver?0.4:0),reason:'Linea prudente anche senza piena convergenza'});
-      if(h.u25&&h.u25.aff>=4) tips.push({market:'U 2.5',tier:'WATCH',score:(h.u25?.score||0)+(h.gzUnder?0.4:0),reason:'Under leggibile ma con conferme parziali'});
-      if(h.mg13&&h.mg13.aff>=4) tips.push({market:h.mg13.side==='ospite'?'MG 1-3 Ospite':'MG 1-3 Casa',tier:'SMART',score:(h.mg13?.score||0),reason:'Multigol orientato sul lato migliore del match'});
-    }
-    if(!tips.length){
-      if(h.ov05) tips.push({market:'Ov 0.5 PT',tier:'LIGHT',score:h.ov05?.score||0,reason:'Unico segnale disponibile sul match'});
-      else if(h.o25) tips.push({market:'Ov 2.5',tier:'LIGHT',score:h.o25?.score||0,reason:'Segnale principale disponibile sul match'});
-      else if(h.u25) tips.push({market:'U 2.5',tier:'LIGHT',score:h.u25?.score||0,reason:'Segnale principale disponibile sul match'});
-      else if(h.gg) tips.push({market:'GG',tier:'LIGHT',score:h.gg?.score||0,reason:'Segnale principale disponibile sul match'});
-      else if(h.mg13) tips.push({market:h.mg13.side==='ospite'?'MG 1-3 Ospite':'MG 1-3 Casa',tier:'LIGHT',score:h.mg13?.score||0,reason:'Lettura MG con dati ancora incompleti'});
-    }
-    tips.sort((a,b)=>b.score-a.score); const main=tips[0]||null,alt=tips[1]||null;
-    let risk='Basso'; if(h.conflicts>=2) risk='Alto'; else if(h.conflicts===1) risk='Medio';
-    let summary='Nessun dato utile disponibile.';
-    if(main){ const confTxt=h.coverage>=3?'convergenza buona':h.coverage===2?'convergenza media':'copertura leggera'; summary=`${main.market} ${main.tier}: ${main.reason}. ${confTxt}, copertura ${h.coverage}/5, rischio ${risk}.`; }
-    return {tips,main,alt,risk,summary};
-  }
-
-  function buildHubMatchMap(){
-    const map={}; const ensure=(evento,ora='')=>{const k=normName(evento);if(!k)return null;if(!map[k])map[k]={key:k,evento:evento,ora:ora,ov05:null,gg:null,o25:null,u25:null,mg13:null,ia:null,qv:null,gz:null,dm:null};return map[k];};
-    getOv05Rows().forEach(r=>{const m=ensure(r.evento,r.ora);if(m&&!m.ov05)m.ov05=r;});
-    getGgRows().forEach(r=>{const m=ensure(r.evento,r.ora);if(m&&!m.gg)m.gg=r;});
-    getO25Rows().forEach(r=>{const m=ensure(r.evento,r.ora);if(m&&!m.o25)m.o25=r;});
-    getU25Rows().forEach(r=>{const m=ensure(r.evento,r.ora);if(m&&!m.u25)m.u25=r;});
-    getMgRows().forEach(r=>{const m=ensure(r.evento,r.ora);if(m&&!m.mg13)m.mg13={...r,aff:Math.max(r.house.aff,r.away.aff),score:Math.max(r.house.total,r.away.total)};});
-    getIaRows().forEach(r=>{const m=ensure(r.evento,r.ora);if(m&&!m.ia)m.ia=r;});
-    ST.quoteValore.forEach(r=>{const m=ensure(r.match,r.ora);if(m&&!m.qv)m.qv={...r,...analyzeQuoteMatch(r)};});
-    ST.gz.forEach(r=>{const m=ensure(r.evento,r.ora);if(m&&!m.gz)m.gz={...r,prob:gzProbability(r.gz)};});
-    ST.dataMining.forEach(r=>{const m=ensure(r.match,r.ora);if(m&&!m.dm)m.dm=r;});
-    const rows=[]; for(const m of Object.values(map)){
-      const gzOver=!!(m.gz&&m.gz.prob.type==='over'), gzUnder=!!(m.gz&&m.gz.prob.type==='under'), gzMid=!!(m.gz&&m.gz.prob.type==='neutral');
-      const qvForGoals=!!(m.qv&&['casa','ospite','entrambe'].includes(m.qv.golSide)), qvBoth=!!(m.qv&&m.qv.golSide==='entrambe'), qvTight=!!(m.qv&&m.qv.golSide==='pareggio');
-      let coverage=[m.ov05,m.gg||m.o25||m.u25,m.qv,m.gz,m.dm].filter(Boolean).length; if(m.dm && m.dm.np>=30) coverage++;
-      let conflicts=(m.o25&&gzUnder?1:0)+(m.u25&&gzOver?1:0)+(m.gg&&m.qv&&m.qv.golSide==='pareggio'?1:0);
-      if(m.dm){ if(m.o25&&m.o25.aff>=4&&m.dm.pOV25<45) conflicts++; if(m.u25&&m.u25.aff>=4&&m.dm.pUN35<60) conflicts++; if(m.gg&&m.gg.aff>=4&&m.dm.pGG<45) conflicts++; }
-      const conv=(m.gz?1:0)+(m.qv?1:0)+(m.ia&&m.ia.avgAff>=2.5?1:0); const h={...m,gzOver,gzUnder,gzMid,qvForGoals,qvBoth,qvTight,coverage,conflicts,conv};
-      const advice=hubAdvice(h); rows.push({...h,advice,score:advice.main?advice.main.score:0,aff:Math.max(1,Math.min(5,coverage+conv-conflicts))});
-    }
-    return rows.sort((a,b)=>b.score-a.score||sortTime(a,b));
-  }
-  function getHubRows(){let rows=buildHubMatchMap();rows=filt(rows);return ST.sortMode==='time'?[...rows].sort(sortTime):rows;}
-
+  // ==================== CURRENT ROWS (ADATTATE PER DASHBOARD) ====================
   function currentRows(){
     switch(ST.market){
       case 'ov05': return getOv05Rows(); case 'gg': return getGgRows(); case 'o25': return getO25Rows(); case 'u25': return getU25Rows();
@@ -407,6 +366,57 @@
   function getGzRows(){let rows=ST.gz.map(r=>({...r,prob:gzProbability(r.gz),score:Math.abs(r.gz||0)}));if(ST.gzFilter!=='all')rows=rows.filter(r=>r.prob.type===ST.gzFilter);rows=filtLeague(rows,'lega');if(ST.gzSort==='time'||ST.sortMode==='time')return [...rows].sort(sortTime);return [...rows].sort((a,b)=>Math.abs(b.gz||0)-Math.abs(a.gz||0)||sortTime(a,b));}
   function getGeneralRows(){const rows=[];getOv05Rows().slice(0,5).forEach(r=>rows.push({ora:r.ora,evento:r.evento,market:'Ov 0.5PT',score:r.score,aff:r.aff,source:r,advice:r.aff>=4?'Linea prudente con buon supporto':'Segnale da confermare'}));getGgRows().slice(0,5).forEach(r=>rows.push({ora:r.ora,evento:r.evento,market:'GG',score:r.score,aff:r.aff,source:r,advice:r.gzAlign?.aligned&&r.qvAlign&&marketSupportsQuote('gg',r.qvAlign)?'GG sostenuto da GZ e 1X2':'GG interessante ma non pienamente convergente'}));getO25Rows().slice(0,5).forEach(r=>rows.push({ora:r.ora,evento:r.evento,market:'Ov 2.5',score:r.score,aff:r.aff,source:r,advice:r.gzAlign?.aligned?'Over supportato da GZ':'Over da verificare con le quote'}));getU25Rows().slice(0,5).forEach(r=>rows.push({ora:r.ora,evento:r.evento,market:'U 2.5',score:r.score,aff:r.aff,source:r,advice:r.gzAlign?.aligned?'Under coerente con GZ':'Under senza conferma piena'}));getMgRows().slice(0,5).forEach(r=>rows.push({ora:r.ora,evento:r.evento,market:'MG 1-3',score:Math.max(r.house.total,r.away.total),aff:Math.max(r.house.aff,r.away.aff),source:r,advice:'Mercato smart utile per match equilibrati'}));getIaRows().slice(0,5).forEach(r=>rows.push({ora:r.ora,evento:r.evento,market:'Stats IA',score:r.score,aff:r.aff,source:r,advice:'Supporto statistico accessorio'}));buildHubMatchMap().slice(0,5).forEach(r=>{if(r.advice.main)rows.push({ora:r.ora,evento:r.evento,market:'Pronostico finale',score:r.score,aff:r.aff,source:r,advice:r.advice.summary});});rows.sort((a,b)=>b.score-a.score||sortTime(a,b));return filt(rows);}
   function getDataMiningRows(){let rows = ST.dataMining.map(dm => ({...dm, score: dm.np})); rows = filt(rows); if (ST.sortMode === 'time') return rows.sort(sortTime); return rows.sort((a,b) => b.np - a.np || sortTime(a,b));}
+
+  function buildHubMatchMap(){
+    const map={}; const ensure=(evento,ora='')=>{const k=normName(evento);if(!k)return null;if(!map[k])map[k]={key:k,evento:evento,ora:ora,ov05:null,gg:null,o25:null,u25:null,mg13:null,ia:null,qv:null,gz:null,dm:null};return map[k];};
+    getOv05Rows().forEach(r=>{const m=ensure(r.evento,r.ora);if(m&&!m.ov05)m.ov05=r;});
+    getGgRows().forEach(r=>{const m=ensure(r.evento,r.ora);if(m&&!m.gg)m.gg=r;});
+    getO25Rows().forEach(r=>{const m=ensure(r.evento,r.ora);if(m&&!m.o25)m.o25=r;});
+    getU25Rows().forEach(r=>{const m=ensure(r.evento,r.ora);if(m&&!m.u25)m.u25=r;});
+    getMgRows().forEach(r=>{const m=ensure(r.evento,r.ora);if(m&&!m.mg13)m.mg13={...r,aff:Math.max(r.house.aff,r.away.aff),score:Math.max(r.house.total,r.away.total)};});
+    getIaRows().forEach(r=>{const m=ensure(r.evento,r.ora);if(m&&!m.ia)m.ia=r;});
+    ST.quoteValore.forEach(r=>{const m=ensure(r.match,r.ora);if(m&&!m.qv)m.qv={...r,...analyzeQuoteMatch(r)};});
+    ST.gz.forEach(r=>{const m=ensure(r.evento,r.ora);if(m&&!m.gz)m.gz={...r,prob:gzProbability(r.gz)};});
+    ST.dataMining.forEach(r=>{const m=ensure(r.match,r.ora);if(m&&!m.dm)m.dm=r;});
+    const rows=[]; for(const m of Object.values(map)){
+      const gzOver=!!(m.gz&&m.gz.prob.type==='over'), gzUnder=!!(m.gz&&m.gz.prob.type==='under'), gzMid=!!(m.gz&&m.gz.prob.type==='neutral');
+      const qvForGoals=!!(m.qv&&['casa','ospite','entrambe'].includes(m.qv.golSide)), qvBoth=!!(m.qv&&m.qv.golSide==='entrambe'), qvTight=!!(m.qv&&m.qv.golSide==='pareggio');
+      let coverage=[m.ov05,m.gg||m.o25||m.u25,m.qv,m.gz,m.dm].filter(Boolean).length; if(m.dm && m.dm.np>=30) coverage++;
+      let conflicts=(m.o25&&gzUnder?1:0)+(m.u25&&gzOver?1:0)+(m.gg&&m.qv&&m.qv.golSide==='pareggio'?1:0);
+      if(m.dm){ if(m.o25&&m.o25.aff>=4&&m.dm.pOV25<45) conflicts++; if(m.u25&&m.u25.aff>=4&&m.dm.pUN35<60) conflicts++; if(m.gg&&m.gg.aff>=4&&m.dm.pGG<45) conflicts++; }
+      const conv=(m.gz?1:0)+(m.qv?1:0)+(m.ia&&m.ia.avgAff>=2.5?1:0); const h={...m,gzOver,gzUnder,gzMid,qvForGoals,qvBoth,qvTight,coverage,conflicts,conv};
+      const advice=hubAdvice(h); rows.push({...h,advice,score:advice.main?advice.main.score:0,aff:Math.max(1,Math.min(5,coverage+conv-conflicts))});
+    }
+    return rows.sort((a,b)=>b.score-a.score||sortTime(a,b));
+  }
+  function getHubRows(){let rows=buildHubMatchMap();rows=filt(rows);return ST.sortMode==='time'?[...rows].sort(sortTime):rows;}
+  function hubAdvice(h){
+    const tips=[]; const hasTopPlusPotential = h.coverage >= 4 && h.conflicts === 0 && h.dm && h.dm.np >= 40;
+    if(h.o25&&h.o25.aff>=4&&h.gzOver&&h.qvForGoals) tips.push({market:'Ov 2.5', tier: hasTopPlusPotential?'TOP+':'TOP', score:(h.o25?.score||0)+(h.conv||0)+(hasTopPlusPotential?0.5:0), reason:'IGBt e MGE forti con conferma GZ over e 1X2 coerente'});
+    if(h.gg&&h.gg.aff>=4&&h.gzOver) tips.push({market:'GG', tier: hasTopPlusPotential?'TOP+':'TOP', score:(h.gg?.score||0)+(h.conv||0)*0.8+(hasTopPlusPotential?0.4:0), reason:'Segnale offensivo sostenuto da GZ over e indicatori GG'});
+    if(h.ov05&&h.ov05.aff>=4) tips.push({market:'Ov 0.5 PT', tier: hasTopPlusPotential?'TOP+':'SAFE', score:(h.ov05?.score||0)+(h.gzOver?0.6:0)+(h.qvForGoals?0.3:0)+(hasTopPlusPotential?0.3:0), reason:'Linea prudente supportata dall indicatore primo tempo'});
+    if(h.u25&&h.u25.aff>=4&&h.gzUnder) tips.push({market:'U 2.5', tier: hasTopPlusPotential?'TOP+':'TOP', score:(h.u25?.score||0)+(h.conv||0)+(hasTopPlusPotential?0.5:0), reason:'Profilo da under confermato da GZ'});
+    if(h.mg13&&h.mg13.aff>=4) tips.push({market:'MG 1-3', tier: hasTopPlusPotential?'TOP+':'SMART', score:(h.mg13?.score||0)+(h.gzMid?0.4:0)+(h.qvTight?0.3:0)+(hasTopPlusPotential?0.3:0), reason:'Mercato mirato per match controllato o equilibrio'});
+    if(!tips.length){
+      if(h.o25&&h.o25.aff>=4) tips.push({market:'Ov 2.5',tier:'WATCH',score:(h.o25?.score||0)+(h.gzOver?0.4:0),reason:'Buon segnale statistico, manca convergenza totale'});
+      if(h.gg&&h.gg.aff>=4) tips.push({market:'GG',tier:'WATCH',score:(h.gg?.score||0)+(h.gzOver?0.3:0),reason:'GG interessante ma non completamente confermato'});
+      if(h.ov05&&h.ov05.aff>=4) tips.push({market:'Ov 0.5 PT',tier:'SAFE',score:(h.ov05?.score||0)+(h.gzOver?0.4:0),reason:'Linea prudente anche senza piena convergenza'});
+      if(h.u25&&h.u25.aff>=4) tips.push({market:'U 2.5',tier:'WATCH',score:(h.u25?.score||0)+(h.gzUnder?0.4:0),reason:'Under leggibile ma con conferme parziali'});
+      if(h.mg13&&h.mg13.aff>=4) tips.push({market:h.mg13.side==='ospite'?'MG 1-3 Ospite':'MG 1-3 Casa',tier:'SMART',score:(h.mg13?.score||0),reason:'Multigol orientato sul lato migliore del match'});
+    }
+    if(!tips.length){
+      if(h.ov05) tips.push({market:'Ov 0.5 PT',tier:'LIGHT',score:h.ov05?.score||0,reason:'Unico segnale disponibile sul match'});
+      else if(h.o25) tips.push({market:'Ov 2.5',tier:'LIGHT',score:h.o25?.score||0,reason:'Segnale principale disponibile sul match'});
+      else if(h.u25) tips.push({market:'U 2.5',tier:'LIGHT',score:h.u25?.score||0,reason:'Segnale principale disponibile sul match'});
+      else if(h.gg) tips.push({market:'GG',tier:'LIGHT',score:h.gg?.score||0,reason:'Segnale principale disponibile sul match'});
+      else if(h.mg13) tips.push({market:h.mg13.side==='ospite'?'MG 1-3 Ospite':'MG 1-3 Casa',tier:'LIGHT',score:h.mg13?.score||0,reason:'Lettura MG con dati ancora incompleti'});
+    }
+    tips.sort((a,b)=>b.score-a.score); const main=tips[0]||null,alt=tips[1]||null;
+    let risk='Basso'; if(h.conflicts>=2) risk='Alto'; else if(h.conflicts===1) risk='Medio';
+    let summary='Nessun dato utile disponibile.';
+    if(main){ const confTxt=h.coverage>=3?'convergenza buona':h.coverage===2?'convergenza media':'copertura leggera'; summary=`${main.market} ${main.tier}: ${main.reason}. ${confTxt}, copertura ${h.coverage}/5, rischio ${risk}.`; }
+    return {tips,main,alt,risk,summary};
+  }
 
   // ==================== STORICO ====================
   const STORAGE_KEY='ma_storico_v1';
@@ -454,7 +464,7 @@
     return {tot:rows.length,pending,win,loss,resolved,winPct,lossPct,cats};
   }
 
-  // ==================== RENDER DASHBOARD ====================
+  // ==================== DASHBOARD ====================
   function generateTopList(market, sub) {
     const originalMarket = ST.market, originalSub = ST.sub, originalIaCat = ST.iaCat, originalPlSub = ST.plSub, originalSort = ST.sortMode;
     ST.market = market;
@@ -466,7 +476,6 @@
     ST.market = originalMarket; ST.sub = originalSub; ST.iaCat = originalIaCat; ST.plSub = originalPlSub; ST.sortMode = originalSort;
     return rows;
   }
-
   function renderDashboard() {
     const datasets = [
       { key: 'ov05', label: 'Ov 0.5 PT', tag: 'tag-m1', icon: '⚽' },
@@ -504,7 +513,6 @@
     document.getElementById('main').innerHTML = html;
     bindDashboardEvents();
   }
-
   function renderDashResults() {
     const list = ST.dashList, showAll = ST.showAll, displayList = showAll ? list : list.slice(0, 10);
     let html = `<div class="result-header"><div class="sec"><div class="tag ${getTagClass(ST.dashMarket)}">${getMarketLabel(ST.dashMarket, ST.dashSub)}</div><div class="sec-ct">${list.length} risultati</div></div><button class="pdf-btn" id="dashPdfBtn">${svgPDF}<span>PDF</span></button></div>`;
@@ -517,7 +525,6 @@
     }
     return html;
   }
-
   function getTagClass(market) {
     const map = { ov05:'tag-m1', gg:'tag-a', o25:'tag-gen', u25:'tag-b', mg13:'tag-mg', ia:'tag-ia', players:'tag-a', quote:'tag-mg', gz:'tag-gz' };
     return map[market] || 'tag-gen';
@@ -529,7 +536,6 @@
     if (market==='players') return `Giocatori ${sub==='shots'?'Tiri/Gol':'Cartellini'}`;
     return base;
   }
-
   function renderDashRow(r, idx) {
     let aff = r.aff || 3, score = r.score || 0, name = r.evento || r.match || r.nome || '', ora = r.ora || '';
     let subBadges = '';
@@ -552,7 +558,6 @@
     </div>
     <div class="pickbar"><button class="pickbtn" data-addpick-dash="${idx}">➕ Aggiungi a storico</button></div>`;
   }
-
   function bindDashboardEvents() {
     document.querySelectorAll('[data-dashgen]').forEach(btn => {
       btn.addEventListener('click', (e) => {
@@ -571,7 +576,6 @@
       if (addBtn) { const idx = parseInt(addBtn.dataset.addpickDash); const row = ST.dashList[idx]; if (row) addPickToHistory(row, ST.dashMarket); }
     });
   }
-
   function openDashDetail(idx) { const row = ST.dashList[idx]; if (!row) return; ST.det = row; ST.detMarket = ST.dashMarket; renderDetail(); }
   function exportDashPDF() {
     if (!ST.dashList.length) { alert('Nessun dato da esportare.'); return; }
@@ -598,6 +602,77 @@
     const st=r.status==='won'?'<span class="badge good">Vinta</span>':r.status==='lost'?'<span class="badge warn">Persa</span>':'<span class="badge neu">In attesa</span>';
     return `<div class="histrow"><div class="histtop"><div><div class="histname">${escapeHtml(r.match)}</div><div class="histmeta"><span class="badge alt">${escapeHtml(r.category)}</span><span>${escapeHtml(r.source)}</span>${r.ora?`<span>${escapeHtml(r.ora)}</span>`:''}${st}</div></div><div>${r.aff?affBadge(r.aff):''}</div></div><div class="histactions"><button class="mini ok" data-hset="${r.id}" data-val="won">✅ Vinta</button><button class="mini no" data-hset="${r.id}" data-val="lost">❌ Persa</button><button class="mini dim" data-hset="${r.id}" data-val="pending">⏳ Reset</button><button class="mini dim" data-hdel="${r.id}">🗑 Elimina</button></div></div>`;
   }
+
+  // ==================== DETTAGLIO MODALE (COMPLETO) ====================
+  function renderDetail(){
+    const r=ST.det;if(!r)return;document.body.style.overflow='hidden';
+    let title=r.evento||r.match||r.nome||'Dettaglio';
+    let subtitle=(r.lega||r.nazione||r.partita||r.marketLabel||'')+(r.ora?` • ${r.ora}`:'');
+    let score=fmt(r.score||Math.max(r.house?.total||0,r.away?.total||0),2);
+    let aff=r.aff||Math.max(r.house?.aff||0,r.away?.aff||0)||3;
+    let cards=''; let breakdown=''; let dmSection=''; let reBars='';
+    const dm = r.dm;
+    if (dm) {
+      dmSection = `<div class="bk"><div class="bk-t">📈 DataMining Plus (NP: ${dm.np})</div><div class="dg">
+        ${detailKv('1', `${dm.p1.toFixed(0)}% / ${dm.q1.toFixed(2)}`, dm.p1>50?'g':'n')}
+        ${detailKv('X', `${dm.pX.toFixed(0)}% / ${dm.qX.toFixed(2)}`)}
+        ${detailKv('2', `${dm.p2.toFixed(0)}% / ${dm.q2.toFixed(2)}`, dm.p2>50?'g':'n')}
+        ${detailKv('GG', `${dm.pGG.toFixed(0)}% / ${dm.qGG.toFixed(2)}`)}
+        ${detailKv('OV15', `${dm.pOV15.toFixed(0)}% / ${dm.qOV15.toFixed(2)}`)}
+        ${detailKv('OV25', `${dm.pOV25.toFixed(0)}% / ${dm.qOV25.toFixed(2)}`)}
+        ${detailKv('UN35', `${dm.pUN35.toFixed(0)}% / ${dm.qUN35.toFixed(2)}`)}
+        ${detailKv('OV0.5PT', `${dm.pOV05pt.toFixed(0)}% / ${dm.qOV05pt.toFixed(2)}`)}
+        ${detailKv('MGE', dm.mge.toFixed(2))}
+        ${detailKv('DIFF', dm.diff.toFixed(2))}
+        ${detailKv('IC', dm.ic)}
+        ${detailKv('RC/RO', `${dm.rc} / ${dm.ro}`)}
+        ${detailKv('SC', `${dm.pSC.toFixed(0)}% (IGBC ${dm.igbc})`)}
+        ${detailKv('SO', `${dm.pSO.toFixed(0)}% (IGBO ${dm.igbo})`)}
+      </div>`;
+      if (dm.re) reBars = renderExactScoresWithBars(dm.re);
+      if (isMG24(dm)) dmSection += `<div class="note"><span class="badge alt">🔥 MG 2-4 (quota 1.50)</span> Condizioni: OV15 >60% e UN35 >60%</div>`;
+      dmSection += `</div>`;
+    }
+    if(ST.detMarket==='ov05'){
+      const [dl,dc]=diffLabel(r.diff);cards=[detailKv('IND',r.ind,r.ind<320?'g':'w'),detailKv('Delta',fmt(r.delta,2)+'%',r.delta<=-20?'g':'n'),detailKv('Diff',dl,dc),detailKv('MGE',fmt(r.mge,2),r.mge>=3?'g':'n'),detailKv('Q Ov0.5',fmt(r.qrOv05,2)),detailKv('U5 / U5CT',`${r.u5Raw||'0|0'} / ${r.u5ctRaw||'0|0'}`),detailKv('COv05 / OOv05',`${fmt(r.cov05,0)}% / ${fmt(r.oov05,0)}%`)];
+      breakdown=breakdownHtml(r.breakdown)+`<div class="list-inline">${r.gzAlign?`<span class="badge ${r.gzAlign.aligned?'good':'neu'}">GZ ${escapeHtml(r.gzAlign.prob.desc)}</span>`:''}${r.qvAlign&&marketSupportsQuote('ov05',r.qvAlign)?`<span class="badge alt">1X2 ${escapeHtml(r.qvAlign.golSide)}</span>`:''}</div>`;
+    } else if(['gg','o25','u25'].includes(ST.detMarket)){
+      const [dl,dc]=diffLabel(r.diff);cards=[detailKv('IGBc',r.igbc,r.igbc>=150?'g':'n'),detailKv('IGBo',r.igbo,r.igbo>=150?'g':'n'),detailKv('IGBt',r.igbt,r.igbt>=300?'g':'n'),detailKv('MGE',fmt(r.mge,2),r.mge>=3?'g':'n'),detailKv('Diff',dl,dc),detailKv('PGG',fmt(r.pgg,1)+'%'),detailKv('S1-S2',r.s12),detailKv('qOv2.5',fmt(r.qov25,2))];
+      breakdown=breakdownHtml(r.breakdown)+`<div class="list-inline">${r.gzAlign?`<span class="badge ${r.gzAlign.aligned?'good':'neu'}">${escapeHtml(r.gzAlign.prob.desc)}</span>`:''}${r.qvAlign&&marketSupportsQuote(ST.detMarket,r.qvAlign)?`<span class="badge alt">1X2 ${escapeHtml(r.qvAlign.golSide)}</span>`:''}${r.m1?'<span class="badge good">Match selezionato in M1</span>':''}</div>`;
+    } else if(ST.detMarket==='mg13'){
+      score=fmt(r.side==='ospite'?r.away.total:r.house.total,2);aff=r.side==='ospite'?r.away.aff:r.house.aff;cards=[detailKv('Pronostico lato',r.side==='ospite'?'MG 1-3 Ospite':'MG 1-3 Casa','g'),detailKv('ICH',r.ich,r.ich<=350?'g':'n'),detailKv('ICA',r.ica,r.ica<=350?'g':'n'),detailKv('VarC / VarO',`${fmt(r.varc,1)}% / ${fmt(r.varo,1)}%`),detailKv('MGFC / MGFO',`${fmt(r.mgfc,2)} / ${fmt(r.mgfo,2)}`),detailKv('MGSO / MGSC',`${fmt(r.mgso,2)} / ${fmt(r.mgsc,2)}`),detailKv('RitC / RitO',`${r.ritc} / ${r.rito}`),detailKv('Q1 / Q2',`${fmt(r.q1,2)} / ${fmt(r.q2,2)}`)];
+      breakdown=`<div class="bk"><div class="bk-t">Casa</div>${r.house.breakdown.map(x=>`<div class="bk-r"><div class="n">${escapeHtml(x.n)}</div><div class="p ${x.p>0?'pos':'zero'}">+${fmt(x.p,2)}</div></div>`).join('')}<div class="bk-tot"><span>Totale Casa</span><span class="p">${fmt(r.house.total,2)}</span></div></div><div class="bk"><div class="bk-t">Ospite</div>${r.away.breakdown.map(x=>`<div class="bk-r"><div class="n">${escapeHtml(x.n)}</div><div class="p ${x.p>0?'pos':'zero'}">+${fmt(x.p,2)}</div></div>`).join('')}<div class="bk-tot"><span>Totale Ospite</span><span class="p">${fmt(r.away.total,2)}</span></div></div>`;
+    } else if(ST.detMarket==='ia'){
+      cards=[detailKv('Lega',r.lega||'N/D'),detailKv('Nazione',r.nazione||'N/D'),detailKv('Stats',r.stats.length),detailKv('Avg Aff',fmt(r.avgAff,2),r.avgAff>=3?'g':'n'),detailKv('Max Aff',fmt(r.maxAff,2),r.maxAff>=3?'g':'n'),detailKv('High Count',r.highCount)];
+      breakdown=`<div class="bk"><div class="bk-t">Predizioni IA</div>${r.stats.map(s=>`<div class="bk-r"><div class="n">${escapeHtml(s.label)} • ${escapeHtml(s.pred)}</div><div class="p ${s.aff>=3?'pos':'zero'}">${fmt(s.aff,1)}</div></div>`).join('')}</div>`;
+    } else if(ST.detMarket==='players'){
+      const isCards=ST.plSub==='cards'; cards=[detailKv('Squadra',r.squadra||'N/D'),detailKv('Partita',r.partita||'N/D'),detailKv('Ruolo',r.pos||'N/D'),detailKv('Minuti',fmt(r.min,0)),detailKv('Presenze',r.pres||0),detailKv(isCards?'Ammonizioni':'Gol',fmt(isCards?r.amm:r.gol,2),isCards?r.amm>=.3?'g':'n':r.gol>=.25?'g':'n'),detailKv(isCards?'Falli':'TiP',fmt(isCards?r.falli:r.tiriPorta,2)),detailKv(isCards?'Tackle':'TT',fmt(isCards?r.tackle:r.tiriTot,2))];
+      breakdown=breakdownHtml(r.breakdown);
+    } else if(ST.detMarket==='quote'){
+      cards=[detailKv('R finale',r.r||'N/D'),detailKv('1',`R ${fmt(r.r1,2)} / DM ${fmt(r.dm1,2)} / Spr ${fmt(r.spread1,2)}`,r.value1?'g':'n'),detailKv('X',`R ${fmt(r.rx,2)} / DM ${fmt(r.dmx,2)} / Spr ${fmt(r.spreadX,2)}`,r.valueX?'w':'n'),detailKv('2',`R ${fmt(r.r2,2)} / DM ${fmt(r.dm2,2)} / Spr ${fmt(r.spread2,2)}`,r.value2?'g':'n'),detailKv('NP',r.np),detailKv('Lato',r.golSide||'Nessuno')];
+      breakdown=`<div class="bk"><div class="bk-t">Value signals</div><div class="bk-r"><div class="n">1 Value</div><div class="p ${r.value1?'pos':'zero'}">${r.value1?'SI':'NO'}</div></div><div class="bk-r"><div class="n">X Value</div><div class="p ${r.valueX?'pos':'zero'}">${r.valueX?'SI':'NO'}</div></div><div class="bk-r"><div class="n">2 Value</div><div class="p ${r.value2?'pos':'zero'}">${r.value2?'SI':'NO'}</div></div><div class="bk-tot"><span>Score spread</span><span class="p">${fmt(r.score,2)}</span></div></div>`;
+    } else if(ST.detMarket==='gz'){
+      cards=[detailKv('GZ',fmt(r.gz,0),Math.abs(r.gz||0)>=5000?'g':'n'),detailKv('Segnale',r.prob.desc,r.prob.type==='over'?'g':r.prob.type==='under'?'w':'n'),detailKv('GZha',fmt(r.gzha,0)),detailKv('IGBc / IGBo / IGBt',`${fmt(r.igbc,0)} / ${fmt(r.igbo,0)} / ${fmt(r.igbt,0)}`),detailKv('MGE',fmt(r.mge,2)),detailKv('Diff',fmt(r.diff,2))];
+      breakdown=`<div class="bk"><div class="bk-t">Interpretazione GZ</div><div class="note">${escapeHtml(r.prob.desc)}. Valori molto lontani dallo zero sono più forti; valori vicini allo zero sono letti come segnali leggeri o neutrali.</div></div>`;
+    } else {
+      cards=[detailKv('Score',fmt(r.score,2)),detailKv('Affidabilità',`${r.aff||'N/D'}/5`)];
+      breakdown=breakdownHtml(r.breakdown);
+    }
+    document.getElementById('detM').innerHTML=`<div class="ov" id="ovLay" aria-modal="true" role="dialog"><div class="det" onclick="event.stopPropagation()"><div class="det-top"><div><div class="det-t">${escapeHtml(title)}</div><div class="det-sub">${escapeHtml(subtitle)}</div></div><button class="det-x" id="closeDetBtn" aria-label="Chiudi dettagli">✕</button></div><div class="abar"><div><div class="abar-lb">Affidabilità</div><div class="abar-dots">${dots(aff,'lg')}</div></div><div class="abar-r"><div class="abar-lb">Score</div><div class="abar-sc">${escapeHtml(score)}</div><div class="abar-pt">${escapeHtml(ST.detMarket.toUpperCase())}</div></div></div><div class="dg">${cards.join('')}</div>${dmSection}${reBars}${breakdown}</div></div>`;
+    document.getElementById('ovLay').addEventListener('click', closeDetail);
+    document.getElementById('closeDetBtn').addEventListener('click', closeDetail);
+  }
+  function detailKv(label,val,cls='n'){return `<div class="dc"><div class="dc-l">${escapeHtml(label)}</div><div class="dc-v ${cls}">${escapeHtml(val)}</div></div>`;}
+  function breakdownHtml(breakdown){if(!breakdown||!breakdown.length)return '<div class="note">Nessun breakdown disponibile.</div>';const total=breakdown.reduce((s,x)=>s+x.p,0);return `<div class="bk"><div class="bk-t">Breakdown punteggio</div>${breakdown.map(x=>`<div class="bk-r"><div class="n">${escapeHtml(x.n)}</div><div class="p ${x.p>0?'pos':'zero'}">+${fmt(x.p,2)}</div></div>`).join('')}<div class="bk-tot"><span>Totale</span><span class="p">${fmt(total,2)}</span></div></div>`;}
+  function renderExactScoresWithBars(reString) {
+    if (!reString) return '';
+    const scores = reString.split(/\s{2,}/).filter(s => s.includes('%'));
+    const items = scores.map(s => { const parts = s.trim().split(':'); const score = parts[0].trim(); const perc = parseFloat(parts[1].replace('%', '')); return { score, perc }; }).sort((a,b) => b.perc - a.perc).slice(0, 4);
+    if (!items.length) return '';
+    const maxPerc = items[0].perc;
+    return `<div class="bk"><div class="bk-t">🔮 Risultati esatti più probabili</div>` + items.map(it => { const barWidth = (it.perc / maxPerc) * 100; return `<div class="prob-bar-container"><div class="n" style="min-width:40px;">${it.score}</div><div class="prob-bar"><div class="prob-fill" style="width:${barWidth}%;"></div></div><div class="p pos" style="min-width:45px;text-align:right;">${it.perc.toFixed(1)}%</div></div>`; }).join('') + `</div>`;
+  }
+  function closeDetail(){ST.det=null;document.getElementById('detM').innerHTML='';document.body.style.overflow='';}
 
   // ==================== UPLOAD E PERSISTENZA ====================
   const DATA_STORAGE_PREFIX='ma_dataset_';
@@ -645,7 +720,7 @@
     document.querySelectorAll('input[type="file"][data-target]').forEach(inp=>{inp.onchange=()=>handleUploadInput(inp);});
   }
 
-  // ==================== RENDER GENERALE ====================
+  // ==================== RENDER PRINCIPALE ====================
   function render(){
     document.querySelectorAll('.mtab').forEach(b=>b.classList.toggle('active',b.dataset.m===ST.market));
     const totals=DATASETS.reduce((s,d)=>s+(ST[d.key]?.length||0),0);
@@ -674,9 +749,6 @@
     document.body.addEventListener('change',e=>{if(e.target.id==='histCatSel'){ST.histCategory=e.target.value; render();}});
     document.body.addEventListener('input',e=>{if(e.target.id==='searchIn'){ST.q=e.target.value.trim(); render();}});
   }
-
-  function closeDetail(){ST.det=null; document.getElementById('detM').innerHTML='';}
-  function renderDetail(){ /* omesso per brevità ma incluso nel codice completo */ }
 
   function initApp(){ restoreDatasets(); bindStatic(); render(); }
   initApp();
