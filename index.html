@@ -6,193 +6,150 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="theme-color" content="#0b0d12">
-  <title>Match Analyzer Pro – Dashboard Completa</title>
+  <title>Match Analyzer – Single View Pro</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <script defer src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script defer src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
   <style>
-    /* === STILI COMPLETI (identici all'originale, inclusi modale, dashboard, ecc.) === */
     *{margin:0;padding:0;box-sizing:border-box}
-    :root{
-      --bg:#0b0d12;--s1:#141720;--s2:#1a1e2a;--s3:#252a38;
-      --brd:#2d3345;--brd2:#3a4055;
-      --t1:#e8ecf4;--t2:#a0a8be;--t3:#6b7490;
-      --grn:#4ade80;--grn2:#22c55e;--grn-bg:rgba(74,222,128,.1);
-      --amb:#fbbf24;--amb-bg:rgba(251,191,36,.1);
-      --red:#f87171;--red-bg:rgba(248,113,113,.08);
-      --blu:#60a5fa;--blu-bg:rgba(96,165,250,.1);
-      --cyn:#22d3ee;--cyn-bg:rgba(34,211,238,.08);
-      --mag:#c084fc;--mag-bg:rgba(192,132,252,.08);
-      --org:#fb923c;--org-bg:rgba(251,146,60,.08);
-      --M:'IBM Plex Mono',monospace;--S:'DM Sans',sans-serif;
-    }
-    html{font-size:15px;background:var(--bg)}
     body{
-      background:var(--bg);color:var(--t1);font-family:var(--S);
-      min-height:100vh;min-height:100dvh;-webkit-font-smoothing:antialiased;
-      -webkit-text-size-adjust:100%;padding-top:env(safe-area-inset-top);
-      padding-bottom:env(safe-area-inset-bottom);
+      background:#0b0e14; color:#eef2fb; font-family:'Inter',sans-serif;
+      padding:16px; min-height:100vh; display:flex; justify-content:center;
     }
-    button,input,select{font:inherit}
-    button{border:none;background:none;cursor:pointer}
-    .app{max-width:760px;margin:0 auto;padding:16px 14px 110px;background:var(--bg);min-height:100vh;min-height:100dvh}
-    .hdr{padding:18px 0 10px;margin-bottom:8px;display:flex;align-items:flex-start;justify-content:space-between;gap:10px;flex-wrap:wrap}
-    .hdr h1{font-size:1.35rem;font-weight:700;color:#fff;letter-spacing:-.4px}
-    .hdr h1 span{color:var(--grn)}
-    .hdr-info{font:500 .8rem var(--S);color:var(--t3)}
-    .mtabs{display:flex;gap:6px;margin-bottom:14px;overflow-x:auto;padding-bottom:4px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
-    .mtabs::-webkit-scrollbar{display:none}
-    .mtab{padding:10px 16px;border-radius:24px;font:600 .85rem var(--S);color:var(--t2);border:1px solid var(--brd);background:var(--s1);white-space:nowrap;transition:all .2s;flex-shrink:0}
-    .mtab:hover,.mtab:focus-visible{color:var(--t1);border-color:var(--brd2)}
-    .mtab.active{background:var(--grn);color:var(--bg);border-color:var(--grn);font-weight:700}
-    .panel{background:var(--s1);border:1px solid var(--brd);border-radius:14px;padding:12px;margin-bottom:12px}
-    .dataset-toggle{display:flex;align-items:center;justify-content:space-between;padding:8px 0;cursor:pointer;user-select:none}
-    .dataset-toggle h3{font-size:1rem;font-weight:600;color:var(--t1);display:flex;align-items:center;gap:6px}
-    .dataset-toggle .arrow{font-size:1.2rem;color:var(--t3);transition:transform .2s}
-    .dataset-panel{overflow:hidden;transition:max-height .3s ease;max-height:0}
-    .dataset-panel.open{max-height:800px}
-    .upload-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px;margin-top:12px}
-    .upload-card{position:relative;padding:14px;border:1.5px dashed var(--brd2);border-radius:12px;background:rgba(255,255,255,.01);min-height:92px;display:flex;flex-direction:column;justify-content:center;gap:6px}
-    .upload-card:hover{border-color:var(--grn2);background:rgba(74,222,128,.03)}
-    .upload-lbl{font:700 .8rem var(--M);color:#fff}
-    .upload-meta{font:500 .82rem var(--S);color:var(--t2);line-height:1.45}
-    .upload-meta small{display:block;color:var(--t3)}
-    .loaded{color:var(--grn);font-weight:700}
-    .clear-btn,.pick-btn{align-self:flex-start;padding:6px 10px;border-radius:8px;background:var(--red-bg);border:1px solid rgba(248,113,113,.25);color:var(--red);font:700 .75rem var(--M);margin-top:4px}
-    .pick-btn{background:var(--blu-bg);color:var(--blu);border-color:rgba(96,165,250,.2);margin-right:6px}
-    .dashboard{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px;margin:16px 0}
-    .dash-card{background:var(--s1);border:1px solid var(--brd);border-radius:16px;padding:16px;transition:all .15s}
-    .dash-card h4{font-size:1rem;font-weight:700;margin-bottom:12px;display:flex;align-items:center;gap:6px}
-    .dash-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
-    .dash-btn{background:var(--grn);color:var(--bg);border:none;padding:8px 12px;border-radius:8px;font:700 .8rem var(--S);flex:1;min-width:70px}
-    .dash-btn.secondary{background:var(--s3);color:var(--t1)}
-    .dash-select{background:var(--s2);border:1px solid var(--brd);border-radius:6px;color:var(--t1);padding:6px;font-size:.8rem;width:100%;margin-bottom:8px}
-    .result-area{margin-top:20px}
-    .sec{display:flex;align-items:center;gap:10px;margin:18px 0 10px;padding-bottom:8px;border-bottom:1.5px solid var(--brd)}
-    .tag{padding:5px 12px;border-radius:6px;font:700 .75rem var(--M);letter-spacing:.5px;text-transform:uppercase}
-    .tag-m1{background:var(--grn-bg);color:var(--grn)}
-    .tag-a{background:var(--blu-bg);color:var(--blu)}
-    .tag-b{background:var(--amb-bg);color:var(--amb)}
-    .tag-gen{background:var(--cyn-bg);color:var(--cyn)}
-    .tag-mg{background:var(--mag-bg);color:var(--mag)}
-    .tag-ia{background:var(--org-bg);color:var(--org)}
-    .tag-gz{background:rgba(96,165,250,.1);color:var(--blu)}
-    .mlist{display:flex;flex-direction:column;gap:6px}
-    .mrow{display:grid;grid-template-columns:56px 1fr auto;align-items:center;gap:10px;padding:12px 14px;background:var(--s1);border:1.5px solid transparent;border-radius:12px;cursor:pointer;transition:all .15s}
-    .mrow:hover,.mrow:focus-visible{border-color:var(--brd2);background:var(--s2)}
-    .m-ora{font:600 .82rem var(--M);color:var(--t2)}
-    .m-name{font:600 .95rem var(--S);color:#fff;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-    .m-sub{font:.78rem var(--S);color:var(--t3);margin-top:2px;display:flex;gap:6px;flex-wrap:wrap}
-    .m-right{display:flex;align-items:center;gap:8px;flex-shrink:0;justify-content:flex-end}
-    .m-ind{font:700 .82rem var(--M);padding:4px 10px;border-radius:6px}
-    .ind-g{color:var(--grn);background:var(--grn-bg)}
-    .ind-o{color:var(--amb);background:var(--amb-bg)}
-    .ind-r{color:var(--t3);background:rgba(255,255,255,.04)}
-    .badge{padding:3px 8px;border-radius:5px;font:700 .72rem var(--M);border:1px solid transparent;white-space:nowrap}
-    .badge.good{background:var(--grn-bg);color:var(--grn);border-color:rgba(74,222,128,.2)}
-    .badge.warn{background:var(--amb-bg);color:var(--amb);border-color:rgba(251,191,36,.2)}
-    .badge.info{background:var(--blu-bg);color:var(--blu);border-color:rgba(96,165,250,.2)}
-    .badge.alt{background:var(--mag-bg);color:var(--mag);border-color:rgba(192,132,252,.2)}
-    .badge.neu{background:rgba(255,255,255,.05);color:var(--t2);border-color:rgba(255,255,255,.08)}
-    .badge.dm-green{background:rgba(74,222,128,.15);color:var(--grn)}
-    .badge.dm-yellow{background:rgba(251,191,36,.1);color:var(--amb)}
-    .badge.dm-red{background:rgba(248,113,113,.1);color:var(--red)}
-    .badge.value{background:rgba(192,132,252,.15);color:var(--mag)}
-    .badge.top-plus{background:rgba(255,215,0,.15);color:#FFD700;font-weight:800}
-    .aff{display:flex;align-items:center;gap:3px}
-    .aff-d{width:6px;height:6px;border-radius:50%}
-    .empty{text-align:center;padding:50px 20px;color:var(--t3);background:var(--s1);border:1px solid var(--brd);border-radius:14px}
-    .pickbar{margin-top:6px;display:flex;justify-content:flex-end}
-    .pickbtn{background:var(--blu-bg);color:var(--blu);border:1px solid rgba(96,165,250,.2);padding:4px 12px;border-radius:6px;font:700 .75rem var(--M);cursor:pointer}
-    .show-more-btn{text-align:center;margin-top:16px}
-    .ov{position:fixed;inset:0;background:rgba(0,0,0,.72);backdrop-filter:blur(4px);z-index:100;display:flex;align-items:flex-end;justify-content:center}
-    .det{background:var(--s1);border:1.5px solid var(--brd);border-radius:20px 20px 0 0;max-width:620px;width:100%;max-height:88vh;overflow-y:auto;padding:22px 16px 28px}
-    @media(min-width:700px){.det{border-radius:20px;margin-bottom:24px}}
-    .det-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px}
-    .det-x{width:36px;height:36px;border-radius:10px;border:1.5px solid var(--brd);background:transparent;color:var(--t2);font-size:1.1rem}
-    .result-header{display:flex;justify-content:space-between;align-items:center}
-    .status{padding:10px 12px;border-radius:10px;background:var(--bg);color:var(--t2);border:1px solid var(--brd);font:.82rem var(--S)}
-    .statsgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px}
-    .statcard{background:var(--s2);padding:12px;border-radius:10px;text-align:center}
-    .statcard .k{font-size:.75rem;color:var(--t3);text-transform:uppercase}
-    .statcard .v{font-size:1.4rem;font-weight:700;font-family:var(--M)}
-    .tablemini{width:100%;border-collapse:collapse;margin:12px 0;font-size:.8rem}
-    .tablemini th{color:var(--t3);font-weight:600;text-align:left;padding:6px 4px}
-    .tablemini td{padding:6px 4px;border-bottom:1px solid var(--brd)}
-    .histrow{background:var(--s1);border-radius:12px;padding:12px;margin-bottom:8px}
-    .histtop{display:flex;justify-content:space-between;align-items:flex-start}
-    .histname{font-weight:700;color:#fff;margin-bottom:4px}
-    .histmeta{display:flex;flex-wrap:wrap;gap:6px;font-size:.75rem;color:var(--t2)}
-    .histactions{display:flex;gap:8px;margin-top:12px}
-    .mini{padding:6px 12px;border-radius:6px;font-size:.75rem;font-weight:600;background:var(--s3);color:var(--t1)}
-    .mini.ok{background:var(--grn-bg);color:var(--grn)}
-    .mini.no{background:var(--amb-bg);color:var(--amb)}
-    .mini.dim{background:var(--s2);color:var(--t2)}
-    .btn.ghost{background:transparent;border:1px solid var(--brd);padding:8px 12px;border-radius:8px;color:var(--t2)}
-    .btn.danger{color:var(--red);border-color:var(--red)}
-    .dg{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px}
-    .dc{background:var(--bg);border-radius:10px;padding:12px;border:1px solid rgba(255,255,255,.03)}
-    .dc-l{font:.7rem var(--S);color:var(--t3);text-transform:uppercase;letter-spacing:.5px;font-weight:700;margin-bottom:3px}
-    .dc-v{font:700 .98rem var(--M);word-break:break-word}
-    .bk{margin-top:14px;padding-top:14px;border-top:1.5px solid var(--brd)}
-    .bk-t{font:.75rem var(--S);color:var(--t3);text-transform:uppercase;letter-spacing:.5px;font-weight:700;margin-bottom:8px}
-    .bk-r{display:flex;justify-content:space-between;gap:12px;padding:6px 0;font:.85rem var(--S)}
-    .bk-tot{display:flex;justify-content:space-between;padding:10px 0 0;margin-top:6px;border-top:1.5px solid var(--brd);font:700 .95rem var(--S)}
-    .note{margin-top:8px;color:var(--t3);font:.8rem var(--S);line-height:1.5}
-    .prob-bar-container{display:flex;align-items:center;gap:8px;margin:4px 0}
-    .prob-bar{flex:1;height:6px;background:var(--s3);border-radius:3px;overflow:hidden}
-    .prob-fill{height:100%;background:var(--grn);border-radius:3px}
+    .app-container{ max-width:1400px; width:100%; display:flex; flex-direction:column; gap:20px; }
+    .header{ display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; }
+    h1{ font-size:1.8rem; font-weight:700; letter-spacing:-0.02em; }
+    h1 span{ color:#3b82f6; }
+    .dataset-badge{ background:#1e2430; padding:6px 14px; border-radius:40px; font-size:0.9rem; color:#9ab3d0; }
+    .controls{ display:flex; flex-wrap:wrap; gap:12px; align-items:center; background:#131a24; padding:12px 18px; border-radius:16px; }
+    .control-group{ display:flex; gap:8px; align-items:center; }
+    select, input[type="text"]{
+      background:#0f151c; border:1px solid #2a3645; color:#fff; padding:8px 14px; border-radius:10px;
+      font-size:0.9rem; outline:none; transition:0.15s;
+    }
+    select:focus, input:focus{ border-color:#3b82f6; }
+    .checkbox-group{ display:flex; gap:16px; margin-left:8px; }
+    .checkbox-group label{ display:flex; align-items:center; gap:6px; font-size:0.9rem; color:#b0c7e0; cursor:pointer; }
+    .btn{
+      background:#1e2a3a; border:none; color:#e0edff; padding:8px 16px; border-radius:10px;
+      font-weight:500; font-size:0.9rem; cursor:pointer; transition:0.15s; border:1px solid #2e405b;
+    }
+    .btn-primary{ background:#3b82f6; border-color:#3b82f6; color:#fff; }
+    .btn-primary:hover{ background:#2563eb; }
+    .btn:hover{ background:#2a3a4e; }
+    .main-layout{ display:flex; gap:20px; }
+    .table-wrapper{ flex:3; min-width:0; background:#10171f; border-radius:20px; padding:16px; border:1px solid #253141; }
+    .detail-panel{ flex:1.2; background:#10171f; border-radius:20px; padding:18px; border:1px solid #253141; max-height:80vh; overflow-y:auto; }
+    @media (max-width:800px){ .main-layout{ flex-direction:column; } }
+    .match-table{ width:100%; border-collapse:collapse; font-size:0.9rem; }
+    .match-table th{ text-align:left; padding:12px 8px; color:#8da3c0; font-weight:500; border-bottom:1px solid #253141; }
+    .match-table td{ padding:12px 8px; border-bottom:1px solid #1a2532; }
+    .match-table tbody tr{ cursor:pointer; transition:background 0.1s; }
+    .match-table tbody tr:hover{ background:#19232e; }
+    .match-table tbody tr.selected{ background:#1e3a5f; border-left:3px solid #3b82f6; }
+    .score-bar{ width:80px; height:6px; background:#1e2a3a; border-radius:4px; overflow:hidden; display:inline-block; margin-right:6px; }
+    .score-fill{ height:100%; background:#3b82f6; border-radius:4px; }
+    .aff-dots{ display:flex; gap:3px; }
+    .dot{ width:8px; height:8px; border-radius:50%; background:#2e405b; }
+    .dot.filled{ background:#10b981; }
+    .badge{ display:inline-block; background:#1e3a5f; color:#a0c4ff; padding:2px 8px; border-radius:12px; font-size:0.7rem; font-weight:600; margin-right:4px; }
+    .detail-title{ font-size:1.3rem; font-weight:600; margin-bottom:16px; }
+    .detail-section{ margin-bottom:20px; }
+    .detail-label{ font-size:0.75rem; text-transform:uppercase; letter-spacing:0.5px; color:#7f9bc0; margin-bottom:6px; }
+    .detail-value{ font-size:1.1rem; font-weight:500; }
+    .breakdown-item{ display:flex; justify-content:space-between; padding:6px 0; border-bottom:1px solid #1e2a3a; }
+    .upload-area{ margin-top:12px; display:flex; flex-wrap:wrap; gap:8px; }
+    .file-label{ background:#1e2a3a; padding:6px 14px; border-radius:10px; font-size:0.8rem; cursor:pointer; }
+    .note{ color:#7f9bc0; font-size:0.8rem; margin-top:4px; }
+    .bk{ margin-top:14px; padding-top:14px; border-top:1px solid #253141; }
   </style>
 </head>
 <body>
-<div class="app">
-  <div class="hdr">
-    <div>
-      <h1>Match <span>Analyzer</span> Pro</h1>
-      <div class="hdr-info" id="hdrInfo">Carica i CSV e usa la dashboard</div>
-      <div id="backtestInfo" style="font-size:0.75rem; color:var(--t3); margin-top:4px;"></div>
+<div class="app-container">
+  <div class="header">
+    <h1>Match <span>Analyzer</span> · Single View</h1>
+    <div class="dataset-badge" id="datasetSummary">0 dataset caricati</div>
+  </div>
+
+  <details style="background:#10171f; border-radius:16px; padding:12px 18px;">
+    <summary style="font-weight:600; cursor:pointer; color:#b0c7e0;">📂 Gestione Dataset (carica CSV)</summary>
+    <div class="upload-area" id="uploadArea"></div>
+  </details>
+
+  <div class="controls">
+    <div class="control-group">
+      <label style="color:#8da3c0;">Mercato</label>
+      <select id="marketSelect">
+        <option value="ov05">Ov 0.5 PT</option>
+        <option value="gg">GG</option>
+        <option value="o25" selected>Ov 2.5</option>
+        <option value="u25">U 2.5</option>
+        <option value="mg13c">MG 1-3 Casa</option>
+        <option value="mg13o">MG 1-3 Ospite</option>
+        <option value="ia">Stats IA</option>
+        <option value="players_cards">Giocatori Cartellini</option>
+        <option value="players_shots">Giocatori Tiri/Gol</option>
+        <option value="quote">1X2 Value</option>
+        <option value="gz">GZ Index</option>
+      </select>
+    </div>
+    <div class="control-group">
+      <label style="color:#8da3c0;">Aff min</label>
+      <select id="minAffSelect">
+        <option value="1">1+</option><option value="2">2+</option><option value="3" selected>3+</option><option value="4">4+</option><option value="5">5</option>
+      </select>
+    </div>
+    <div class="control-group">
+      <input type="text" id="searchInput" placeholder="🔍 Cerca partita..." style="min-width:180px;">
+    </div>
+    <div class="checkbox-group">
+      <label><input type="checkbox" id="filterGZ" checked> GZ</label>
+      <label><input type="checkbox" id="filter1X2" checked> 1X2</label>
+      <label><input type="checkbox" id="filterDM" checked> DM</label>
+    </div>
+    <div class="control-group">
+      <button class="btn" id="exportCsvBtn">📄 CSV</button>
+      <button class="btn" id="exportPdfBtn">📑 PDF</button>
+      <button class="btn btn-primary" id="addToHistoryBtn">➕ Aggiungi a storico</button>
     </div>
   </div>
 
-  <div class="mtabs" id="mtabs">
-    <button class="mtab active" data-m="dashboard">🏠 Dashboard</button>
-    <button class="mtab" data-m="storico">📋 Storico</button>
-  </div>
-
-  <div class="panel">
-    <div class="dataset-toggle" id="datasetToggle">
-      <h3><span>📂</span> Gestione Dataset</h3>
-      <span class="arrow" id="toggleArrow">▼</span>
+  <div class="main-layout">
+    <div class="table-wrapper">
+      <div style="overflow-x:auto;">
+        <table class="match-table" id="matchTable">
+          <thead>
+            <tr><th>Ora</th><th>Partita</th><th>Score (0-100)</th><th>Affidabilità</th><th>Conferme</th></tr>
+          </thead>
+          <tbody id="tableBody"></tbody>
+        </table>
+      </div>
+      <div id="noResultsMsg" style="text-align:center; padding:40px; color:#7f9bc0; display:none;">Nessun risultato con i filtri attuali.</div>
     </div>
-    <div class="dataset-panel" id="datasetPanel">
-      <div class="upload-grid" id="uploadGrid"></div>
-      <div class="footer-note">File supportati: CSV con separatore ; oppure , . DataMining Plus fornisce NP, %, quote e RE.</div>
+    <div class="detail-panel" id="detailPanel">
+      <div style="color:#8da3c0; text-align:center; padding:20px;">Seleziona una partita per vedere i dettagli</div>
     </div>
   </div>
-
-  <div id="main"></div>
-  <div id="detM"></div>
 </div>
 
 <script>
 (function(){
   // ==================== STATO GLOBALE ====================
   const ST = {
-    market: 'dashboard',
-    dashMarket: null, dashSub: null, dashList: [], showAll: false,
-    q: '',
     ov05:[], ggov25:[], mg13:[], ia:[], plCards:[], plShots:[], gz:[], quoteValore:[], dataMining:[],
-    history: [],
-    histStatus:'all', histCategory:'all',
-    backtestStats: { ov05: { correct: 0, total: 0 }, gg: { correct: 0, total: 0 }, o25: { correct: 0, total: 0 }, u25: { correct: 0, total: 0 }, mg13: { correct: 0, total: 0 } },
-    det: null, detMarket: null, detSide: null,
-    sub: 'all', iaCat: 'all', plSub: 'cards', league: 'all', sortMode: 'score',
-    quoteFilter: 'all', gzFilter: 'all', gzSort: 'value'
+    currentMarket: 'o25',
+    filters: { minAff:3, search:'', requireGZ:true, require1X2:true, requireDM:true },
+    cache: new Map(),
+    selectedRow: null,
+    history: JSON.parse(localStorage.getItem('ma_single_history')||'[]'),
+    // stati temporanei per le funzioni originali
+    sub:'all', iaCat:'all', plSub:'cards', league:'all', sortMode:'score',
+    quoteFilter:'all', gzFilter:'all', gzSort:'value',
+    det:null, detMarket:null, detSide:null
   };
 
-  const svgPDF = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>';
   const DATASETS = [
     {key:'ov05',label:'Ov 0.5PT',hint:'IND / Delta / U5 / COv0.5'},
     {key:'ggov25',label:'GG + Ov/U 2.5',hint:'IGBc / IGBo / IGBt / MGE'},
@@ -205,23 +162,18 @@
     {key:'dataMining',label:'DataMining Plus',hint:'NP, % mercati, quote, RE'}
   ];
 
-  // ==================== HELPER ====================
+  // ==================== HELPER (identici alle versioni precedenti) ====================
   function escapeHtml(s){return String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));}
   function timeVal(ora){if(!ora)return 9999;const m=String(ora).match(/(\d{1,2}):(\d{2})/);if(!m)return 9999;return parseInt(m[1])*60+parseInt(m[2]);}
   function sortTime(a,b){return timeVal(a.ora)-timeVal(b.ora);}
   function normName(s){return String(s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]/g,' ').replace(/\s+/g,' ').trim();}
-  function dots(a,sz){let h='';const s=sz==='lg'?9:6;for(let i=1;i<=5;i++){const on=i<=a;const c=on?(a>=4?'var(--grn)':a===3?'var(--amb)':'var(--t3)'):'var(--s3)';h+=`<div class="aff-d" style="width:${s}px;height:${s}px;background:${c}"></div>`;}return h;}
-  function affBadge(aff){return `<div class="aff"><div>${dots(aff)}</div><div class="aff-n aff-${aff}">${aff}/5</div></div>`;}
-  function indB(v,t){if(v===null||v===undefined||v==='')return `<div class="m-ind ind-r">N/D</div>`; if(t==='ov05'){const c=v<=320?'ind-g':v<=340?'ind-o':'ind-r';return `<div class="m-ind ${c}">${v}</div>`;} if(t==='igbt'){const c=v>=350?'ind-g':v>=300?'ind-o':'ind-r';return `<div class="m-ind ${c}">${v}</div>`;} if(t==='mg'){const c=v<=320?'ind-g':v<=350?'ind-o':'ind-r';return `<div class="m-ind ${c}">${v}</div>`;} return `<div class="m-ind ind-r">${v}</div>`;}
-  function filt(list){if(!ST.q)return list;const q=ST.q.toLowerCase();return list.filter(r=>[r.evento,r.nome,r.partita,r.squadra,r.match,r.lega,r.nazione].filter(Boolean).join(' ').toLowerCase().includes(q));}
-  function filtLeague(list,key){let r=filt(list);if(ST.league!=='all'&&key)r=r.filter(x=>String(x[key]||'').trim()===ST.league);return r;}
-  function diffLabel(d){if(d===null||d===undefined||isNaN(d))return ['N/D','n'];if(d===0)return ['0.00','n'];const v=(d>0?'+':'')+d.toFixed(2);const tag=d<0?' (sotto)':d>0.5?' (sovra+)':d>0?' (sovra)':'';const c=d<0?'g':d>0.5?'w':'n';return [v+tag,c];}
-  function getLeagueOptions(data,key){const vals=[...new Set(data.map(r=>String(r[key]||'').trim()).filter(v=>v&&v.length>1))].sort((a,b)=>a.localeCompare(b));return vals;}
+  function dots(a,sz){let h='';const s=sz==='lg'?9:6;for(let i=1;i<=5;i++){const on=i<=a;const c=on?(a>=4?'#10b981':a===3?'#f59e0b':'#6b7280'):'#374151';h+=`<div class="aff-d" style="width:${s}px;height:${s}px;background:${c};border-radius:50%;"></div>`;}return h;}
+  function affBadge(aff){return `<div style="display:flex;align-items:center;gap:6px;"><div style="display:flex;gap:3px;">${dots(aff)}</div><span style="font-weight:600;">${aff}/5</span></div>`;}
   function fmt(n,d=2){if(n===null||n===undefined||Number.isNaN(n))return 'N/D';return Number(n).toFixed(d);}
   function parseCsvLines(t){return t.replace(/^\uFEFF/,'').trim().replace(/\r\n/g,'\n').replace(/\r/g,'\n').split('\n');}
   function splitCsvLine(line, sep){const out=[];let cur='';let q=false;for(let i=0;i<line.length;i++){const ch=line[i];if(ch==='"'){if(q&&line[i+1]==='"'){cur+='"';i++;}else q=!q;}else if(ch===sep&&!q){out.push(cur);cur='';}else cur+=ch;} out.push(cur); return out;}
 
-  // ==================== PARSING (COMPLETO) ====================
+  // ==================== PARSING (COMPLETO, IDENTICO ALL'ORIGINALE) ====================
   function parseOv05(t){const L=parseCsvLines(t);if(L.length<2)return[];const sep=L[0].includes(';')?';':',';const s=x=>(x||'').replace(/^"|"$/g,'').trim();const h=splitCsvLine(L[0],sep).map(s);const hi={};h.forEach((x,i)=>hi[x]=i);const g=(r,k)=>s(r[hi[k]]||'');const pf=x=>parseFloat((x||'0').replace(',','.').replace('%',''))||0;const pu=x=>{if(!x)return[0,0];const p=x.split('|').map(v=>parseInt(v)||0);return[p[0]||0,p[1]||0]};const R=[];for(let i=1;i<L.length;i++){const f=splitCsvLine(L[i],sep).map(s);if(f.length<5)continue;R.push({ora:g(f,'ORA'),evento:g(f,'EVENTO'),rpt:g(f,'Rpt'),ind:parseInt(g(f,'IND'))||999,qrOv05:pf(g(f,'QROv0.5pt')),delta:pf(g(f,'Delta')),u5:pu(g(f,'U5[C|O]')),u5ct:pu(g(f,'U5CT[C|O]')),diff:pf(g(f,'Diff')),mge:pf(g(f,'MGE')),cov05:pf(g(f,'COv0.5%')),oov05:pf(g(f,'OOv0.5%')),qrGG:pf(g(f,'QrGG')),qrO25:pf(g(f,'QrO25')),u5Raw:g(f,'U5[C|O]'),u5ctRaw:g(f,'U5CT[C|O]'),cov05R:g(f,'COv0.5%'),oov05R:g(f,'OOv0.5%')});}return R;}
   function parseGGOv25(t){const L=parseCsvLines(t);if(L.length<2)return[];const sep=L[0].includes(';')?';':',';const s=x=>(x||'').replace(/^"|"$/g,'').trim();const h=splitCsvLine(L[0],sep).map(s);const hi={};h.forEach((x,i)=>hi[x]=i);const g=(r,k)=>s(r[hi[k]]||'');const pf=x=>parseFloat((x||'0').replace(',','.').replace('%',''))||0;const R=[];for(let i=1;i<L.length;i++){const f=splitCsvLine(L[i],sep).map(s);if(f.length<5)continue;let oR=g(f,'ORA'),ev=g(f,'EVENTO');const tm=oR.match(/(\d{1,2}:\d{2})/),dt=oR.match(/(\d{2}-\d{2})/);const oD=(dt?dt[1].replace('-','/')+' ':'')+(tm?tm[1]:'');ev=ev.split(/\s{3,}/)[0]||ev;R.push({ora:oD.trim(),evento:ev,nazione:g(f,'NAZIONE'),lega:g(f,'LEGA')||g(f,'NAZIONE'),rpt:g(f,'RIS.'),igbc:parseInt(pf(g(f,'IGBc'))),igbo:parseInt(pf(g(f,'IGBo'))),igbt:parseInt(pf(g(f,'IGBt'))),mge:pf(g(f,'MGE')),diff:pf(g(f,'Diff')),pgg:pf(g(f,'PGG')),s12:parseInt(pf(g(f,'S1-S2'))),qov25:pf(g(f,'qOv2.5'))});}return R;}
   function parseMG13(t){const L=parseCsvLines(t);if(L.length<2)return[];const sep=L[0].includes(';')?';':',';const s=x=>(x||'').replace(/^"|"$/g,'').trim();const h=splitCsvLine(L[0],sep).map(s);const hi={};h.forEach((x,i)=>hi[x]=i);const g=(r,k)=>s(r[hi[k]]||'');const pf=x=>parseFloat((x||'0').replace(',','.'))||0;const R=[];for(let i=1;i<L.length;i++){const f=splitCsvLine(L[i],sep).map(s);if(f.length<5)continue;R.push({ora:g(f,'ORA'),evento:g(f,'EVENTO'),rpt:g(f,'R'),ich:parseInt(pf(g(f,'ICH'))),varc:pf(g(f,'VarC')),vu5c:pf(g(f,'VU5C')),ritc:parseInt(pf(g(f,'RitC'))),mgfc:pf(g(f,'MGFC')),mgso:pf(g(f,'MGSO')),q1:pf(g(f,'Q1')),qo25:pf(g(f,'QO25')),q2:pf(g(f,'Q2')),ica:parseInt(pf(g(f,'ICA'))),varo:pf(g(f,'VarO')),vu5o:pf(g(f,'VU5O')),rito:parseInt(pf(g(f,'RitO'))),mgfo:pf(g(f,'MGFO')),mgsc:pf(g(f,'MGSC'))});}return R;}
@@ -230,449 +182,200 @@
   function parsePlShots(t){const L=parseCsvLines(t);if(L.length<2)return[];const sep=L[0].includes(';')?';':',';const s=x=>(x||'').replace(/^"|"$/g,'').trim();const h=splitCsvLine(L[0],sep).map(s);const hi={};h.forEach((x,i)=>hi[x]=i);const g=(r,k)=>s(r[hi[k]]||'');const pf=x=>parseFloat((x||'0').replace(',','.'))||0;const R=[];for(let i=1;i<L.length;i++){const f=splitCsvLine(L[i],sep).map(s);if(f.length<5)continue;const oR=g(f,'Ora');const tm=oR.match(/(\d{1,2}:\d{2})/),dt=oR.match(/(\d{2}-\d{2})/);const ora=(dt?dt[1].replace('-','/')+' ':'')+(tm?tm[1]:'');R.push({ora:ora.trim(),lega:g(f,'Campionato'),partita:g(f,'Partita'),nome:g(f,'Nome'),squadra:g(f,'Squadra'),pos:g(f,'Pos.'),pres:parseInt(pf(g(f,'Presenze'))),min:pf(g(f,'Minuti')),tiriTot:pf(g(f,'Tiri Totali')),tiriPorta:pf(g(f,'Tiri in porta')),gol:pf(g(f,'Gol')),rit:parseInt(g(f,'Rit.'))||0});}return R;}
   function parseGZ(t){const L=parseCsvLines(t);if(L.length<2)return[];const sep=L[0].includes(';')?';':',';const s=x=>(x||'').replace(/^"|"$/g,'').trim();const h=splitCsvLine(L[0],sep).map(s);const hi={};h.forEach((x,i)=>hi[x]=i);const g=(r,k)=>s(r[hi[k]]||'');const pf=x=>{if(x===''||x===undefined)return null;const v=parseFloat(String(x).replace(',','.'));return isNaN(v)?null:v;};const R=[];for(let i=1;i<L.length;i++){const f=splitCsvLine(L[i],sep).map(s);if(f.length<3)continue;let dataEv=g(f,'DATA EV.');const tm=dataEv.match(/(\d{1,2}:\d{2})/),dt=dataEv.match(/(\d{2}-\d{2})/);const ora=(dt?dt[1].replace('-','/')+' ':'')+(tm?tm[1]:'');const evento=g(f,'EVENTO');if(!evento)continue;R.push({ora:ora.trim(),nazione:g(f,'NAZIONE'),lega:g(f,'LEGA'),evento:evento,ris:g(f,'RIS.'),gz:pf(g(f,'GZ')),gzha:pf(g(f,'GZha')),igbc:pf(g(f,'IGBc')),igbo:pf(g(f,'IGBo')),igbt:pf(g(f,'IGBt')),mge:pf(g(f,'MGE')),diff:pf(g(f,'Diff'))});}return R;}
   function parseQuoteValore(t){const L=parseCsvLines(t);if(L.length<2)return[];const sep=L[0].includes(';')?';':',';const s=x=>(x||'').replace(/^"|"$/g,'').trim();const h=splitCsvLine(L[0],sep).map(s);const idxOra=h.indexOf('Ora');const idxMatch=h.indexOf('Match');const idxR=h.indexOf('R');const idxNP=h.indexOf('NP');const idxT1=h.indexOf('T1');const idxR1=h.indexOf('R1');const idxDM1=h.indexOf('DM1');const idxSpread1=h.indexOf('Spread');const idxTX=h.indexOf('TX');const idxRX=h.indexOf('RX');const idxDMX=h.indexOf('DMX');const idxSpreadX=h.indexOf('Spread',idxDMX+1);const idxT2=h.indexOf('T2');const idxR2=h.indexOf('R2');const idxDM2=h.indexOf('DM2');const idxSpread2=h.indexOf('Spread',idxDM2+1);const pf=x=>{if(x===''||x===undefined)return 0;const v=parseFloat(String(x).replace(',','.'));return isNaN(v)?0:v;};const R=[];for(let i=1;i<L.length;i++){const f=splitCsvLine(L[i],sep).map(s);if(f.length<5)continue;const ora=s(f[idxOra]||'');const match=s(f[idxMatch]||'');if(!match)continue;R.push({ora,match,r:s(f[idxR]||''),np:parseInt(pf(f[idxNP]))||0,t1:pf(f[idxT1]),r1:pf(f[idxR1]),dm1:pf(f[idxDM1]),spread1:pf(f[idxSpread1]),tx:pf(f[idxTX]),rx:pf(f[idxRX]),dmx:pf(f[idxDMX]),spreadX:pf(f[idxSpreadX]),t2:pf(f[idxT2]),r2:pf(f[idxR2]),dm2:pf(f[idxDM2]),spread2:pf(f[idxSpread2])});}return R;}
-  function parseDataMining(t) {
-    const L = parseCsvLines(t); if (L.length < 2) return [];
-    const sep = L[0].includes(';') ? ';' : ','; const s = x => (x || '').replace(/^"|"$/g, '').trim();
-    const header = splitCsvLine(L[0], sep).map(s);
-    const idx = (name) => header.findIndex(h => h.includes(name));
-    const iOra = idx('Ora'), iMatch = idx('Match'), iR = idx('R'), iRpt = idx('Rpt'), iNP = idx('NP');
-    const i1Perc = header.findIndex((h, i) => h === '1' && i > 5), i1Quota = i1Perc + 1;
-    const iXPerc = i1Quota + 1, iXQuota = iXPerc + 1;
-    const i2Perc = iXQuota + 1, i2Quota = i2Perc + 1;
-    const iMGE = idx('MGE'), iDIFF = idx('DIFF');
-    const iGGPerc = header.findIndex((h, i) => h === 'GG' && i > iDIFF), iGGQuota = iGGPerc + 1;
-    const iOV15Perc = idx('OV15'), iOV15Quota = iOV15Perc + 1;
-    const iOV25Perc = idx('OV25'), iOV25Quota = iOV25Perc + 1;
-    const iUN35Perc = idx('UN35'), iUN35Quota = iUN35Perc + 1;
-    const iOV05ptPerc = idx('OV0.5pt'), iOV05ptQuota = iOV05ptPerc + 1;
-    const iIC = idx('IC'), iRC = idx('RC'), iRO = idx('RO');
-    const iSCPerc = idx('SC'), iIGBC = idx('IGBC'), iSCQuota = iSCPerc + 1;
-    const iSOPerc = idx('SO'), iIGBO = idx('IGBO'), iSOQuota = iSOPerc + 1;
-    const iRE = idx('RE');
-    const R = [];
-    for (let i = 1; i < L.length; i++) {
-      const f = splitCsvLine(L[i], sep).map(s); if (f.length < 5) continue;
-      const parsePerc = (v) => parseFloat((v || '0').replace('%', '').replace(',', '.')) || 0;
-      const parseFloatNum = (v) => parseFloat((v || '').replace(',', '.')) || 0;
-      const parseIntNum = (v) => parseInt(v) || 0;
-      const oraRaw = f[iOra] || '', match = f[iMatch] || ''; if (!match) continue;
-      const tm = oraRaw.match(/(\d{1,2}:\d{2})/); const ora = tm ? tm[1] : oraRaw;
-      R.push({ ora, match, r: f[iR] || '', rpt: f[iRpt] || '', np: parseIntNum(f[iNP]),
-        p1: parsePerc(f[i1Perc]), q1: parseFloatNum(f[i1Quota]), pX: parsePerc(f[iXPerc]), qX: parseFloatNum(f[iXQuota]),
-        p2: parsePerc(f[i2Perc]), q2: parseFloatNum(f[i2Quota]), mge: parseFloatNum(f[iMGE]), diff: parseFloatNum(f[iDIFF]),
-        pGG: parsePerc(f[iGGPerc]), qGG: parseFloatNum(f[iGGQuota]), pOV15: parsePerc(f[iOV15Perc]), qOV15: parseFloatNum(f[iOV15Quota]),
-        pOV25: parsePerc(f[iOV25Perc]), qOV25: parseFloatNum(f[iOV25Quota]), pUN35: parsePerc(f[iUN35Perc]), qUN35: parseFloatNum(f[iUN35Quota]),
-        pOV05pt: parsePerc(f[iOV05ptPerc]), qOV05pt: parseFloatNum(f[iOV05ptQuota]), ic: parseIntNum(f[iIC]), rc: parseIntNum(f[iRC]), ro: parseIntNum(f[iRO]),
-        pSC: parsePerc(f[iSCPerc]), igbc: parseIntNum(f[iIGBC]), qSC: parseFloatNum(f[iSCQuota]),
-        pSO: parsePerc(f[iSOPerc]), igbo: parseIntNum(f[iIGBO]), qSO: parseFloatNum(f[iSOQuota]), re: f[iRE] || '' });
-    }
-    return R;
-  }
+  function parseDataMining(t){const L=parseCsvLines(t);if(L.length<2)return[];const sep=L[0].includes(';')?';':',';const s=x=>(x||'').replace(/^"|"$/g,'').trim();const header=splitCsvLine(L[0],sep).map(s);const idx=(name)=>header.findIndex(h=>h.includes(name));const iOra=idx('Ora'),iMatch=idx('Match'),iR=idx('R'),iRpt=idx('Rpt'),iNP=idx('NP');const i1Perc=header.findIndex((h,i)=>h==='1'&&i>5),i1Quota=i1Perc+1;const iXPerc=i1Quota+1,iXQuota=iXPerc+1;const i2Perc=iXQuota+1,i2Quota=i2Perc+1;const iMGE=idx('MGE'),iDIFF=idx('DIFF');const iGGPerc=header.findIndex((h,i)=>h==='GG'&&i>iDIFF),iGGQuota=iGGPerc+1;const iOV15Perc=idx('OV15'),iOV15Quota=iOV15Perc+1;const iOV25Perc=idx('OV25'),iOV25Quota=iOV25Perc+1;const iUN35Perc=idx('UN35'),iUN35Quota=iUN35Perc+1;const iOV05ptPerc=idx('OV0.5pt'),iOV05ptQuota=iOV05ptPerc+1;const iIC=idx('IC'),iRC=idx('RC'),iRO=idx('RO');const iSCPerc=idx('SC'),iIGBC=idx('IGBC'),iSCQuota=iSCPerc+1;const iSOPerc=idx('SO'),iIGBO=idx('IGBO'),iSOQuota=iSOPerc+1;const iRE=idx('RE');const R=[];for(let i=1;i<L.length;i++){const f=splitCsvLine(L[i],sep).map(s);if(f.length<5)continue;const parsePerc=(v)=>parseFloat((v||'0').replace('%','').replace(',','.'))||0;const parseFloatNum=(v)=>parseFloat((v||'').replace(',','.'))||0;const parseIntNum=(v)=>parseInt(v)||0;const oraRaw=f[iOra]||'',match=f[iMatch]||'';if(!match)continue;const tm=oraRaw.match(/(\d{1,2}:\d{2})/);const ora=tm?tm[1]:oraRaw;R.push({ora,match,r:f[iR]||'',rpt:f[iRpt]||'',np:parseIntNum(f[iNP]),p1:parsePerc(f[i1Perc]),q1:parseFloatNum(f[i1Quota]),pX:parsePerc(f[iXPerc]),qX:parseFloatNum(f[iXQuota]),p2:parsePerc(f[i2Perc]),q2:parseFloatNum(f[i2Quota]),mge:parseFloatNum(f[iMGE]),diff:parseFloatNum(f[iDIFF]),pGG:parsePerc(f[iGGPerc]),qGG:parseFloatNum(f[iGGQuota]),pOV15:parsePerc(f[iOV15Perc]),qOV15:parseFloatNum(f[iOV15Quota]),pOV25:parsePerc(f[iOV25Perc]),qOV25:parseFloatNum(f[iOV25Quota]),pUN35:parsePerc(f[iUN35Perc]),qUN35:parseFloatNum(f[iUN35Quota]),pOV05pt:parsePerc(f[iOV05ptPerc]),qOV05pt:parseFloatNum(f[iOV05ptQuota]),ic:parseIntNum(f[iIC]),rc:parseIntNum(f[iRC]),ro:parseIntNum(f[iRO]),pSC:parsePerc(f[iSCPerc]),igbc:parseIntNum(f[iIGBC]),qSC:parseFloatNum(f[iSCQuota]),pSO:parsePerc(f[iSOPerc]),igbo:parseIntNum(f[iIGBO]),qSO:parseFloatNum(f[iSOQuota]),re:f[iRE]||''});}return R;}
 
   // ==================== SCORING (COMPLETO) ====================
-  function isMG24(dm){ return dm && dm.pOV15 > 60 && dm.pUN35 > 60; }
-  function getDMFactor(dm, market) { if (!dm) return 1.0; const np = dm.np; let perc = 0; switch (market) { case 'ov05': perc = dm.pOV05pt; break; case 'gg': perc = dm.pGG; break; case 'o25': perc = dm.pOV25; break; case 'u25': perc = dm.pUN35; break; case 'mg13': return Math.min(1 + (np / 100), 1.3); default: return 1.0; } const npWeight = Math.min(np / 50, 1.2); const percWeight = 0.8 + (perc / 100) * 0.6; return npWeight * percWeight; }
-  function getDMBadgeClass(dm, market) { if (!dm) return ''; const np = dm.np; let perc = 0; switch (market) { case 'ov05': perc = dm.pOV05pt; break; case 'gg': perc = dm.pGG; break; case 'o25': perc = dm.pOV25; break; case 'u25': perc = dm.pUN35; break; default: return 'neu'; } if (np >= 30 && perc >= (market === 'u25' ? 60 : 55)) return 'dm-green'; if (np >= 15 && perc >= (market === 'u25' ? 50 : 45)) return 'dm-yellow'; return 'dm-red'; }
-  function dmBadgeHtml(dm, market) { if (!dm) return ''; let perc = 0, quota = 0, label = ''; switch (market) { case 'ov05': perc = dm.pOV05pt; quota = dm.qOV05pt; label = 'OV0.5PT'; break; case 'gg': perc = dm.pGG; quota = dm.qGG; label = 'GG'; break; case 'o25': perc = dm.pOV25; quota = dm.qOV25; label = 'OV25'; break; case 'u25': perc = dm.pUN35; quota = dm.qUN35; label = 'UN35'; break; default: return ''; } const badgeClass = getDMBadgeClass(dm, market); const icon = badgeClass === 'dm-green' ? '🟢' : badgeClass === 'dm-yellow' ? '🟡' : '🔴'; return `<span class="badge ${badgeClass}" title="NP=${dm.np}">${icon} ${label}: ${perc.toFixed(0)}% (${quota.toFixed(2)}) NP:${dm.np}</span>`; }
-  function computeValue(perc, quota) { if (!quota || quota <= 0) return 0; const implied = 1 / quota; return (perc / 100) - implied; }
-  function valueBadgeHtml(dm, market) { if (!dm) return ''; let perc = 0, quota = 0; switch (market) { case 'ov05': perc = dm.pOV05pt; quota = dm.qOV05pt; break; case 'gg': perc = dm.pGG; quota = dm.qGG; break; case 'o25': perc = dm.pOV25; quota = dm.qOV25; break; case 'u25': perc = dm.pUN35; quota = dm.qUN35; break; default: return ''; } const value = computeValue(perc, quota); if (value > 0.05) return `<span class="badge value" title="Vantaggio rispetto alla quota">💰 Value +${(value*100).toFixed(1)}%</span>`; return ''; }
+  function isMG24(dm){return dm&&dm.pOV15>60&&dm.pUN35>60;}
+  function getDMFactor(dm,market){if(!dm)return 1.0;const np=dm.np;let perc=0;switch(market){case'ov05':perc=dm.pOV05pt;break;case'gg':perc=dm.pGG;break;case'o25':perc=dm.pOV25;break;case'u25':perc=dm.pUN35;break;case'mg13':return Math.min(1+(np/100),1.3);default:return 1.0;}const npWeight=Math.min(np/50,1.2);const percWeight=0.8+(perc/100)*0.6;return npWeight*percWeight;}
+  function getDMBadgeClass(dm,market){if(!dm)return'';const np=dm.np;let perc=0;switch(market){case'ov05':perc=dm.pOV05pt;break;case'gg':perc=dm.pGG;break;case'o25':perc=dm.pOV25;break;case'u25':perc=dm.pUN35;break;default:return'neu';}if(np>=30&&perc>=(market==='u25'?60:55))return'dm-green';if(np>=15&&perc>=(market==='u25'?50:45))return'dm-yellow';return'dm-red';}
+  function dmBadgeHtml(dm,market){if(!dm)return'';let perc=0,quota=0,label='';switch(market){case'ov05':perc=dm.pOV05pt;quota=dm.qOV05pt;label='OV0.5PT';break;case'gg':perc=dm.pGG;quota=dm.qGG;label='GG';break;case'o25':perc=dm.pOV25;quota=dm.qOV25;label='OV25';break;case'u25':perc=dm.pUN35;quota=dm.qUN35;label='UN35';break;default:return'';}const badgeClass=getDMBadgeClass(dm,market);const icon=badgeClass==='dm-green'?'🟢':badgeClass==='dm-yellow'?'🟡':'🔴';return`<span class="badge" style="background:${badgeClass==='dm-green'?'#064e3b':badgeClass==='dm-yellow'?'#78350f':'#374151'};color:#fff;">${icon} ${label}: ${perc.toFixed(0)}% (${quota.toFixed(2)}) NP:${dm.np}</span>`;}
+  function computeValue(perc,quota){if(!quota||quota<=0)return 0;const implied=1/quota;return(perc/100)-implied;}
+  function valueBadgeHtml(dm,market){if(!dm)return'';let perc=0,quota=0;switch(market){case'ov05':perc=dm.pOV05pt;quota=dm.qOV05pt;break;case'gg':perc=dm.pGG;quota=dm.qGG;break;case'o25':perc=dm.pOV25;quota=dm.qOV25;break;case'u25':perc=dm.pUN35;quota=dm.qUN35;break;default:return'';}const value=computeValue(perc,quota);if(value>0.05)return`<span class="badge" style="background:#4c1d95;">💰 Value +${(value*100).toFixed(1)}%</span>`;return'';}
+  function isValueSign(quotaReale,quotaDM,spread){return spread>0.15&&quotaReale>1.01&&quotaReale<3&&quotaDM>0;}
+  function analyzeQuoteMatch(r){const value1=isValueSign(r.r1,r.dm1,r.spread1);const valueX=isValueSign(r.rx,r.dmx,r.spreadX);const value2=isValueSign(r.r2,r.dm2,r.spread2);let golSide=null;if(value1&&!value2)golSide='casa';else if(value2&&!value1)golSide='ospite';else if(value1&&value2)golSide='entrambe';else if(valueX)golSide='pareggio';const score=(value1?r.spread1:0)+(valueX?r.spreadX:0)+(value2?r.spread2:0);return{value1,valueX,value2,golSide,score};}
+  function gzProbability(gz){if(gz===null)return{label:'N/D',desc:'Dato mancante',type:'nd'};if(gz<-1800)return{label:'U2.5 64%',desc:'Under 2.5 al 64%',type:'under'};if(gz<-1200)return{label:'U3.5 81%',desc:'Under 3.5 al 81%',type:'under'};if(gz>5000)return{label:'Ov2.5 64%',desc:'Over 2.5 al 64%',type:'over'};if(gz>1000)return{label:'Ov1.5 80%',desc:'Over 1.5 al 80%',type:'over'};if(gz>-200&&gz<200)return{label:'Ov0.5 95%',desc:'Over 0.5 al 95%',type:'over'};return{label:'Normale',desc:'Nessuna indicazione forte',type:'neutral'};}
+  function getGzAlignment(evento,requiredType){if(!ST.gz.length)return null;const matchGz=ST.gz.find(g=>normName(g.evento)===normName(evento));if(!matchGz)return null;const prob=gzProbability(matchGz.gz);const aligned=(requiredType==='over'&&prob.type==='over')||(requiredType==='under'&&prob.type==='under');return{gz:matchGz.gz,prob,aligned};}
+  function getQuoteAlignment(evento){if(!ST.quoteValore.length)return null;const matchQv=ST.quoteValore.find(q=>normName(q.match)===normName(evento));if(!matchQv)return null;const analysis=analyzeQuoteMatch(matchQv);if(!analysis.golSide)return null;return{golSide:analysis.golSide,score:analysis.score,value1:analysis.value1,valueX:analysis.valueX,value2:analysis.value2};}
+  function marketSupportsQuote(market,qv){if(!qv)return false;if(market==='ov05'||market==='o25')return['casa','ospite','entrambe'].includes(qv.golSide);if(market==='gg')return qv.golSide==='entrambe';if(market==='u25')return qv.golSide==='pareggio';if(market==='mg13c'||market==='mg13o')return['casa','ospite','pareggio'].includes(qv.golSide);return false;}
+  function getDataMiningForMatch(evento){if(!ST.dataMining.length)return null;const normEv=normName(evento);return ST.dataMining.find(dm=>normName(dm.match)===normEv)||null;}
 
-  function parseGoalsFromResult(r) { if (!r) return null; const match = r.match(/(\d+)\s*-\s*(\d+)/); if (!match) return null; return { home: parseInt(match[1]), away: parseInt(match[2]), total: parseInt(match[1]) + parseInt(match[2]) }; }
-  function computeBacktestStats() {
-    ST.backtestStats = { ov05: { correct: 0, total: 0 }, gg: { correct: 0, total: 0 }, o25: { correct: 0, total: 0 }, u25: { correct: 0, total: 0 }, mg13: { correct: 0, total: 0 } };
-    if (!ST.dataMining.length) return;
-    ST.dataMining.forEach(dm => {
-      const goals = parseGoalsFromResult(dm.r); if (!goals) return;
-      const ggRow = getGgRows().find(r => normName(r.evento) === normName(dm.match));
-      const o25Row = getO25Rows().find(r => normName(r.evento) === normName(dm.match));
-      const u25Row = getU25Rows().find(r => normName(r.evento) === normName(dm.match));
-      const mg13Row = getMgRows().find(r => normName(r.evento) === normName(dm.match));
-      if (ggRow && ggRow.aff >= 3) { ST.backtestStats.gg.total++; if (goals.home > 0 && goals.away > 0) ST.backtestStats.gg.correct++; }
-      if (o25Row && o25Row.aff >= 3) { ST.backtestStats.o25.total++; if (goals.total > 2) ST.backtestStats.o25.correct++; }
-      if (u25Row && u25Row.aff >= 3) { ST.backtestStats.u25.total++; if (goals.total < 3) ST.backtestStats.u25.correct++; }
-      if (mg13Row && mg13Row.aff >= 3) { ST.backtestStats.mg13.total++; if (goals.total >= 1 && goals.total <= 3) ST.backtestStats.mg13.correct++; }
-    });
-  }
-  function updateBacktestDisplay() {
-    const el = document.getElementById('backtestInfo'); if (!el) return;
-    const stats = ST.backtestStats; const format = (s) => s.total ? ((s.correct / s.total) * 100).toFixed(1) + '%' : 'N/D';
-    el.innerHTML = `📊 Backtest (AFF≥3): O25 ${format(stats.o25)} | U25 ${format(stats.u25)} | GG ${format(stats.gg)} | MG13 ${format(stats.mg13)}`;
-  }
+  // Funzioni di scoring per ogni mercato (ov05AFF, ggAFF, o25AFF, u25AFF, mg13AFF_C, mg13AFF_O, scoreAmm, scoreGol) - identiche alle precedenti
+  function ov05M1(r){return r.ind<320&&r.delta<-20&&r.diff<0;}
+  function ov05AFF(r){const b=[];if(r.ind<280)b.push({n:'IND < 280',p:2});else if(r.ind<320)b.push({n:'IND 280-319',p:1.5});else if(r.ind<330)b.push({n:'IND 320-329',p:1});else b.push({n:'IND >= 330',p:0});if(r.delta<=-20)b.push({n:'Delta <= -20%',p:2});else if(r.delta<=-5)b.push({n:'Delta -19 a -5%',p:1});else if(r.delta<=0)b.push({n:'Delta -4.9 a 0%',p:.5});else b.push({n:'Delta > 0%',p:0});if(r.diff<0)b.push({n:'Diff < 0',p:1.5});else if(r.diff<=.2)b.push({n:'Diff 0-0.20',p:.5});else b.push({n:'Diff > 0.20',p:0});if(r.mge>=3.2)b.push({n:'MGE >= 3.20',p:1.5});else if(r.mge>=2.8)b.push({n:'MGE 2.80-3.19',p:1});else if(r.mge>=2.5)b.push({n:'MGE 2.50-2.79',p:.5});else b.push({n:'MGE < 2.50',p:0});b.push(r.cov05>=75?{n:'COv05% >= 75',p:.75}:{n:'COv05% < 75',p:0});b.push(r.oov05>=75?{n:'OOv05% >= 75',p:.75}:{n:'OOv05% < 75',p:0});b.push(r.qrGG>0&&r.qrO25>0&&r.qrGG<r.qrO25?{n:'QrGG < QrO25',p:.75}:{n:'QrGG >= QrO25',p:0});if(r.qrOv05>=1.15&&r.qrOv05<=1.30)b.push({n:'QOv05 1.15-1.30',p:.75});else if(r.qrOv05>=1.31&&r.qrOv05<=1.40)b.push({n:'QOv05 1.31-1.40',p:.5});else b.push({n:'QOv05 fuori range',p:0});const[ctC,ctO]=r.u5ct;if(ctC>=3&&ctO>=3)b.push({n:'U5CT entrambe >=3',p:.75});else if(ctC>=3||ctO>=3)b.push({n:'U5CT una >=3',p:.25});else b.push({n:'U5CT < 3',p:0});const[uC,uO]=r.u5;if(uC>=3&&uO>=3)b.push({n:'U5 entrambe >=3',p:.5});else if(uC>=3||uO>=3)b.push({n:'U5 una >=3',p:.15});else b.push({n:'U5 < 3',p:0});const missCT=(5-ctC)+(5-ctO);if(missCT>=7)b.push({n:'Ritardo CT >=7/10',p:.75});else if(missCT>=5)b.push({n:'Ritardo CT 5-6/10',p:.35});else b.push({n:'Ritardo CT <5',p:0});const tot=b.reduce((s,x)=>s+x.p,0);return{breakdown:b,total:tot,aff:tot>=8.5?5:tot>=7?4:tot>=5.5?3:tot>=4?2:1,max:12.9};}
+  function ggM1(r){return r.igbc>=150&&r.igbo>=150&&r.s12<150&&r.pgg>=55;}
+  function ggAFF(r){const b=[];if(r.igbc>=200)b.push({n:'IGBc >= 200',p:2});else if(r.igbc>=150)b.push({n:'IGBc 150-199',p:1.5});else if(r.igbc>=100)b.push({n:'IGBc 100-149',p:.75});else b.push({n:'IGBc < 100',p:0});if(r.igbo>=200)b.push({n:'IGBo >= 200',p:2});else if(r.igbo>=150)b.push({n:'IGBo 150-199',p:1.5});else if(r.igbo>=100)b.push({n:'IGBo 100-149',p:.75});else b.push({n:'IGBo < 100',p:0});if(r.s12<80)b.push({n:'S1-S2 < 80',p:2});else if(r.s12<150)b.push({n:'S1-S2 80-149',p:1.5});else if(r.s12<300)b.push({n:'S1-S2 150-299',p:.75});else b.push({n:'S1-S2 >= 300',p:0});if(r.pgg>=65)b.push({n:'PGG >= 65%',p:1.5});else if(r.pgg>=55)b.push({n:'PGG 55-64%',p:1});else if(r.pgg>=45)b.push({n:'PGG 45-54%',p:.5});else b.push({n:'PGG < 45%',p:0});if(r.diff<-.5)b.push({n:'Diff < -0.5',p:1.5});else if(r.diff<=0)b.push({n:'Diff -0.5 a 0',p:.75});else b.push({n:'Diff > 0',p:0});if(r.mge>=3)b.push({n:'MGE >= 3.0',p:1.5});else if(r.mge>=2.5)b.push({n:'MGE 2.50-2.99',p:.75});else b.push({n:'MGE < 2.50',p:0});if(r.qov25>0&&r.qov25<1.7)b.push({n:'qOv2.5 < 1.70',p:.75});else if(r.qov25<=2)b.push({n:'qOv2.5 1.70-2.00',p:.25});else b.push({n:'qOv2.5 > 2.00',p:0});const tot=b.reduce((s,x)=>s+x.p,0);return{breakdown:b,total:tot,aff:tot>=8.5?5:tot>=7?4:tot>=5.5?3:tot>=4?2:1,max:11.25};}
+  function o25M1(r){return r.igbt>=300&&r.mge>=3&&r.diff<=0;}
+  function o25AFF(r){const b=[];if(r.igbt>=400)b.push({n:'IGBt >= 400',p:2.5});else if(r.igbt>=350)b.push({n:'IGBt 350-399',p:2});else if(r.igbt>=300)b.push({n:'IGBt 300-349',p:1.5});else if(r.igbt>=250)b.push({n:'IGBt 250-299',p:.75});else b.push({n:'IGBt < 250',p:0});if(r.mge>=3.5)b.push({n:'MGE >= 3.50',p:2});else if(r.mge>=3)b.push({n:'MGE 3.00-3.49',p:1.5});else if(r.mge>=2.5)b.push({n:'MGE 2.50-2.99',p:.5});else b.push({n:'MGE < 2.50',p:0});if(r.diff<-1)b.push({n:'Diff < -1.0',p:2});else if(r.diff<-.5)b.push({n:'Diff -1.0 a -0.5',p:1.5});else if(r.diff<=0)b.push({n:'Diff -0.5 a 0',p:.75});else if(r.diff<=.3)b.push({n:'Diff 0-0.30',p:.25});else b.push({n:'Diff > 0.30',p:0});let s12p=0,s12n='';if(r.igbc>=400||r.igbo>=400){s12p=1.5;s12n='IGBc/o >= 400';}else if(r.s12<100){s12p=1.5;s12n='S1-S2 < 100';}else if(r.s12<200){s12p=1;s12n='S1-S2 100-199';}else if(r.s12<350){s12p=.5;s12n='S1-S2 200-349';}else{s12p=0;s12n='S1-S2 >= 350';}b.push({n:s12n,p:s12p});if(r.pgg>=65)b.push({n:'PGG >= 65%',p:1});else if(r.pgg>=55)b.push({n:'PGG 55-64%',p:.5});else if(r.pgg>=45)b.push({n:'PGG 45-54%',p:.25});else b.push({n:'PGG < 45%',p:0});if(r.qov25>0&&r.qov25<1.45)b.push({n:'qOv2.5 < 1.45',p:1.5});else if(r.qov25<=1.65)b.push({n:'qOv2.5 1.45-1.65',p:1});else if(r.qov25<=1.85)b.push({n:'qOv2.5 1.66-1.85',p:.5});else b.push({n:'qOv2.5 > 1.85',p:0});const tot=b.reduce((s,x)=>s+x.p,0);return{breakdown:b,total:tot,aff:tot>=8.5?5:tot>=7?4:tot>=5.5?3:tot>=4?2:1,max:10.5};}
+  function u25M1(r){return r.diff>1.5&&r.mge>0&&r.mge<3;}
+  function u25AFF(r){const b=[];if(r.diff>=2)b.push({n:'Diff >= 2.0 (sovra)',p:2.5});else if(r.diff>=1.5)b.push({n:'Diff 1.5-1.99',p:2});else if(r.diff>=1)b.push({n:'Diff 1.0-1.49',p:1});else if(r.diff>=.5)b.push({n:'Diff 0.5-0.99',p:.5});else b.push({n:'Diff < 0.5',p:0});if(r.mge>0&&r.mge<2)b.push({n:'MGE < 2.00',p:2.5});else if(r.mge<2.5)b.push({n:'MGE 2.00-2.49',p:2});else if(r.mge<3)b.push({n:'MGE 2.50-2.99',p:1});else b.push({n:'MGE >= 3.00',p:0});if(r.qov25>=2.3)b.push({n:'qOv2.5 >= 2.30',p:1.5});else if(r.qov25>=2)b.push({n:'qOv2.5 2.00-2.29',p:1});else if(r.qov25>=1.8)b.push({n:'qOv2.5 1.80-1.99',p:.5});else b.push({n:'qOv2.5 < 1.80',p:0});if(r.pgg>0&&r.pgg<35)b.push({n:'PGG < 35%',p:1.5});else if(r.pgg<45)b.push({n:'PGG 35-44%',p:1});else if(r.pgg<55)b.push({n:'PGG 45-54%',p:.5});else if(r.pgg>0)b.push({n:'PGG >= 55%',p:0});else b.push({n:'PGG N/D',p:0});if(r.igbt<200)b.push({n:'IGBt < 200',p:1.5});else if(r.igbt<250)b.push({n:'IGBt 200-249',p:1});else if(r.igbt<300)b.push({n:'IGBt 250-299',p:.5});else b.push({n:'IGBt >= 300',p:0});if(r.s12>=400)b.push({n:'S1-S2 >= 400',p:1});else if(r.s12>=200)b.push({n:'S1-S2 200-399',p:.5});else b.push({n:'S1-S2 < 200',p:0});const o25a=o25AFF(r);if(o25a.aff<=1)b.push({n:'Ov2.5 AFF 1 (conferma)',p:1.5});else if(o25a.aff<=2)b.push({n:'Ov2.5 AFF 2',p:.75});else b.push({n:'Ov2.5 AFF >= 3',p:0});const tot=b.reduce((s,x)=>s+x.p,0);return{breakdown:b,total:tot,aff:tot>=9?5:tot>=7.5?4:tot>=6?3:tot>=4.5?2:1,max:12};}
+  function mg13M1C(r){return r.ich>=300&&r.ich<=350&&r.varc>=30;}
+  function mg13M1O(r){return r.ica>=300&&r.ica<=350&&r.varo>=30;}
+  function mg13AFF_C(r){const b=[];if(r.ich<=300)b.push({n:'ICH <= 300',p:2.5});else if(r.ich<=320)b.push({n:'ICH 301-320',p:2});else if(r.ich<=350)b.push({n:'ICH 321-350',p:1.5});else if(r.ich<=400)b.push({n:'ICH 351-400',p:.5});else b.push({n:'ICH > 400',p:0});if(r.varc>=40)b.push({n:'VarC >= 40%',p:2});else if(r.varc>=30)b.push({n:'VarC 30-39%',p:1.5});else if(r.varc>=20)b.push({n:'VarC 20-29%',p:.5});else b.push({n:'VarC < 20%',p:0});if(r.mgfc>=1.5&&r.mgfc<=2.5)b.push({n:'MGFC 1.5-2.5',p:1.5});else if(r.mgfc>=1&&r.mgfc<1.5)b.push({n:'MGFC 1.0-1.49',p:1});else if(r.mgfc>2.5&&r.mgfc<=3)b.push({n:'MGFC 2.51-3.0',p:.75});else b.push({n:'MGFC fuori range',p:0});if(r.vu5c>=60)b.push({n:'VU5C >= 60%',p:1});else if(r.vu5c>=40)b.push({n:'VU5C 40-59%',p:.5});else b.push({n:'VU5C < 40%',p:0});if(r.q1>=1.5&&r.q1<=2.5)b.push({n:'Q1 1.50-2.50',p:1});else if((r.q1>=1.2&&r.q1<1.5)||(r.q1>2.5&&r.q1<=4))b.push({n:'Q1 ok',p:.5});else b.push({n:'Q1 estrema',p:0});if(r.mgso>=1.5)b.push({n:'MGSO >= 1.5',p:1});else if(r.mgso>=1)b.push({n:'MGSO 1.0-1.49',p:.5});else b.push({n:'MGSO < 1.0',p:0});if(r.ritc>=3)b.push({n:'RitC >= 3',p:.75});else if(r.ritc>=1)b.push({n:'RitC 1-2',p:.25});else b.push({n:'RitC 0',p:0});const tot=b.reduce((s,x)=>s+x.p,0);return{breakdown:b,total:tot,aff:tot>=8?5:tot>=6.5?4:tot>=5?3:tot>=3.5?2:1,max:9.75};}
+  function mg13AFF_O(r){const b=[];if(r.ica<=300)b.push({n:'ICA <= 300',p:2.5});else if(r.ica<=320)b.push({n:'ICA 301-320',p:2});else if(r.ica<=350)b.push({n:'ICA 321-350',p:1.5});else if(r.ica<=400)b.push({n:'ICA 351-400',p:.5});else b.push({n:'ICA > 400',p:0});if(r.varo>=40)b.push({n:'VarO >= 40%',p:2});else if(r.varo>=30)b.push({n:'VarO 30-39%',p:1.5});else if(r.varo>=20)b.push({n:'VarO 20-29%',p:.5});else b.push({n:'VarO < 20%',p:0});if(r.mgfo>=1.5&&r.mgfo<=2.5)b.push({n:'MGFO 1.5-2.5',p:1.5});else if(r.mgfo>=1&&r.mgfo<1.5)b.push({n:'MGFO 1.0-1.49',p:1});else if(r.mgfo>2.5&&r.mgfo<=3)b.push({n:'MGFO 2.51-3.0',p:.75});else b.push({n:'MGFO fuori range',p:0});if(r.vu5o>=60)b.push({n:'VU5O >= 60%',p:1});else if(r.vu5o>=40)b.push({n:'VU5O 40-59%',p:.5});else b.push({n:'VU5O < 40%',p:0});if(r.q2>=2&&r.q2<=4)b.push({n:'Q2 2.00-4.00',p:1});else if(r.q2>4&&r.q2<=6)b.push({n:'Q2 4.01-6.00',p:.5});else b.push({n:'Q2 estrema',p:0});if(r.mgsc>=1.5)b.push({n:'MGSC >= 1.5',p:1});else if(r.mgsc>=1)b.push({n:'MGSC 1.0-1.49',p:.5});else b.push({n:'MGSC < 1.0',p:0});if(r.rito>=3)b.push({n:'RitO >= 3',p:.75});else if(r.rito>=1)b.push({n:'RitO 1-2',p:.25});else b.push({n:'RitO 0',p:0});const tot=b.reduce((s,x)=>s+x.p,0);return{breakdown:b,total:tot,aff:tot>=8?5:tot>=6.5?4:tot>=5?3:tot>=3.5?2:1,max:9.75};}
+  function scoreAmm(r){const b=[];if(r.amm>=.4)b.push({n:'Amm/p >= 0.40',p:3});else if(r.amm>=.3)b.push({n:'Amm/p 0.30-0.39',p:2.5});else if(r.amm>=.2)b.push({n:'Amm/p 0.20-0.29',p:1.5});else b.push({n:'Amm/p < 0.20',p:0});if(r.falli>=2.5)b.push({n:'Falli >= 2.5',p:2.5});else if(r.falli>=2)b.push({n:'Falli 2.0-2.49',p:2});else if(r.falli>=1.5)b.push({n:'Falli 1.5-1.99',p:1});else b.push({n:'Falli < 1.5',p:0});if(r.rit>=5)b.push({n:'Ritardo >= 5',p:2});else if(r.rit>=3)b.push({n:'Ritardo 3-4',p:1.5});else if(r.rit>=1)b.push({n:'Ritardo 1-2',p:.5});else b.push({n:'Ritardo 0',p:0});if(r.tackle>=2)b.push({n:'Tackle >= 2.0',p:1.5});else if(r.tackle>=1)b.push({n:'Tackle 1.0-1.99',p:.75});else b.push({n:'Tackle < 1.0',p:0});if(r.min>=70)b.push({n:'Minuti >= 70',p:.5});else b.push({n:'Minuti < 70',p:0});const tot=b.reduce((s,x)=>s+x.p,0);return{breakdown:b,total:tot,max:9.5,level:tot>=7?'hot':tot>=5?'warm':'mild'};}
+  function scoreGol(r){const b=[];if(r.gol>=.4)b.push({n:'Gol/p >= 0.40',p:3});else if(r.gol>=.25)b.push({n:'Gol/p 0.25-0.39',p:2});else if(r.gol>=.15)b.push({n:'Gol/p 0.15-0.24',p:1});else b.push({n:'Gol/p < 0.15',p:0});if(r.tiriPorta>=2)b.push({n:'TiP >= 2.0',p:2.5});else if(r.tiriPorta>=1.5)b.push({n:'TiP 1.5-1.99',p:1.5});else if(r.tiriPorta>=1)b.push({n:'TiP 1.0-1.49',p:1});else b.push({n:'TiP < 1.0',p:0});if(r.rit>=5)b.push({n:'Ritardo >= 5',p:2});else if(r.rit>=3)b.push({n:'Ritardo 3-4',p:1.5});else if(r.rit>=1)b.push({n:'Ritardo 1-2',p:.5});else b.push({n:'Ritardo 0',p:0});if(r.tiriTot>=3)b.push({n:'TT >= 3.0',p:1.5});else if(r.tiriTot>=2)b.push({n:'TT 2.0-2.99',p:1});else b.push({n:'TT < 2.0',p:0});if(r.min>=70)b.push({n:'Minuti >= 70',p:.5});else b.push({n:'Minuti < 70',p:0});const tot=b.reduce((s,x)=>s+x.p,0);return{breakdown:b,total:tot,max:9.5,level:tot>=7?'hot':tot>=5?'warm':'mild'};}
 
-  function isValueSign(quotaReale, quotaDM, spread){return spread>0.15&&quotaReale>1.01&&quotaReale<3&&quotaDM>0;}
-  function analyzeQuoteMatch(r){const value1=isValueSign(r.r1,r.dm1,r.spread1);const valueX=isValueSign(r.rx,r.dmx,r.spreadX);const value2=isValueSign(r.r2,r.dm2,r.spread2);let golSide=null;if(value1&&!value2)golSide='casa';else if(value2&&!value1)golSide='ospite';else if(value1&&value2)golSide='entrambe';else if(valueX)golSide='pareggio';const score=(value1?r.spread1:0)+(valueX?r.spreadX:0)+(value2?r.spread2:0);return {value1,valueX,value2,golSide,score};}
-  function gzProbability(gz){if(gz===null)return {label:'N/D',desc:'Dato mancante',type:'nd'};if(gz<-1800)return {label:'U2.5 64%',desc:'Under 2.5 al 64%',type:'under'};if(gz<-1200)return {label:'U3.5 81%',desc:'Under 3.5 al 81%',type:'under'};if(gz>5000)return {label:'Ov2.5 64%',desc:'Over 2.5 al 64%',type:'over'};if(gz>1000)return {label:'Ov1.5 80%',desc:'Over 1.5 al 80%',type:'over'};if(gz>-200&&gz<200)return {label:'Ov0.5 95%',desc:'Over 0.5 al 95%',type:'over'};return {label:'Normale',desc:'Nessuna indicazione forte',type:'neutral'};}
-  function getGzAlignment(evento,requiredType){if(!ST.gz.length)return null;const matchGz=ST.gz.find(g=>normName(g.evento)===normName(evento));if(!matchGz)return null;const prob=gzProbability(matchGz.gz);const aligned=(requiredType==='over'&&prob.type==='over')||(requiredType==='under'&&prob.type==='under');return {gz:matchGz.gz,prob,aligned};}
-  function getQuoteAlignment(evento){if(!ST.quoteValore.length)return null;const matchQv=ST.quoteValore.find(q=>normName(q.match)===normName(evento));if(!matchQv)return null;const analysis=analyzeQuoteMatch(matchQv);if(!analysis.golSide)return null;return {golSide:analysis.golSide,score:analysis.score,value1:analysis.value1,valueX:analysis.valueX,value2:analysis.value2};}
-  function marketSupportsQuote(market,qv){if(!qv)return false;if(market==='ov05')return ['casa','ospite','entrambe'].includes(qv.golSide);if(market==='gg')return qv.golSide==='entrambe';if(market==='o25')return ['casa','ospite','entrambe'].includes(qv.golSide);if(market==='u25')return qv.golSide==='pareggio';if(market==='mg13')return ['casa','ospite','pareggio'].includes(qv.golSide);return false;}
-  function marketSupportsGz(market,gz){if(!gz)return false;if(['ov05','gg','o25'].includes(market))return gz.prob.type==='over';if(market==='u25')return gz.prob.type==='under';if(market==='mg13')return ['over','under','neutral'].includes(gz.prob.type);return false;}
-  function getDataMiningForMatch(evento) {if (!ST.dataMining || !ST.dataMining.length) return null;const normEv = normName(evento);return ST.dataMining.find(dm => normName(dm.match) === normEv) || null;}
-
-  function ov05M1(r){return r.ind<320&&r.delta<-20&&r.diff<0}
-  function ov05AFF(r){const b=[];if(r.ind<280)b.push({n:'IND < 280',p:2});else if(r.ind<320)b.push({n:'IND 280-319',p:1.5});else if(r.ind<330)b.push({n:'IND 320-329',p:1});else b.push({n:'IND >= 330',p:0});if(r.delta<=-20)b.push({n:'Delta <= -20%',p:2});else if(r.delta<=-5)b.push({n:'Delta -19 a -5%',p:1});else if(r.delta<=0)b.push({n:'Delta -4.9 a 0%',p:.5});else b.push({n:'Delta > 0%',p:0});if(r.diff<0)b.push({n:'Diff < 0',p:1.5});else if(r.diff<=.2)b.push({n:'Diff 0-0.20',p:.5});else b.push({n:'Diff > 0.20',p:0});if(r.mge>=3.2)b.push({n:'MGE >= 3.20',p:1.5});else if(r.mge>=2.8)b.push({n:'MGE 2.80-3.19',p:1});else if(r.mge>=2.5)b.push({n:'MGE 2.50-2.79',p:.5});else b.push({n:'MGE < 2.50',p:0});b.push(r.cov05>=75?{n:'COv05% >= 75',p:.75}:{n:'COv05% < 75',p:0});b.push(r.oov05>=75?{n:'OOv05% >= 75',p:.75}:{n:'OOv05% < 75',p:0});b.push(r.qrGG>0&&r.qrO25>0&&r.qrGG<r.qrO25?{n:'QrGG < QrO25',p:.75}:{n:'QrGG >= QrO25',p:0});if(r.qrOv05>=1.15&&r.qrOv05<=1.30)b.push({n:'QOv05 1.15-1.30',p:.75});else if(r.qrOv05>=1.31&&r.qrOv05<=1.40)b.push({n:'QOv05 1.31-1.40',p:.5});else b.push({n:'QOv05 fuori range',p:0});const[ctC,ctO]=r.u5ct;if(ctC>=3&&ctO>=3)b.push({n:'U5CT entrambe >=3',p:.75});else if(ctC>=3||ctO>=3)b.push({n:'U5CT una >=3',p:.25});else b.push({n:'U5CT < 3',p:0});const[uC,uO]=r.u5;if(uC>=3&&uO>=3)b.push({n:'U5 entrambe >=3',p:.5});else if(uC>=3||uO>=3)b.push({n:'U5 una >=3',p:.15});else b.push({n:'U5 < 3',p:0});const missCT=(5-ctC)+(5-ctO);if(missCT>=7)b.push({n:'Ritardo CT >=7/10',p:.75});else if(missCT>=5)b.push({n:'Ritardo CT 5-6/10',p:.35});else b.push({n:'Ritardo CT <5',p:0});const tot=b.reduce((s,x)=>s+x.p,0);return {breakdown:b,total:tot,aff:tot>=8.5?5:tot>=7?4:tot>=5.5?3:tot>=4?2:1,max:12.9};}
-  function ggM1(r){return r.igbc>=150&&r.igbo>=150&&r.s12<150&&r.pgg>=55}
-  function ggAFF(r){const b=[];if(r.igbc>=200)b.push({n:'IGBc >= 200',p:2});else if(r.igbc>=150)b.push({n:'IGBc 150-199',p:1.5});else if(r.igbc>=100)b.push({n:'IGBc 100-149',p:.75});else b.push({n:'IGBc < 100',p:0});if(r.igbo>=200)b.push({n:'IGBo >= 200',p:2});else if(r.igbo>=150)b.push({n:'IGBo 150-199',p:1.5});else if(r.igbo>=100)b.push({n:'IGBo 100-149',p:.75});else b.push({n:'IGBo < 100',p:0});if(r.s12<80)b.push({n:'S1-S2 < 80',p:2});else if(r.s12<150)b.push({n:'S1-S2 80-149',p:1.5});else if(r.s12<300)b.push({n:'S1-S2 150-299',p:.75});else b.push({n:'S1-S2 >= 300',p:0});if(r.pgg>=65)b.push({n:'PGG >= 65%',p:1.5});else if(r.pgg>=55)b.push({n:'PGG 55-64%',p:1});else if(r.pgg>=45)b.push({n:'PGG 45-54%',p:.5});else b.push({n:'PGG < 45%',p:0});if(r.diff<-.5)b.push({n:'Diff < -0.5',p:1.5});else if(r.diff<=0)b.push({n:'Diff -0.5 a 0',p:.75});else b.push({n:'Diff > 0',p:0});if(r.mge>=3)b.push({n:'MGE >= 3.0',p:1.5});else if(r.mge>=2.5)b.push({n:'MGE 2.50-2.99',p:.75});else b.push({n:'MGE < 2.50',p:0});if(r.qov25>0&&r.qov25<1.7)b.push({n:'qOv2.5 < 1.70',p:.75});else if(r.qov25<=2)b.push({n:'qOv2.5 1.70-2.00',p:.25});else b.push({n:'qOv2.5 > 2.00',p:0});const tot=b.reduce((s,x)=>s+x.p,0);return {breakdown:b,total:tot,aff:tot>=8.5?5:tot>=7?4:tot>=5.5?3:tot>=4?2:1,max:11.25};}
-  function o25M1(r){return r.igbt>=300&&r.mge>=3&&r.diff<=0}
-  function o25AFF(r){const b=[];if(r.igbt>=400)b.push({n:'IGBt >= 400',p:2.5});else if(r.igbt>=350)b.push({n:'IGBt 350-399',p:2});else if(r.igbt>=300)b.push({n:'IGBt 300-349',p:1.5});else if(r.igbt>=250)b.push({n:'IGBt 250-299',p:.75});else b.push({n:'IGBt < 250',p:0});if(r.mge>=3.5)b.push({n:'MGE >= 3.50',p:2});else if(r.mge>=3)b.push({n:'MGE 3.00-3.49',p:1.5});else if(r.mge>=2.5)b.push({n:'MGE 2.50-2.99',p:.5});else b.push({n:'MGE < 2.50',p:0});if(r.diff<-1)b.push({n:'Diff < -1.0',p:2});else if(r.diff<-.5)b.push({n:'Diff -1.0 a -0.5',p:1.5});else if(r.diff<=0)b.push({n:'Diff -0.5 a 0',p:.75});else if(r.diff<=.3)b.push({n:'Diff 0-0.30',p:.25});else b.push({n:'Diff > 0.30',p:0});let s12p=0,s12n='';if(r.igbc>=400||r.igbo>=400){s12p=1.5;s12n='IGBc/o >= 400';}else if(r.s12<100){s12p=1.5;s12n='S1-S2 < 100';}else if(r.s12<200){s12p=1;s12n='S1-S2 100-199';}else if(r.s12<350){s12p=.5;s12n='S1-S2 200-349';}else{s12p=0;s12n='S1-S2 >= 350';}b.push({n:s12n,p:s12p});if(r.pgg>=65)b.push({n:'PGG >= 65%',p:1});else if(r.pgg>=55)b.push({n:'PGG 55-64%',p:.5});else if(r.pgg>=45)b.push({n:'PGG 45-54%',p:.25});else b.push({n:'PGG < 45%',p:0});if(r.qov25>0&&r.qov25<1.45)b.push({n:'qOv2.5 < 1.45',p:1.5});else if(r.qov25<=1.65)b.push({n:'qOv2.5 1.45-1.65',p:1});else if(r.qov25<=1.85)b.push({n:'qOv2.5 1.66-1.85',p:.5});else b.push({n:'qOv2.5 > 1.85',p:0});const tot=b.reduce((s,x)=>s+x.p,0);return {breakdown:b,total:tot,aff:tot>=8.5?5:tot>=7?4:tot>=5.5?3:tot>=4?2:1,max:10.5};}
-  function u25M1(r){return r.diff>1.5&&r.mge>0&&r.mge<3}
-  function u25AFF(r){const b=[];if(r.diff>=2)b.push({n:'Diff >= 2.0 (sovra)',p:2.5});else if(r.diff>=1.5)b.push({n:'Diff 1.5-1.99',p:2});else if(r.diff>=1)b.push({n:'Diff 1.0-1.49',p:1});else if(r.diff>=.5)b.push({n:'Diff 0.5-0.99',p:.5});else b.push({n:'Diff < 0.5',p:0});if(r.mge>0&&r.mge<2)b.push({n:'MGE < 2.00',p:2.5});else if(r.mge<2.5)b.push({n:'MGE 2.00-2.49',p:2});else if(r.mge<3)b.push({n:'MGE 2.50-2.99',p:1});else b.push({n:'MGE >= 3.00',p:0});if(r.qov25>=2.3)b.push({n:'qOv2.5 >= 2.30',p:1.5});else if(r.qov25>=2)b.push({n:'qOv2.5 2.00-2.29',p:1});else if(r.qov25>=1.8)b.push({n:'qOv2.5 1.80-1.99',p:.5});else b.push({n:'qOv2.5 < 1.80',p:0});if(r.pgg>0&&r.pgg<35)b.push({n:'PGG < 35%',p:1.5});else if(r.pgg<45)b.push({n:'PGG 35-44%',p:1});else if(r.pgg<55)b.push({n:'PGG 45-54%',p:.5});else if(r.pgg>0)b.push({n:'PGG >= 55%',p:0});else b.push({n:'PGG N/D',p:0});if(r.igbt<200)b.push({n:'IGBt < 200',p:1.5});else if(r.igbt<250)b.push({n:'IGBt 200-249',p:1});else if(r.igbt<300)b.push({n:'IGBt 250-299',p:.5});else b.push({n:'IGBt >= 300',p:0});if(r.s12>=400)b.push({n:'S1-S2 >= 400',p:1});else if(r.s12>=200)b.push({n:'S1-S2 200-399',p:.5});else b.push({n:'S1-S2 < 200',p:0});const o25a=o25AFF(r);if(o25a.aff<=1)b.push({n:'Ov2.5 AFF 1 (conferma)',p:1.5});else if(o25a.aff<=2)b.push({n:'Ov2.5 AFF 2',p:.75});else b.push({n:'Ov2.5 AFF >= 3',p:0});const tot=b.reduce((s,x)=>s+x.p,0);return {breakdown:b,total:tot,aff:tot>=9?5:tot>=7.5?4:tot>=6?3:tot>=4.5?2:1,max:12};}
-  function mg13M1C(r){return r.ich>=300&&r.ich<=350&&r.varc>=30}
-  function mg13M1O(r){return r.ica>=300&&r.ica<=350&&r.varo>=30}
-  function mg13AFF_C(r){const b=[];if(r.ich<=300)b.push({n:'ICH <= 300',p:2.5});else if(r.ich<=320)b.push({n:'ICH 301-320',p:2});else if(r.ich<=350)b.push({n:'ICH 321-350',p:1.5});else if(r.ich<=400)b.push({n:'ICH 351-400',p:.5});else b.push({n:'ICH > 400',p:0});if(r.varc>=40)b.push({n:'VarC >= 40%',p:2});else if(r.varc>=30)b.push({n:'VarC 30-39%',p:1.5});else if(r.varc>=20)b.push({n:'VarC 20-29%',p:.5});else b.push({n:'VarC < 20%',p:0});if(r.mgfc>=1.5&&r.mgfc<=2.5)b.push({n:'MGFC 1.5-2.5',p:1.5});else if(r.mgfc>=1&&r.mgfc<1.5)b.push({n:'MGFC 1.0-1.49',p:1});else if(r.mgfc>2.5&&r.mgfc<=3)b.push({n:'MGFC 2.51-3.0',p:.75});else b.push({n:'MGFC fuori range',p:0});if(r.vu5c>=60)b.push({n:'VU5C >= 60%',p:1});else if(r.vu5c>=40)b.push({n:'VU5C 40-59%',p:.5});else b.push({n:'VU5C < 40%',p:0});if(r.q1>=1.5&&r.q1<=2.5)b.push({n:'Q1 1.50-2.50',p:1});else if((r.q1>=1.2&&r.q1<1.5)||(r.q1>2.5&&r.q1<=4))b.push({n:'Q1 ok',p:.5});else b.push({n:'Q1 estrema',p:0});if(r.mgso>=1.5)b.push({n:'MGSO >= 1.5',p:1});else if(r.mgso>=1)b.push({n:'MGSO 1.0-1.49',p:.5});else b.push({n:'MGSO < 1.0',p:0});if(r.ritc>=3)b.push({n:'RitC >= 3',p:.75});else if(r.ritc>=1)b.push({n:'RitC 1-2',p:.25});else b.push({n:'RitC 0',p:0});const tot=b.reduce((s,x)=>s+x.p,0);return {breakdown:b,total:tot,aff:tot>=8?5:tot>=6.5?4:tot>=5?3:tot>=3.5?2:1,max:9.75};}
-  function mg13AFF_O(r){const b=[];if(r.ica<=300)b.push({n:'ICA <= 300',p:2.5});else if(r.ica<=320)b.push({n:'ICA 301-320',p:2});else if(r.ica<=350)b.push({n:'ICA 321-350',p:1.5});else if(r.ica<=400)b.push({n:'ICA 351-400',p:.5});else b.push({n:'ICA > 400',p:0});if(r.varo>=40)b.push({n:'VarO >= 40%',p:2});else if(r.varo>=30)b.push({n:'VarO 30-39%',p:1.5});else if(r.varo>=20)b.push({n:'VarO 20-29%',p:.5});else b.push({n:'VarO < 20%',p:0});if(r.mgfo>=1.5&&r.mgfo<=2.5)b.push({n:'MGFO 1.5-2.5',p:1.5});else if(r.mgfo>=1&&r.mgfo<1.5)b.push({n:'MGFO 1.0-1.49',p:1});else if(r.mgfo>2.5&&r.mgfo<=3)b.push({n:'MGFO 2.51-3.0',p:.75});else b.push({n:'MGFO fuori range',p:0});if(r.vu5o>=60)b.push({n:'VU5O >= 60%',p:1});else if(r.vu5o>=40)b.push({n:'VU5O 40-59%',p:.5});else b.push({n:'VU5O < 40%',p:0});if(r.q2>=2&&r.q2<=4)b.push({n:'Q2 2.00-4.00',p:1});else if(r.q2>4&&r.q2<=6)b.push({n:'Q2 4.01-6.00',p:.5});else b.push({n:'Q2 estrema',p:0});if(r.mgsc>=1.5)b.push({n:'MGSC >= 1.5',p:1});else if(r.mgsc>=1)b.push({n:'MGSC 1.0-1.49',p:.5});else b.push({n:'MGSC < 1.0',p:0});if(r.rito>=3)b.push({n:'RitO >= 3',p:.75});else if(r.rito>=1)b.push({n:'RitO 1-2',p:.25});else b.push({n:'RitO 0',p:0});const tot=b.reduce((s,x)=>s+x.p,0);return {breakdown:b,total:tot,aff:tot>=8?5:tot>=6.5?4:tot>=5?3:tot>=3.5?2:1,max:9.75};}
-
-  function scoreAmm(r){const b=[];if(r.amm>=.4)b.push({n:'Amm/p >= 0.40',p:3});else if(r.amm>=.3)b.push({n:'Amm/p 0.30-0.39',p:2.5});else if(r.amm>=.2)b.push({n:'Amm/p 0.20-0.29',p:1.5});else b.push({n:'Amm/p < 0.20',p:0});if(r.falli>=2.5)b.push({n:'Falli >= 2.5',p:2.5});else if(r.falli>=2)b.push({n:'Falli 2.0-2.49',p:2});else if(r.falli>=1.5)b.push({n:'Falli 1.5-1.99',p:1});else b.push({n:'Falli < 1.5',p:0});if(r.rit>=5)b.push({n:'Ritardo >= 5',p:2});else if(r.rit>=3)b.push({n:'Ritardo 3-4',p:1.5});else if(r.rit>=1)b.push({n:'Ritardo 1-2',p:.5});else b.push({n:'Ritardo 0',p:0});if(r.tackle>=2)b.push({n:'Tackle >= 2.0',p:1.5});else if(r.tackle>=1)b.push({n:'Tackle 1.0-1.99',p:.75});else b.push({n:'Tackle < 1.0',p:0});if(r.min>=70)b.push({n:'Minuti >= 70',p:.5});else b.push({n:'Minuti < 70',p:0});const tot=b.reduce((s,x)=>s+x.p,0);return {breakdown:b,total:tot,max:9.5,level:tot>=7?'hot':tot>=5?'warm':'mild'};}
-  function scoreGol(r){const b=[];if(r.gol>=.4)b.push({n:'Gol/p >= 0.40',p:3});else if(r.gol>=.25)b.push({n:'Gol/p 0.25-0.39',p:2});else if(r.gol>=.15)b.push({n:'Gol/p 0.15-0.24',p:1});else b.push({n:'Gol/p < 0.15',p:0});if(r.tiriPorta>=2)b.push({n:'TiP >= 2.0',p:2.5});else if(r.tiriPorta>=1.5)b.push({n:'TiP 1.5-1.99',p:1.5});else if(r.tiriPorta>=1)b.push({n:'TiP 1.0-1.49',p:1});else b.push({n:'TiP < 1.0',p:0});if(r.rit>=5)b.push({n:'Ritardo >= 5',p:2});else if(r.rit>=3)b.push({n:'Ritardo 3-4',p:1.5});else if(r.rit>=1)b.push({n:'Ritardo 1-2',p:.5});else b.push({n:'Ritardo 0',p:0});if(r.tiriTot>=3)b.push({n:'TT >= 3.0',p:1.5});else if(r.tiriTot>=2)b.push({n:'TT 2.0-2.99',p:1});else b.push({n:'TT < 2.0',p:0});if(r.min>=70)b.push({n:'Minuti >= 70',p:.5});else b.push({n:'Minuti < 70',p:0});const tot=b.reduce((s,x)=>s+x.p,0);return {breakdown:b,total:tot,max:9.5,level:tot>=7?'hot':tot>=5?'warm':'mild'};}
-
-  // ==================== CURRENT ROWS (ADATTATE PER DASHBOARD) ====================
-  function currentRows(){
-    switch(ST.market){
-      case 'ov05': return getOv05Rows(); case 'gg': return getGgRows(); case 'o25': return getO25Rows(); case 'u25': return getU25Rows();
-      case 'mg13': return getMgRows(); case 'ia': return getIaRows(); case 'players': return getPlayerRows();
-      case 'quote': return getQuoteRows(); case 'gz': return getGzRows(); case 'gen': return getGeneralRows();
-      case 'hub': return getHubRows(); case 'storico': return getHistoryRows(); case 'datamining': return getDataMiningRows();
-      default: return [];
-    }
-  }
-  function sortRows(rows, scoreKey='score'){const arr=[...rows];if(ST.sortMode==='time')return arr.sort(sortTime);return arr.sort((a,b)=>(b[scoreKey]??0)-(a[scoreKey]??0)||sortTime(a,b));}
+  // ==================== GETTERS PER MERCATO (ADATTATI) ====================
   function getOv05Rows(){
-    let rows = []; if (ST.ov05.length) { rows = ST.ov05.map(r => { const a = ov05AFF(r); const gz = getGzAlignment(r.evento, 'over'); const qv = getQuoteAlignment(r.evento); const dm = getDataMiningForMatch(r.evento); const dmFactor = getDMFactor(dm, 'ov05'); const combinedScore = a.total * dmFactor; const combinedAff = Math.min(5, Math.round(a.aff * dmFactor)); return { ...r, score: combinedScore, aff: combinedAff, originalScore: a.total, originalAff: a.aff, breakdown: a.breakdown, marketLabel: 'Ov 0.5PT', m1: ov05M1(r), gzAlign: gz, qvAlign: qv, dm }; }); }
-    else if (ST.dataMining.length) { rows = ST.dataMining.map(dm => ({ ora: dm.ora, evento: dm.match, ind: dm.ic || 999, delta: 0, diff: dm.diff, mge: dm.mge, score: 0, aff: dm.np >= 30 ? 4 : dm.np >= 15 ? 3 : 2, breakdown: [], marketLabel: 'Ov 0.5PT', m1: false, gzAlign: null, qvAlign: null, dm })); }
-    if(ST.sub==='m1')rows=rows.filter(r=>r.m1); rows=filt(rows); return sortRows(rows,'score');
-  }
-  function getGgRows(){
-    let rows = []; if (ST.ggov25.length) { rows = ST.ggov25.map(r => { const a = ggAFF(r); const gz = getGzAlignment(r.evento, 'over'); const qv = getQuoteAlignment(r.evento); const dm = getDataMiningForMatch(r.evento); const dmFactor = getDMFactor(dm, 'gg'); const combinedScore = a.total * dmFactor; const combinedAff = Math.min(5, Math.round(a.aff * dmFactor)); return { ...r, score: combinedScore, aff: combinedAff, originalScore: a.total, originalAff: a.aff, breakdown: a.breakdown, marketLabel: 'GG', m1: ggM1(r), gzAlign: gz, qvAlign: qv, dm }; }); }
-    else if (ST.dataMining.length) { rows = ST.dataMining.map(dm => ({ ora: dm.ora, evento: dm.match, igbc: dm.igbc, igbo: dm.igbo, igbt: 0, mge: dm.mge, diff: dm.diff, pgg: 0, s12: 0, qov25: dm.qOV25, score: 0, aff: dm.np >= 30 ? 4 : dm.np >= 15 ? 3 : 2, breakdown: [], marketLabel: 'GG', m1: false, gzAlign: null, qvAlign: null, dm })); }
-    if(ST.sub==='m1')rows=rows.filter(r=>r.m1); rows=filtLeague(rows,'lega'); return sortRows(rows,'score');
-  }
-  function getO25Rows(){
-    let rows = []; if (ST.ggov25.length) { rows = ST.ggov25.map(r => { const a = o25AFF(r); const gz = getGzAlignment(r.evento, 'over'); const qv = getQuoteAlignment(r.evento); const dm = getDataMiningForMatch(r.evento); const dmFactor = getDMFactor(dm, 'o25'); const combinedScore = a.total * dmFactor; const combinedAff = Math.min(5, Math.round(a.aff * dmFactor)); return { ...r, score: combinedScore, aff: combinedAff, originalScore: a.total, originalAff: a.aff, breakdown: a.breakdown, marketLabel: 'Ov 2.5', m1: o25M1(r), gzAlign: gz, qvAlign: qv, dm }; }); }
-    else if (ST.dataMining.length) { rows = ST.dataMining.map(dm => ({ ora: dm.ora, evento: dm.match, igbt: 0, mge: dm.mge, diff: dm.diff, pgg: 0, s12: 0, qov25: dm.qOV25, score: 0, aff: dm.np >= 30 ? 4 : dm.np >= 15 ? 3 : 2, breakdown: [], marketLabel: 'Ov 2.5', m1: false, gzAlign: null, qvAlign: null, dm })); }
-    if(ST.sub==='m1')rows=rows.filter(r=>r.m1); rows=filtLeague(rows,'lega'); return sortRows(rows,'score');
-  }
-  function getU25Rows(){
-    let rows = []; if (ST.ggov25.length) { rows = ST.ggov25.map(r => { const a = u25AFF(r); const gz = getGzAlignment(r.evento, 'under'); const qv = getQuoteAlignment(r.evento); const dm = getDataMiningForMatch(r.evento); const dmFactor = getDMFactor(dm, 'u25'); const combinedScore = a.total * dmFactor; const combinedAff = Math.min(5, Math.round(a.aff * dmFactor)); return { ...r, score: combinedScore, aff: combinedAff, originalScore: a.total, originalAff: a.aff, breakdown: a.breakdown, marketLabel: 'U 2.5', m1: u25M1(r), gzAlign: gz, qvAlign: qv, dm }; }); }
-    else if (ST.dataMining.length) { rows = ST.dataMining.map(dm => ({ ora: dm.ora, evento: dm.match, igbt: 0, mge: dm.mge, diff: dm.diff, pgg: 0, s12: 0, qov25: dm.qOV25, score: 0, aff: dm.np >= 30 ? 4 : dm.np >= 15 ? 3 : 2, breakdown: [], marketLabel: 'U 2.5', m1: false, gzAlign: null, qvAlign: null, dm })); }
-    if(ST.sub==='m1')rows=rows.filter(r=>r.m1); rows=filtLeague(rows,'lega'); return sortRows(rows,'score');
-  }
-  function getMgRows(){
-    let rows = []; if (ST.mg13.length) { rows = ST.mg13.map(r => { const house = mg13AFF_C(r), away = mg13AFF_O(r); const useHouse = ST.detSide==='ospite'?false:ST.sub!=='ospite'; const aff = ST.sub==='ospite'?away.aff:house.aff; const dm = getDataMiningForMatch(r.evento); const dmFactor = getDMFactor(dm, 'mg13'); const combinedScore = Math.max(house.total, away.total) * dmFactor; const combinedAff = Math.min(5, Math.round(aff * dmFactor)); return { ...r, score: combinedScore, aff: combinedAff, originalScore: Math.max(house.total, away.total), originalAff: aff, house, away, breakdown: ST.sub==='ospite'?away.breakdown:house.breakdown, side: ST.sub==='ospite'?'ospite':'casa', m1c: mg13M1C(r), m1o: mg13M1O(r), dm }; }); }
-    else if (ST.dataMining.length) { rows = ST.dataMining.map(dm => { const house = { total: 0, aff: 2, breakdown: [] }, away = { total: 0, aff: 2, breakdown: [] }; return { ora: dm.ora, evento: dm.match, ich:0, ica:0, house, away, score:0, aff: dm.np>=30?4:dm.np>=15?3:2, side:'casa', m1c:false, m1o:false, dm }; }); }
-    if(ST.sub==='m1')rows=rows.filter(r=>r.m1c||r.m1o); rows=filt(rows); if(ST.sortMode==='time')return rows.sort(sortTime); return rows.sort((a,b)=>{const sa=ST.sub==='ospite'?a.away.total:a.house.total;const sb=ST.sub==='ospite'?b.away.total:b.house.total;return sb-sa||sortTime(a,b);});
-  }
-  function getIaRows(){let rows=ST.ia.map(r=>({...r,score:r.avgAff,aff:r.maxAff>=4?5:r.maxAff>=3?4:r.maxAff>=2.5?3:r.maxAff>=1.5?2:1}));if(ST.iaCat!=='all')rows=rows.filter(r=>r.stats.some(s=>s.key===ST.iaCat));rows=filtLeague(rows,'lega');return sortRows(rows,'score');}
-  function getPlayerRows(){const isCards=ST.plSub==='cards';let rows=(isCards?ST.plCards:ST.plShots).map(r=>{const a=isCards?scoreAmm(r):scoreGol(r);return {...r,score:a.total,level:a.level,breakdown:a.breakdown,aff:a.total>=7?5:a.total>=5?4:a.total>=3.5?3:a.total>=2?2:1,marketLabel:isCards?'Cartellini':'Gol/Tiri'};});rows=filtLeague(rows,'lega');return sortRows(rows,'score');}
-  function getQuoteRows(){let rows=ST.quoteValore.map(r=>{const a=analyzeQuoteMatch(r);return {...r,score:a.score,...a};});if(ST.quoteFilter!=='all')rows=rows.filter(r=>r.golSide===ST.quoteFilter);rows=filt(rows);return ST.sortMode==='time'?[...rows].sort(sortTime):[...rows].sort((a,b)=>b.score-a.score||sortTime(a,b));}
-  function getGzRows(){let rows=ST.gz.map(r=>({...r,prob:gzProbability(r.gz),score:Math.abs(r.gz||0)}));if(ST.gzFilter!=='all')rows=rows.filter(r=>r.prob.type===ST.gzFilter);rows=filtLeague(rows,'lega');if(ST.gzSort==='time'||ST.sortMode==='time')return [...rows].sort(sortTime);return [...rows].sort((a,b)=>Math.abs(b.gz||0)-Math.abs(a.gz||0)||sortTime(a,b));}
-  function getGeneralRows(){const rows=[];getOv05Rows().slice(0,5).forEach(r=>rows.push({ora:r.ora,evento:r.evento,market:'Ov 0.5PT',score:r.score,aff:r.aff,source:r,advice:r.aff>=4?'Linea prudente con buon supporto':'Segnale da confermare'}));getGgRows().slice(0,5).forEach(r=>rows.push({ora:r.ora,evento:r.evento,market:'GG',score:r.score,aff:r.aff,source:r,advice:r.gzAlign?.aligned&&r.qvAlign&&marketSupportsQuote('gg',r.qvAlign)?'GG sostenuto da GZ e 1X2':'GG interessante ma non pienamente convergente'}));getO25Rows().slice(0,5).forEach(r=>rows.push({ora:r.ora,evento:r.evento,market:'Ov 2.5',score:r.score,aff:r.aff,source:r,advice:r.gzAlign?.aligned?'Over supportato da GZ':'Over da verificare con le quote'}));getU25Rows().slice(0,5).forEach(r=>rows.push({ora:r.ora,evento:r.evento,market:'U 2.5',score:r.score,aff:r.aff,source:r,advice:r.gzAlign?.aligned?'Under coerente con GZ':'Under senza conferma piena'}));getMgRows().slice(0,5).forEach(r=>rows.push({ora:r.ora,evento:r.evento,market:'MG 1-3',score:Math.max(r.house.total,r.away.total),aff:Math.max(r.house.aff,r.away.aff),source:r,advice:'Mercato smart utile per match equilibrati'}));getIaRows().slice(0,5).forEach(r=>rows.push({ora:r.ora,evento:r.evento,market:'Stats IA',score:r.score,aff:r.aff,source:r,advice:'Supporto statistico accessorio'}));buildHubMatchMap().slice(0,5).forEach(r=>{if(r.advice.main)rows.push({ora:r.ora,evento:r.evento,market:'Pronostico finale',score:r.score,aff:r.aff,source:r,advice:r.advice.summary});});rows.sort((a,b)=>b.score-a.score||sortTime(a,b));return filt(rows);}
-  function getDataMiningRows(){let rows = ST.dataMining.map(dm => ({...dm, score: dm.np})); rows = filt(rows); if (ST.sortMode === 'time') return rows.sort(sortTime); return rows.sort((a,b) => b.np - a.np || sortTime(a,b));}
-
-  function buildHubMatchMap(){
-    const map={}; const ensure=(evento,ora='')=>{const k=normName(evento);if(!k)return null;if(!map[k])map[k]={key:k,evento:evento,ora:ora,ov05:null,gg:null,o25:null,u25:null,mg13:null,ia:null,qv:null,gz:null,dm:null};return map[k];};
-    getOv05Rows().forEach(r=>{const m=ensure(r.evento,r.ora);if(m&&!m.ov05)m.ov05=r;});
-    getGgRows().forEach(r=>{const m=ensure(r.evento,r.ora);if(m&&!m.gg)m.gg=r;});
-    getO25Rows().forEach(r=>{const m=ensure(r.evento,r.ora);if(m&&!m.o25)m.o25=r;});
-    getU25Rows().forEach(r=>{const m=ensure(r.evento,r.ora);if(m&&!m.u25)m.u25=r;});
-    getMgRows().forEach(r=>{const m=ensure(r.evento,r.ora);if(m&&!m.mg13)m.mg13={...r,aff:Math.max(r.house.aff,r.away.aff),score:Math.max(r.house.total,r.away.total)};});
-    getIaRows().forEach(r=>{const m=ensure(r.evento,r.ora);if(m&&!m.ia)m.ia=r;});
-    ST.quoteValore.forEach(r=>{const m=ensure(r.match,r.ora);if(m&&!m.qv)m.qv={...r,...analyzeQuoteMatch(r)};});
-    ST.gz.forEach(r=>{const m=ensure(r.evento,r.ora);if(m&&!m.gz)m.gz={...r,prob:gzProbability(r.gz)};});
-    ST.dataMining.forEach(r=>{const m=ensure(r.match,r.ora);if(m&&!m.dm)m.dm=r;});
-    const rows=[]; for(const m of Object.values(map)){
-      const gzOver=!!(m.gz&&m.gz.prob.type==='over'), gzUnder=!!(m.gz&&m.gz.prob.type==='under'), gzMid=!!(m.gz&&m.gz.prob.type==='neutral');
-      const qvForGoals=!!(m.qv&&['casa','ospite','entrambe'].includes(m.qv.golSide)), qvBoth=!!(m.qv&&m.qv.golSide==='entrambe'), qvTight=!!(m.qv&&m.qv.golSide==='pareggio');
-      let coverage=[m.ov05,m.gg||m.o25||m.u25,m.qv,m.gz,m.dm].filter(Boolean).length; if(m.dm && m.dm.np>=30) coverage++;
-      let conflicts=(m.o25&&gzUnder?1:0)+(m.u25&&gzOver?1:0)+(m.gg&&m.qv&&m.qv.golSide==='pareggio'?1:0);
-      if(m.dm){ if(m.o25&&m.o25.aff>=4&&m.dm.pOV25<45) conflicts++; if(m.u25&&m.u25.aff>=4&&m.dm.pUN35<60) conflicts++; if(m.gg&&m.gg.aff>=4&&m.dm.pGG<45) conflicts++; }
-      const conv=(m.gz?1:0)+(m.qv?1:0)+(m.ia&&m.ia.avgAff>=2.5?1:0); const h={...m,gzOver,gzUnder,gzMid,qvForGoals,qvBoth,qvTight,coverage,conflicts,conv};
-      const advice=hubAdvice(h); rows.push({...h,advice,score:advice.main?advice.main.score:0,aff:Math.max(1,Math.min(5,coverage+conv-conflicts))});
-    }
+    let rows = ST.ov05.length ? ST.ov05.map(r => { const a = ov05AFF(r); const gz = getGzAlignment(r.evento, 'over'); const qv = getQuoteAlignment(r.evento); const dm = getDataMiningForMatch(r.evento); const dmFactor = getDMFactor(dm, 'ov05'); const combinedScore = a.total * dmFactor; const combinedAff = Math.min(5, Math.round(a.aff * dmFactor)); return { ...r, score: combinedScore, aff: combinedAff, originalScore: a.total, originalAff: a.aff, breakdown: a.breakdown, marketLabel: 'Ov 0.5PT', m1: ov05M1(r), gzAlign: gz, qvAlign: qv, dm }; }) : [];
     return rows.sort((a,b)=>b.score-a.score||sortTime(a,b));
   }
-  function getHubRows(){let rows=buildHubMatchMap();rows=filt(rows);return ST.sortMode==='time'?[...rows].sort(sortTime):rows;}
-  function hubAdvice(h){
-    const tips=[]; const hasTopPlusPotential = h.coverage >= 4 && h.conflicts === 0 && h.dm && h.dm.np >= 40;
-    if(h.o25&&h.o25.aff>=4&&h.gzOver&&h.qvForGoals) tips.push({market:'Ov 2.5', tier: hasTopPlusPotential?'TOP+':'TOP', score:(h.o25?.score||0)+(h.conv||0)+(hasTopPlusPotential?0.5:0), reason:'IGBt e MGE forti con conferma GZ over e 1X2 coerente'});
-    if(h.gg&&h.gg.aff>=4&&h.gzOver) tips.push({market:'GG', tier: hasTopPlusPotential?'TOP+':'TOP', score:(h.gg?.score||0)+(h.conv||0)*0.8+(hasTopPlusPotential?0.4:0), reason:'Segnale offensivo sostenuto da GZ over e indicatori GG'});
-    if(h.ov05&&h.ov05.aff>=4) tips.push({market:'Ov 0.5 PT', tier: hasTopPlusPotential?'TOP+':'SAFE', score:(h.ov05?.score||0)+(h.gzOver?0.6:0)+(h.qvForGoals?0.3:0)+(hasTopPlusPotential?0.3:0), reason:'Linea prudente supportata dall indicatore primo tempo'});
-    if(h.u25&&h.u25.aff>=4&&h.gzUnder) tips.push({market:'U 2.5', tier: hasTopPlusPotential?'TOP+':'TOP', score:(h.u25?.score||0)+(h.conv||0)+(hasTopPlusPotential?0.5:0), reason:'Profilo da under confermato da GZ'});
-    if(h.mg13&&h.mg13.aff>=4) tips.push({market:'MG 1-3', tier: hasTopPlusPotential?'TOP+':'SMART', score:(h.mg13?.score||0)+(h.gzMid?0.4:0)+(h.qvTight?0.3:0)+(hasTopPlusPotential?0.3:0), reason:'Mercato mirato per match controllato o equilibrio'});
-    if(!tips.length){
-      if(h.o25&&h.o25.aff>=4) tips.push({market:'Ov 2.5',tier:'WATCH',score:(h.o25?.score||0)+(h.gzOver?0.4:0),reason:'Buon segnale statistico, manca convergenza totale'});
-      if(h.gg&&h.gg.aff>=4) tips.push({market:'GG',tier:'WATCH',score:(h.gg?.score||0)+(h.gzOver?0.3:0),reason:'GG interessante ma non completamente confermato'});
-      if(h.ov05&&h.ov05.aff>=4) tips.push({market:'Ov 0.5 PT',tier:'SAFE',score:(h.ov05?.score||0)+(h.gzOver?0.4:0),reason:'Linea prudente anche senza piena convergenza'});
-      if(h.u25&&h.u25.aff>=4) tips.push({market:'U 2.5',tier:'WATCH',score:(h.u25?.score||0)+(h.gzUnder?0.4:0),reason:'Under leggibile ma con conferme parziali'});
-      if(h.mg13&&h.mg13.aff>=4) tips.push({market:h.mg13.side==='ospite'?'MG 1-3 Ospite':'MG 1-3 Casa',tier:'SMART',score:(h.mg13?.score||0),reason:'Multigol orientato sul lato migliore del match'});
-    }
-    if(!tips.length){
-      if(h.ov05) tips.push({market:'Ov 0.5 PT',tier:'LIGHT',score:h.ov05?.score||0,reason:'Unico segnale disponibile sul match'});
-      else if(h.o25) tips.push({market:'Ov 2.5',tier:'LIGHT',score:h.o25?.score||0,reason:'Segnale principale disponibile sul match'});
-      else if(h.u25) tips.push({market:'U 2.5',tier:'LIGHT',score:h.u25?.score||0,reason:'Segnale principale disponibile sul match'});
-      else if(h.gg) tips.push({market:'GG',tier:'LIGHT',score:h.gg?.score||0,reason:'Segnale principale disponibile sul match'});
-      else if(h.mg13) tips.push({market:h.mg13.side==='ospite'?'MG 1-3 Ospite':'MG 1-3 Casa',tier:'LIGHT',score:h.mg13?.score||0,reason:'Lettura MG con dati ancora incompleti'});
-    }
-    tips.sort((a,b)=>b.score-a.score); const main=tips[0]||null,alt=tips[1]||null;
-    let risk='Basso'; if(h.conflicts>=2) risk='Alto'; else if(h.conflicts===1) risk='Medio';
-    let summary='Nessun dato utile disponibile.';
-    if(main){ const confTxt=h.coverage>=3?'convergenza buona':h.coverage===2?'convergenza media':'copertura leggera'; summary=`${main.market} ${main.tier}: ${main.reason}. ${confTxt}, copertura ${h.coverage}/5, rischio ${risk}.`; }
-    return {tips,main,alt,risk,summary};
+  function getGgRows(){
+    let rows = ST.ggov25.length ? ST.ggov25.map(r => { const a = ggAFF(r); const gz = getGzAlignment(r.evento, 'over'); const qv = getQuoteAlignment(r.evento); const dm = getDataMiningForMatch(r.evento); const dmFactor = getDMFactor(dm, 'gg'); const combinedScore = a.total * dmFactor; const combinedAff = Math.min(5, Math.round(a.aff * dmFactor)); return { ...r, score: combinedScore, aff: combinedAff, originalScore: a.total, originalAff: a.aff, breakdown: a.breakdown, marketLabel: 'GG', m1: ggM1(r), gzAlign: gz, qvAlign: qv, dm }; }) : [];
+    return rows.sort((a,b)=>b.score-a.score||sortTime(a,b));
+  }
+  function getO25Rows(){
+    let rows = ST.ggov25.length ? ST.ggov25.map(r => { const a = o25AFF(r); const gz = getGzAlignment(r.evento, 'over'); const qv = getQuoteAlignment(r.evento); const dm = getDataMiningForMatch(r.evento); const dmFactor = getDMFactor(dm, 'o25'); const combinedScore = a.total * dmFactor; const combinedAff = Math.min(5, Math.round(a.aff * dmFactor)); return { ...r, score: combinedScore, aff: combinedAff, originalScore: a.total, originalAff: a.aff, breakdown: a.breakdown, marketLabel: 'Ov 2.5', m1: o25M1(r), gzAlign: gz, qvAlign: qv, dm }; }) : [];
+    return rows.sort((a,b)=>b.score-a.score||sortTime(a,b));
+  }
+  function getU25Rows(){
+    let rows = ST.ggov25.length ? ST.ggov25.map(r => { const a = u25AFF(r); const gz = getGzAlignment(r.evento, 'under'); const qv = getQuoteAlignment(r.evento); const dm = getDataMiningForMatch(r.evento); const dmFactor = getDMFactor(dm, 'u25'); const combinedScore = a.total * dmFactor; const combinedAff = Math.min(5, Math.round(a.aff * dmFactor)); return { ...r, score: combinedScore, aff: combinedAff, originalScore: a.total, originalAff: a.aff, breakdown: a.breakdown, marketLabel: 'U 2.5', m1: u25M1(r), gzAlign: gz, qvAlign: qv, dm }; }) : [];
+    return rows.sort((a,b)=>b.score-a.score||sortTime(a,b));
+  }
+  function getMgRows(side){
+    let rows = ST.mg13.length ? ST.mg13.map(r => { const house = mg13AFF_C(r), away = mg13AFF_O(r); const aff = side==='ospite'?away.aff:house.aff; const dm = getDataMiningForMatch(r.evento); const dmFactor = getDMFactor(dm, 'mg13'); const combinedScore = Math.max(house.total, away.total) * dmFactor; const combinedAff = Math.min(5, Math.round(aff * dmFactor)); return { ...r, score: combinedScore, aff: combinedAff, originalScore: Math.max(house.total, away.total), originalAff: aff, house, away, breakdown: side==='ospite'?away.breakdown:house.breakdown, side, m1c: mg13M1C(r), m1o: mg13M1O(r), dm }; }) : [];
+    return rows.sort((a,b)=>b.score-a.score||sortTime(a,b));
+  }
+  function getIaRows(){
+    let rows = ST.ia.map(r => ({...r, score: r.avgAff, aff: r.maxAff>=4?5:r.maxAff>=3?4:r.maxAff>=2.5?3:r.maxAff>=1.5?2:1}));
+    return rows.sort((a,b)=>b.score-a.score||sortTime(a,b));
+  }
+  function getPlayerRows(type){
+    const isCards = type==='cards';
+    let rows = (isCards?ST.plCards:ST.plShots).map(r => { const a = isCards?scoreAmm(r):scoreGol(r); return {...r, score:a.total, level:a.level, breakdown:a.breakdown, aff:a.total>=7?5:a.total>=5?4:a.total>=3.5?3:a.total>=2?2:1, marketLabel:isCards?'Cartellini':'Gol/Tiri'}; });
+    return rows.sort((a,b)=>b.score-a.score||sortTime(a,b));
+  }
+  function getQuoteRows(){
+    let rows = ST.quoteValore.map(r => { const a = analyzeQuoteMatch(r); return {...r, score:a.score, ...a}; });
+    return rows.sort((a,b)=>b.score-a.score||sortTime(a,b));
+  }
+  function getGzRows(){
+    let rows = ST.gz.map(r => ({...r, prob:gzProbability(r.gz), score:Math.abs(r.gz||0)}));
+    return rows.sort((a,b)=>Math.abs(b.gz||0)-Math.abs(a.gz||0)||sortTime(a,b));
   }
 
-  // ==================== STORICO ====================
-  const STORAGE_KEY='ma_storico_v1';
-  function safeLoadStorage(){try{return JSON.parse(localStorage.getItem(STORAGE_KEY)||'[]');}catch(e){return [];}}
-  function safeSaveStorage(rows){try{localStorage.setItem(STORAGE_KEY,JSON.stringify(rows));}catch(e){}}
-  ST.history=safeLoadStorage();
-  function sourceLabel(m){return ({ov05:'Ov 0.5 PT',gg:'GG',o25:'Ov 2.5',u25:'U 2.5',mg13:'MG 1-3',ia:'Stats IA',players:'Giocatori',quote:'1X2 Value',gz:'GZ Index',gen:'Generale',hub:'Match Hub',storico:'Storico',datamining:'DataMining'})[m]||m;}
-  function histCategoryFromRow(m,r){
-    if(m==='ov05') return 'Ov 0.5 PT'; if(m==='gg') return 'GG'; if(m==='o25') return 'Ov 2.5'; if(m==='u25') return 'U 2.5';
-    if(m==='mg13'){ if(r.side==='ospite'||ST.sub==='ospite') return 'MG 1-3 Ospite'; if(r.side==='casa'||ST.sub==='casa') return 'MG 1-3 Casa'; return 'MG 1-3 Casa'; }
-    if(m==='ia') return 'Stats IA'; if(m==='players') return ST.plSub==='cards'?'Giocatori Cartellini':'Giocatori Tiri/Gol'; if(m==='quote') return '1X2 Value';
-    if(m==='gz') return 'GZ Index'; if(m==='gen') return r.market||'Generale'; if(m==='hub') return r?.advice?.main?.market || 'Match Hub'; if(m==='datamining') return 'DataMining Plus';
-    return sourceLabel(m);
-  }
-  function histMatchName(m,r){return r.evento||r.match||r.partita||r.nome||'Pronostico';}
-  function buildHistoryEntry(r,m){
-    const category=histCategoryFromRow(m,r); const match=histMatchName(m,r); const source=sourceLabel(m);
-    const key=[category,match,r.ora||'',source].join('|').toLowerCase();
-    return {id:'h_'+Date.now()+'_'+Math.random().toString(36).slice(2,7),dedupe:key,createdAt:new Date().toISOString(),ora:r.ora||'',match,category,source,status:'pending',score:typeof r.score==='number'?r.score:null,aff:r.aff||null,note:'',rawMarket:m};
-  }
-  function addPickToHistory(r,m){
-    const item=buildHistoryEntry(r,m); const exists=ST.history.some(x=>x.dedupe===item.dedupe&&x.status==='pending');
-    if(exists){alert('Pronostico già presente nello storico.');return;}
-    ST.history.unshift(item); safeSaveStorage(ST.history); setUploadStatus(`Aggiunto allo storico: ${item.category} - ${item.match}`,'ok'); render();
-  }
-  function setHistoryStatus(id,status){const x=ST.history.find(v=>v.id===id); if(!x)return; x.status=status; x.updatedAt=new Date().toISOString(); safeSaveStorage(ST.history); render();}
-  function removeHistoryItem(id){ST.history=ST.history.filter(v=>v.id!==id); safeSaveStorage(ST.history); render();}
-  function clearHistoryResolved(){if(!confirm('Vuoi eliminare solo i pronostici già conclusi (vinte/perse)?'))return; ST.history=ST.history.filter(v=>v.status==='pending'); safeSaveStorage(ST.history); render();}
-  function clearAllHistory(){if(!confirm('ATTENZIONE: vuoi cancellare tutto lo storico in modo definitivo?'))return; ST.history=[]; safeSaveStorage(ST.history); render();}
-  function exportHistory(){try{const blob=new Blob([JSON.stringify(ST.history||[],null,2)],{type:'application/json'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='storico-pronostici.json'; document.body.appendChild(a); a.click(); setTimeout(()=>{URL.revokeObjectURL(a.href); a.remove();},300);}catch(e){alert('Export storico non riuscito.');}}
-  function getHistoryRows(){
-    let rows=[...(ST.history||[])]; if(ST.histStatus!=='all') rows=rows.filter(r=>r.status===ST.histStatus);
-    if(ST.histCategory!=='all') rows=rows.filter(r=>r.category===ST.histCategory);
-    if(ST.q) rows=rows.filter(r=>normName(`${r.match} ${r.category} ${r.source}`).includes(normName(ST.q)));
-    if(ST.sortMode==='time') rows.sort((a,b)=>(a.ora||'').localeCompare(b.ora||'')||String(a.match).localeCompare(String(b.match)));
-    else rows.sort((a,b)=>String(b.createdAt||'').localeCompare(String(a.createdAt||'')));
+  // ==================== CALCOLO RISULTATI PER MERCATO (CON CACHING) ====================
+  function computeResultsForMarket(market) {
+    let rows = [];
+    switch(market) {
+      case 'ov05': rows = getOv05Rows(); break;
+      case 'gg': rows = getGgRows(); break;
+      case 'o25': rows = getO25Rows(); break;
+      case 'u25': rows = getU25Rows(); break;
+      case 'mg13c': rows = getMgRows('casa'); break;
+      case 'mg13o': rows = getMgRows('ospite'); break;
+      case 'ia': rows = getIaRows(); break;
+      case 'players_cards': rows = getPlayerRows('cards'); break;
+      case 'players_shots': rows = getPlayerRows('shots'); break;
+      case 'quote': rows = getQuoteRows(); break;
+      case 'gz': rows = getGzRows(); break;
+      default: rows = [];
+    }
+    const maxScore = Math.max(...rows.map(r=>r.score||0), 1);
+    rows = rows.map(r => ({...r, normScore: ((r.score||0) / maxScore) * 100}));
     return rows;
-  }
-  function historySummary(allRows){
-    const rows=allRows||ST.history||[]; const pending=rows.filter(r=>r.status==='pending').length;
-    const win=rows.filter(r=>r.status==='won').length, loss=rows.filter(r=>r.status==='lost').length, resolved=win+loss;
-    const winPct=resolved?((win/resolved)*100):0, lossPct=resolved?((loss/resolved)*100):0; const byCat={};
-    rows.forEach(r=>{const k=r.category||'Altro'; if(!byCat[k]) byCat[k]={cat:k,tot:0,win:0,loss:0,pending:0}; byCat[k].tot++; if(r.status==='won')byCat[k].win++; else if(r.status==='lost')byCat[k].loss++; else byCat[k].pending++;});
-    const cats=Object.values(byCat).map(x=>({...x,resolved:x.win+x.loss,winPct:(x.win+x.loss)?(x.win/(x.win+x.loss))*100:0,lossPct:(x.win+x.loss)?(x.loss/(x.win+x.loss))*100:0})).sort((a,b)=>b.tot-a.tot||a.cat.localeCompare(b.cat));
-    return {tot:rows.length,pending,win,loss,resolved,winPct,lossPct,cats};
   }
 
-  // ==================== DASHBOARD ====================
-  function generateTopList(market, sub) {
-    const originalMarket = ST.market, originalSub = ST.sub, originalIaCat = ST.iaCat, originalPlSub = ST.plSub, originalSort = ST.sortMode;
-    ST.market = market;
-    if (market === 'mg13') ST.sub = sub || 'casa';
-    else if (market === 'ia') ST.iaCat = sub || 'all';
-    else if (market === 'players') ST.plSub = sub || 'cards';
-    ST.sortMode = 'score';
-    let rows = currentRows();
-    ST.market = originalMarket; ST.sub = originalSub; ST.iaCat = originalIaCat; ST.plSub = originalPlSub; ST.sortMode = originalSort;
-    return rows;
-  }
-  function renderDashboard() {
-    const datasets = [
-      { key: 'ov05', label: 'Ov 0.5 PT', tag: 'tag-m1', icon: '⚽' },
-      { key: 'gg', label: 'GG', tag: 'tag-a', icon: '🤝' },
-      { key: 'o25', label: 'Ov 2.5', tag: 'tag-gen', icon: '🔥' },
-      { key: 'u25', label: 'U 2.5', tag: 'tag-b', icon: '🧊' },
-      { key: 'mg13', label: 'MG 1-3', tag: 'tag-mg', icon: '🎯', hasSub: true, subOptions: ['casa', 'ospite'] },
-      { key: 'ia', label: 'Stats IA', tag: 'tag-ia', icon: '📊', hasSub: true, subOptions: ['all', 'TT', 'TIP', 'COR', 'FAL', 'FG'] },
-      { key: 'players', label: 'Giocatori', tag: 'tag-a', icon: '👤', hasSub: true, subOptions: ['cards', 'shots'] },
-      { key: 'quote', label: '1X2 Value', tag: 'tag-mg', icon: '💎' },
-      { key: 'gz', label: 'GZ Index', tag: 'tag-gz', icon: '📈' }
-    ];
-    let html = `<div class="dashboard">`;
-    datasets.forEach(ds => {
-      const count = ST[ds.key]?.length || 0;
-      let subSelect = '';
-      if (ds.hasSub) {
-        const opts = ds.subOptions.map(opt => `<option value="${opt}">${opt}</option>`).join('');
-        subSelect = `<select class="dash-select" id="dashSub_${ds.key}">${opts}</select>`;
+  function getFilteredResults() {
+    const cacheKey = `${ST.currentMarket}_${JSON.stringify(ST.filters)}`;
+    if (ST.cache.has(cacheKey)) return ST.cache.get(cacheKey);
+    let rows = computeResultsForMarket(ST.currentMarket);
+    rows = rows.filter(r => {
+      if ((r.aff||0) < ST.filters.minAff) return false;
+      if (ST.filters.search) {
+        const hay = (r.evento||r.match||r.nome||'').toLowerCase();
+        if (!hay.includes(ST.filters.search.toLowerCase())) return false;
       }
-      html += `<div class="dash-card">
-        <h4><span>${ds.icon}</span> ${ds.label}</h4>
-        <div class="upload-meta">${count ? `<span class="loaded">${count} righe</span>` : 'Nessun dato'}</div>
-        ${subSelect}
-        <div class="dash-actions">
-          <button class="dash-btn" data-dashgen="${ds.key}">Genera</button>
-          ${ds.key === 'mg13' ? '<button class="dash-btn secondary" data-dashgen="mg13" data-dashsub="ospite">Ospite</button>' : ''}
-        </div>
-      </div>`;
+      if (ST.filters.requireGZ && !r.gzAlign?.aligned) return false;
+      if (ST.filters.require1X2 && !(r.qvAlign && marketSupportsQuote(ST.currentMarket, r.qvAlign))) return false;
+      if (ST.filters.requireDM && !r.dm) return false;
+      return true;
     });
-    html += `</div><div id="dashResults" class="result-area">`;
-    if (ST.dashList.length > 0) html += renderDashResults();
-    else html += `<div class="empty"><div class="ico">📋</div><p>Clicca su "Genera" in uno dei riquadri per vedere i migliori pronostici.</p></div>`;
-    html += `</div>`;
-    document.getElementById('main').innerHTML = html;
-    bindDashboardEvents();
-  }
-  function renderDashResults() {
-    const list = ST.dashList, showAll = ST.showAll, displayList = showAll ? list : list.slice(0, 10);
-    let html = `<div class="result-header"><div class="sec"><div class="tag ${getTagClass(ST.dashMarket)}">${getMarketLabel(ST.dashMarket, ST.dashSub)}</div><div class="sec-ct">${list.length} risultati</div></div><button class="pdf-btn" id="dashPdfBtn">${svgPDF}<span>PDF</span></button></div>`;
-    if (displayList.length === 0) html += `<div class="empty">Nessun risultato con i dati attuali.</div>`;
-    else {
-      html += `<div class="mlist">`;
-      displayList.forEach((r, i) => { html += renderDashRow(r, i); });
-      html += `</div>`;
-      if (!showAll && list.length > 10) html += `<div class="show-more-btn"><button class="dash-btn secondary" id="showAllBtn">Mostra tutti (${list.length})</button></div>`;
-    }
-    return html;
-  }
-  function getTagClass(market) {
-    const map = { ov05:'tag-m1', gg:'tag-a', o25:'tag-gen', u25:'tag-b', mg13:'tag-mg', ia:'tag-ia', players:'tag-a', quote:'tag-mg', gz:'tag-gz' };
-    return map[market] || 'tag-gen';
-  }
-  function getMarketLabel(market, sub) {
-    const base = { ov05:'Ov 0.5 PT', gg:'GG', o25:'Ov 2.5', u25:'U 2.5', mg13:'MG 1-3', ia:'Stats IA', players:'Giocatori', quote:'1X2 Value', gz:'GZ Index' }[market] || market;
-    if (market==='mg13') return `MG 1-3 ${sub==='ospite'?'Ospite':'Casa'}`;
-    if (market==='ia') return `Stats IA (${sub})`;
-    if (market==='players') return `Giocatori ${sub==='shots'?'Tiri/Gol':'Cartellini'}`;
-    return base;
-  }
-  function renderDashRow(r, idx) {
-    let aff = r.aff || 3, score = r.score || 0, name = r.evento || r.match || r.nome || '', ora = r.ora || '';
-    let subBadges = '';
-    if (r.m1) subBadges += '<span class="badge good">M1</span>';
-    if (r.gzAlign?.aligned) subBadges += `<span class="badge good">GZ ${escapeHtml(r.gzAlign.prob.label)}</span>`;
-    else if (r.gzAlign) subBadges += `<span class="badge neu">GZ ${escapeHtml(r.gzAlign.prob.label)}</span>`;
-    if (r.qvAlign && marketSupportsQuote(ST.dashMarket, r.qvAlign)) subBadges += `<span class="badge alt">1X2 ${escapeHtml(r.qvAlign.golSide)}</span>`;
-    if (r.dm) {
-      const dmBadge = dmBadgeHtml(r.dm, ST.dashMarket);
-      const valueBadge = valueBadgeHtml(r.dm, ST.dashMarket);
-      subBadges += dmBadge + valueBadge;
-    }
-    if (ST.dashMarket === 'mg13') subBadges += `<span class="badge alt">${ST.dashSub==='ospite'?'Ospite':'Casa'}</span>`;
-    const boosted = r.dm && r.originalAff && r.aff > r.originalAff;
-    const affDisplay = boosted ? `<span>${affBadge(r.aff)} <span class="boost-indicator">⬆️</span></span>` : affBadge(r.aff);
-    return `<div class="mrow" data-open-dash="${idx}">
-      <div class="m-ora">${escapeHtml(ora)}</div>
-      <div><div class="m-name">${escapeHtml(name)}</div><div class="m-sub">${subBadges}</div></div>
-      <div class="m-right">${affDisplay}<div class="m-ind ${score>6?'ind-g':score>4?'ind-o':'ind-r'}">${fmt(score,1)}</div></div>
-    </div>
-    <div class="pickbar"><button class="pickbtn" data-addpick-dash="${idx}">➕ Aggiungi a storico</button></div>`;
-  }
-  function bindDashboardEvents() {
-    document.querySelectorAll('[data-dashgen]').forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        const market = btn.dataset.dashgen; let sub = btn.dataset.dashsub;
-        if (!sub) { const select = document.getElementById(`dashSub_${market}`); sub = select ? select.value : null; }
-        ST.dashMarket = market; ST.dashSub = sub; ST.dashList = generateTopList(market, sub); ST.showAll = false;
-        renderDashboard();
-      });
-    });
-    document.addEventListener('click', (e) => {
-      if (e.target.id === 'showAllBtn') { ST.showAll = true; renderDashboard(); }
-      if (e.target.id === 'dashPdfBtn') exportDashPDF();
-      const openBtn = e.target.closest('[data-open-dash]');
-      if (openBtn) { const idx = parseInt(openBtn.dataset.openDash); openDashDetail(idx); }
-      const addBtn = e.target.closest('[data-addpick-dash]');
-      if (addBtn) { const idx = parseInt(addBtn.dataset.addpickDash); const row = ST.dashList[idx]; if (row) addPickToHistory(row, ST.dashMarket); }
-    });
-  }
-  function openDashDetail(idx) { const row = ST.dashList[idx]; if (!row) return; ST.det = row; ST.detMarket = ST.dashMarket; renderDetail(); }
-  function exportDashPDF() {
-    if (!ST.dashList.length) { alert('Nessun dato da esportare.'); return; }
-    const jspdf = window.jspdf; if (!jspdf?.jsPDF) { alert('Libreria PDF non pronta.'); return; }
-    const doc = new jspdf.jsPDF({orientation:'portrait',unit:'pt',format:'a4'});
-    const title = `Match Analyzer - ${getMarketLabel(ST.dashMarket, ST.dashSub)}`;
-    const head = ['Ora','Evento','Score','Aff','Conferme'];
-    const body = ST.dashList.slice(0, ST.showAll ? undefined : 10).map(r => [r.ora||'', r.evento||r.match||r.nome||'', fmt(r.score,2), r.aff||'', [r.m1?'M1':'', r.gzAlign?.aligned?'GZ':'', r.qvAlign?'1X2':''].filter(Boolean).join(', ')]);
-    doc.setFillColor(11,13,18); doc.rect(0,0,595,70,'F'); doc.setTextColor(255,255,255); doc.setFontSize(16); doc.text(title,40,34);
-    doc.autoTable({startY:86,head:[head],body:body,theme:'grid',styles:{fontSize:8},headStyles:{fillColor:[20,23,32]}});
-    doc.save(`${title.replace(/\s+/g,'-').toLowerCase()}.pdf`);
+    ST.cache.set(cacheKey, rows);
+    return rows;
   }
 
-  function renderStorico() {
-    const rows = getHistoryRows(); const sum = historySummary(ST.history);
-    const stats = `<div class="statsgrid"><div class="statcard"><div class="k">Totali</div><div class="v">${sum.tot}</div></div><div class="statcard"><div class="k">Vinte</div><div class="v">${sum.win}</div></div><div class="statcard"><div class="k">Perse</div><div class="v">${sum.loss}</div></div><div class="statcard"><div class="k">% vinte</div><div class="v">${fmt(sum.winPct,1)}%</div></div><div class="statcard"><div class="k">% perse</div><div class="v">${fmt(sum.lossPct,1)}%</div></div><div class="statcard"><div class="k">In attesa</div><div class="v">${sum.pending}</div></div></div>`;
-    const table = sum.cats.length ? `<table class="tablemini"><thead><tr><th>Categoria</th><th>Tot</th><th>V</th><th>P</th><th>Att</th><th>% V</th><th>% P</th></tr></thead><tbody>${sum.cats.map(c=>`<tr><td>${escapeHtml(c.cat)}</td><td>${c.tot}</td><td>${c.win}</td><td>${c.loss}</td><td>${c.pending}</td><td>${fmt(c.winPct,1)}%</td><td>${fmt(c.lossPct,1)}%</td></tr>`).join('')}</tbody></table>` : '';
-    let html = `<div class="stabs"><button class="stab ${ST.histStatus==='all'?'active':''}" data-hstatus="all">Tutti</button><button class="stab ${ST.histStatus==='pending'?'active':''}" data-hstatus="pending">In attesa</button><button class="stab ${ST.histStatus==='won'?'active':''}" data-hstatus="won">Vinte</button><button class="stab ${ST.histStatus==='lost'?'active':''}" data-hstatus="lost">Perse</button><button class="stab ${ST.sortMode==='score'?'active':''}" data-sort="score">📊 Recenti</button><button class="stab ${ST.sortMode==='time'?'active':''}" data-sort="time">⏰ Orario</button></div><div class="toolbar"><input class="search" id="searchIn" placeholder="Cerca match o categoria" value="${escapeHtml(ST.q||'')}"><select class="select" id="histCatSel">${['all',...sum.cats.map(x=>x.cat)].map(c=>`<option value="${escapeHtml(c)}" ${ST.histCategory===c?'selected':''}>${c==='all'?'Tutte le categorie':escapeHtml(c)}</option>`).join('')}</select><button class="btn ghost" id="histExportBtn">Esporta storico</button><button class="btn ghost" id="histClearResolved">Pulisci concluse</button><button class="btn ghost danger" id="histClearAllBtn">Cancella tutto</button></div><div class="status">Storico: <strong>${sum.tot}</strong> pick • Vinte ${sum.win} • Perse ${sum.loss} • Pending ${sum.pending} • % vinte ${fmt(sum.winPct,1)}%</div>`;
-    if (!rows.length) { html += stats+table+`<div class="empty"><div class="ico">🧾</div><p>Nessun pronostico salvato.</p></div>`; }
-    else { html += stats+table+`<div class="mlist">${rows.map(r=>renderStoricoRow(r)).join('')}</div>`; }
-    document.getElementById('main').innerHTML = html;
-  }
-  function renderStoricoRow(r){
-    const st=r.status==='won'?'<span class="badge good">Vinta</span>':r.status==='lost'?'<span class="badge warn">Persa</span>':'<span class="badge neu">In attesa</span>';
-    return `<div class="histrow"><div class="histtop"><div><div class="histname">${escapeHtml(r.match)}</div><div class="histmeta"><span class="badge alt">${escapeHtml(r.category)}</span><span>${escapeHtml(r.source)}</span>${r.ora?`<span>${escapeHtml(r.ora)}</span>`:''}${st}</div></div><div>${r.aff?affBadge(r.aff):''}</div></div><div class="histactions"><button class="mini ok" data-hset="${r.id}" data-val="won">✅ Vinta</button><button class="mini no" data-hset="${r.id}" data-val="lost">❌ Persa</button><button class="mini dim" data-hset="${r.id}" data-val="pending">⏳ Reset</button><button class="mini dim" data-hdel="${r.id}">🗑 Elimina</button></div></div>`;
+  // ==================== RENDERING ====================
+  function renderTable() {
+    const rows = getFilteredResults();
+    const tbody = document.getElementById('tableBody');
+    const noMsg = document.getElementById('noResultsMsg');
+    if (rows.length === 0) {
+      tbody.innerHTML = '';
+      noMsg.style.display = 'block';
+      return;
+    }
+    noMsg.style.display = 'none';
+    let html = '';
+    rows.forEach((r, idx) => {
+      const name = r.evento || r.match || r.nome || '';
+      const ora = r.ora || '';
+      const aff = r.aff || 1;
+      const normScore = r.normScore || 0;
+      const badges = [];
+      if (r.m1) badges.push('<span class="badge">M1</span>');
+      if (r.gzAlign?.aligned) badges.push('<span class="badge">GZ</span>');
+      if (r.qvAlign && marketSupportsQuote(ST.currentMarket, r.qvAlign)) badges.push('<span class="badge">1X2</span>');
+      if (r.dm) badges.push(dmBadgeHtml(r.dm, ST.currentMarket) + valueBadgeHtml(r.dm, ST.currentMarket));
+      const affDots = Array(5).fill(0).map((_,i)=>`<span class="dot ${i<aff?'filled':''}"></span>`).join('');
+      html += `<tr data-index="${idx}" onclick="window.selectRow(${idx})">
+        <td>${escapeHtml(ora)}</td>
+        <td>${escapeHtml(name)}</td>
+        <td>
+          <div style="display:flex; align-items:center; gap:6px;">
+            <span style="min-width:45px;">${Math.round(normScore)}</span>
+            <div class="score-bar"><div class="score-fill" style="width:${normScore}%;"></div></div>
+          </div>
+        </td>
+        <td><div class="aff-dots">${affDots}</div></td>
+        <td>${badges.join(' ')}</td>
+      </tr>`;
+    });
+    tbody.innerHTML = html;
+    if (ST.selectedRow !== null) {
+      const prevSelected = document.querySelector(`tr[data-index="${ST.selectedRow}"]`);
+      if (prevSelected) prevSelected.classList.add('selected');
+    }
   }
 
-  // ==================== DETTAGLIO MODALE (COMPLETO) ====================
-  function renderDetail(){
-    const r=ST.det;if(!r)return;document.body.style.overflow='hidden';
-    let title=r.evento||r.match||r.nome||'Dettaglio';
-    let subtitle=(r.lega||r.nazione||r.partita||r.marketLabel||'')+(r.ora?` • ${r.ora}`:'');
-    let score=fmt(r.score||Math.max(r.house?.total||0,r.away?.total||0),2);
-    let aff=r.aff||Math.max(r.house?.aff||0,r.away?.aff||0)||3;
-    let cards=''; let breakdown=''; let dmSection=''; let reBars='';
-    const dm = r.dm;
-    if (dm) {
-      dmSection = `<div class="bk"><div class="bk-t">📈 DataMining Plus (NP: ${dm.np})</div><div class="dg">
-        ${detailKv('1', `${dm.p1.toFixed(0)}% / ${dm.q1.toFixed(2)}`, dm.p1>50?'g':'n')}
-        ${detailKv('X', `${dm.pX.toFixed(0)}% / ${dm.qX.toFixed(2)}`)}
-        ${detailKv('2', `${dm.p2.toFixed(0)}% / ${dm.q2.toFixed(2)}`, dm.p2>50?'g':'n')}
-        ${detailKv('GG', `${dm.pGG.toFixed(0)}% / ${dm.qGG.toFixed(2)}`)}
-        ${detailKv('OV15', `${dm.pOV15.toFixed(0)}% / ${dm.qOV15.toFixed(2)}`)}
-        ${detailKv('OV25', `${dm.pOV25.toFixed(0)}% / ${dm.qOV25.toFixed(2)}`)}
-        ${detailKv('UN35', `${dm.pUN35.toFixed(0)}% / ${dm.qUN35.toFixed(2)}`)}
-        ${detailKv('OV0.5PT', `${dm.pOV05pt.toFixed(0)}% / ${dm.qOV05pt.toFixed(2)}`)}
-        ${detailKv('MGE', dm.mge.toFixed(2))}
-        ${detailKv('DIFF', dm.diff.toFixed(2))}
-        ${detailKv('IC', dm.ic)}
-        ${detailKv('RC/RO', `${dm.rc} / ${dm.ro}`)}
-        ${detailKv('SC', `${dm.pSC.toFixed(0)}% (IGBC ${dm.igbc})`)}
-        ${detailKv('SO', `${dm.pSO.toFixed(0)}% (IGBO ${dm.igbo})`)}
-      </div>`;
-      if (dm.re) reBars = renderExactScoresWithBars(dm.re);
-      if (isMG24(dm)) dmSection += `<div class="note"><span class="badge alt">🔥 MG 2-4 (quota 1.50)</span> Condizioni: OV15 >60% e UN35 >60%</div>`;
-      dmSection += `</div>`;
+  window.selectRow = function(idx) {
+    const rows = getFilteredResults();
+    const row = rows[idx];
+    if (!row) return;
+    ST.selectedRow = idx;
+    renderTable();
+    renderDetail(row);
+  };
+
+  function renderDetail(row) {
+    const panel = document.getElementById('detailPanel');
+    let breakdownHtml = '';
+    if (row.breakdown) {
+      breakdownHtml = `<div class="bk"><div style="font-weight:600; margin-bottom:8px;">Breakdown punteggio</div>`;
+      row.breakdown.forEach(x => { breakdownHtml += `<div class="breakdown-item"><span>${escapeHtml(x.n)}</span><span>+${fmt(x.p,2)}</span></div>`; });
+      breakdownHtml += `<div class="breakdown-item" style="font-weight:700;"><span>Totale</span><span>${fmt(row.originalScore||row.score,2)}</span></div></div>`;
     }
-    if(ST.detMarket==='ov05'){
-      const [dl,dc]=diffLabel(r.diff);cards=[detailKv('IND',r.ind,r.ind<320?'g':'w'),detailKv('Delta',fmt(r.delta,2)+'%',r.delta<=-20?'g':'n'),detailKv('Diff',dl,dc),detailKv('MGE',fmt(r.mge,2),r.mge>=3?'g':'n'),detailKv('Q Ov0.5',fmt(r.qrOv05,2)),detailKv('U5 / U5CT',`${r.u5Raw||'0|0'} / ${r.u5ctRaw||'0|0'}`),detailKv('COv05 / OOv05',`${fmt(r.cov05,0)}% / ${fmt(r.oov05,0)}%`)];
-      breakdown=breakdownHtml(r.breakdown)+`<div class="list-inline">${r.gzAlign?`<span class="badge ${r.gzAlign.aligned?'good':'neu'}">GZ ${escapeHtml(r.gzAlign.prob.desc)}</span>`:''}${r.qvAlign&&marketSupportsQuote('ov05',r.qvAlign)?`<span class="badge alt">1X2 ${escapeHtml(r.qvAlign.golSide)}</span>`:''}</div>`;
-    } else if(['gg','o25','u25'].includes(ST.detMarket)){
-      const [dl,dc]=diffLabel(r.diff);cards=[detailKv('IGBc',r.igbc,r.igbc>=150?'g':'n'),detailKv('IGBo',r.igbo,r.igbo>=150?'g':'n'),detailKv('IGBt',r.igbt,r.igbt>=300?'g':'n'),detailKv('MGE',fmt(r.mge,2),r.mge>=3?'g':'n'),detailKv('Diff',dl,dc),detailKv('PGG',fmt(r.pgg,1)+'%'),detailKv('S1-S2',r.s12),detailKv('qOv2.5',fmt(r.qov25,2))];
-      breakdown=breakdownHtml(r.breakdown)+`<div class="list-inline">${r.gzAlign?`<span class="badge ${r.gzAlign.aligned?'good':'neu'}">${escapeHtml(r.gzAlign.prob.desc)}</span>`:''}${r.qvAlign&&marketSupportsQuote(ST.detMarket,r.qvAlign)?`<span class="badge alt">1X2 ${escapeHtml(r.qvAlign.golSide)}</span>`:''}${r.m1?'<span class="badge good">Match selezionato in M1</span>':''}</div>`;
-    } else if(ST.detMarket==='mg13'){
-      score=fmt(r.side==='ospite'?r.away.total:r.house.total,2);aff=r.side==='ospite'?r.away.aff:r.house.aff;cards=[detailKv('Pronostico lato',r.side==='ospite'?'MG 1-3 Ospite':'MG 1-3 Casa','g'),detailKv('ICH',r.ich,r.ich<=350?'g':'n'),detailKv('ICA',r.ica,r.ica<=350?'g':'n'),detailKv('VarC / VarO',`${fmt(r.varc,1)}% / ${fmt(r.varo,1)}%`),detailKv('MGFC / MGFO',`${fmt(r.mgfc,2)} / ${fmt(r.mgfo,2)}`),detailKv('MGSO / MGSC',`${fmt(r.mgso,2)} / ${fmt(r.mgsc,2)}`),detailKv('RitC / RitO',`${r.ritc} / ${r.rito}`),detailKv('Q1 / Q2',`${fmt(r.q1,2)} / ${fmt(r.q2,2)}`)];
-      breakdown=`<div class="bk"><div class="bk-t">Casa</div>${r.house.breakdown.map(x=>`<div class="bk-r"><div class="n">${escapeHtml(x.n)}</div><div class="p ${x.p>0?'pos':'zero'}">+${fmt(x.p,2)}</div></div>`).join('')}<div class="bk-tot"><span>Totale Casa</span><span class="p">${fmt(r.house.total,2)}</span></div></div><div class="bk"><div class="bk-t">Ospite</div>${r.away.breakdown.map(x=>`<div class="bk-r"><div class="n">${escapeHtml(x.n)}</div><div class="p ${x.p>0?'pos':'zero'}">+${fmt(x.p,2)}</div></div>`).join('')}<div class="bk-tot"><span>Totale Ospite</span><span class="p">${fmt(r.away.total,2)}</span></div></div>`;
-    } else if(ST.detMarket==='ia'){
-      cards=[detailKv('Lega',r.lega||'N/D'),detailKv('Nazione',r.nazione||'N/D'),detailKv('Stats',r.stats.length),detailKv('Avg Aff',fmt(r.avgAff,2),r.avgAff>=3?'g':'n'),detailKv('Max Aff',fmt(r.maxAff,2),r.maxAff>=3?'g':'n'),detailKv('High Count',r.highCount)];
-      breakdown=`<div class="bk"><div class="bk-t">Predizioni IA</div>${r.stats.map(s=>`<div class="bk-r"><div class="n">${escapeHtml(s.label)} • ${escapeHtml(s.pred)}</div><div class="p ${s.aff>=3?'pos':'zero'}">${fmt(s.aff,1)}</div></div>`).join('')}</div>`;
-    } else if(ST.detMarket==='players'){
-      const isCards=ST.plSub==='cards'; cards=[detailKv('Squadra',r.squadra||'N/D'),detailKv('Partita',r.partita||'N/D'),detailKv('Ruolo',r.pos||'N/D'),detailKv('Minuti',fmt(r.min,0)),detailKv('Presenze',r.pres||0),detailKv(isCards?'Ammonizioni':'Gol',fmt(isCards?r.amm:r.gol,2),isCards?r.amm>=.3?'g':'n':r.gol>=.25?'g':'n'),detailKv(isCards?'Falli':'TiP',fmt(isCards?r.falli:r.tiriPorta,2)),detailKv(isCards?'Tackle':'TT',fmt(isCards?r.tackle:r.tiriTot,2))];
-      breakdown=breakdownHtml(r.breakdown);
-    } else if(ST.detMarket==='quote'){
-      cards=[detailKv('R finale',r.r||'N/D'),detailKv('1',`R ${fmt(r.r1,2)} / DM ${fmt(r.dm1,2)} / Spr ${fmt(r.spread1,2)}`,r.value1?'g':'n'),detailKv('X',`R ${fmt(r.rx,2)} / DM ${fmt(r.dmx,2)} / Spr ${fmt(r.spreadX,2)}`,r.valueX?'w':'n'),detailKv('2',`R ${fmt(r.r2,2)} / DM ${fmt(r.dm2,2)} / Spr ${fmt(r.spread2,2)}`,r.value2?'g':'n'),detailKv('NP',r.np),detailKv('Lato',r.golSide||'Nessuno')];
-      breakdown=`<div class="bk"><div class="bk-t">Value signals</div><div class="bk-r"><div class="n">1 Value</div><div class="p ${r.value1?'pos':'zero'}">${r.value1?'SI':'NO'}</div></div><div class="bk-r"><div class="n">X Value</div><div class="p ${r.valueX?'pos':'zero'}">${r.valueX?'SI':'NO'}</div></div><div class="bk-r"><div class="n">2 Value</div><div class="p ${r.value2?'pos':'zero'}">${r.value2?'SI':'NO'}</div></div><div class="bk-tot"><span>Score spread</span><span class="p">${fmt(r.score,2)}</span></div></div>`;
-    } else if(ST.detMarket==='gz'){
-      cards=[detailKv('GZ',fmt(r.gz,0),Math.abs(r.gz||0)>=5000?'g':'n'),detailKv('Segnale',r.prob.desc,r.prob.type==='over'?'g':r.prob.type==='under'?'w':'n'),detailKv('GZha',fmt(r.gzha,0)),detailKv('IGBc / IGBo / IGBt',`${fmt(r.igbc,0)} / ${fmt(r.igbo,0)} / ${fmt(r.igbt,0)}`),detailKv('MGE',fmt(r.mge,2)),detailKv('Diff',fmt(r.diff,2))];
-      breakdown=`<div class="bk"><div class="bk-t">Interpretazione GZ</div><div class="note">${escapeHtml(r.prob.desc)}. Valori molto lontani dallo zero sono più forti; valori vicini allo zero sono letti come segnali leggeri o neutrali.</div></div>`;
-    } else {
-      cards=[detailKv('Score',fmt(r.score,2)),detailKv('Affidabilità',`${r.aff||'N/D'}/5`)];
-      breakdown=breakdownHtml(r.breakdown);
+    let dmHtml = '';
+    if (row.dm) {
+      dmHtml = `<div class="bk"><div style="font-weight:600; margin-bottom:8px;">📈 DataMining (NP: ${row.dm.np})</div>`;
+      dmHtml += `<div>1: ${row.dm.p1.toFixed(0)}% / ${row.dm.q1.toFixed(2)} | X: ${row.dm.pX.toFixed(0)}% / ${row.dm.qX.toFixed(2)} | 2: ${row.dm.p2.toFixed(0)}% / ${row.dm.q2.toFixed(2)}</div>`;
+      dmHtml += `<div>OV25: ${row.dm.pOV25.toFixed(0)}% / ${row.dm.qOV25.toFixed(2)} | UN35: ${row.dm.pUN35.toFixed(0)}% / ${row.dm.qUN35.toFixed(2)}</div>`;
+      dmHtml += `</div>`;
     }
-    document.getElementById('detM').innerHTML=`<div class="ov" id="ovLay" aria-modal="true" role="dialog"><div class="det" onclick="event.stopPropagation()"><div class="det-top"><div><div class="det-t">${escapeHtml(title)}</div><div class="det-sub">${escapeHtml(subtitle)}</div></div><button class="det-x" id="closeDetBtn" aria-label="Chiudi dettagli">✕</button></div><div class="abar"><div><div class="abar-lb">Affidabilità</div><div class="abar-dots">${dots(aff,'lg')}</div></div><div class="abar-r"><div class="abar-lb">Score</div><div class="abar-sc">${escapeHtml(score)}</div><div class="abar-pt">${escapeHtml(ST.detMarket.toUpperCase())}</div></div></div><div class="dg">${cards.join('')}</div>${dmSection}${reBars}${breakdown}</div></div>`;
-    document.getElementById('ovLay').addEventListener('click', closeDetail);
-    document.getElementById('closeDetBtn').addEventListener('click', closeDetail);
+    panel.innerHTML = `
+      <div class="detail-title">${escapeHtml(row.evento||row.match||row.nome)}</div>
+      <div class="detail-section">
+        <div class="detail-label">Score normalizzato</div>
+        <div class="detail-value">${Math.round(row.normScore)}/100</div>
+      </div>
+      <div class="detail-section">
+        <div class="detail-label">Affidabilità</div>
+        ${affBadge(row.aff)}
+      </div>
+      ${dmHtml}
+      ${breakdownHtml}
+    `;
   }
-  function detailKv(label,val,cls='n'){return `<div class="dc"><div class="dc-l">${escapeHtml(label)}</div><div class="dc-v ${cls}">${escapeHtml(val)}</div></div>`;}
-  function breakdownHtml(breakdown){if(!breakdown||!breakdown.length)return '<div class="note">Nessun breakdown disponibile.</div>';const total=breakdown.reduce((s,x)=>s+x.p,0);return `<div class="bk"><div class="bk-t">Breakdown punteggio</div>${breakdown.map(x=>`<div class="bk-r"><div class="n">${escapeHtml(x.n)}</div><div class="p ${x.p>0?'pos':'zero'}">+${fmt(x.p,2)}</div></div>`).join('')}<div class="bk-tot"><span>Totale</span><span class="p">${fmt(total,2)}</span></div></div>`;}
-  function renderExactScoresWithBars(reString) {
-    if (!reString) return '';
-    const scores = reString.split(/\s{2,}/).filter(s => s.includes('%'));
-    const items = scores.map(s => { const parts = s.trim().split(':'); const score = parts[0].trim(); const perc = parseFloat(parts[1].replace('%', '')); return { score, perc }; }).sort((a,b) => b.perc - a.perc).slice(0, 4);
-    if (!items.length) return '';
-    const maxPerc = items[0].perc;
-    return `<div class="bk"><div class="bk-t">🔮 Risultati esatti più probabili</div>` + items.map(it => { const barWidth = (it.perc / maxPerc) * 100; return `<div class="prob-bar-container"><div class="n" style="min-width:40px;">${it.score}</div><div class="prob-bar"><div class="prob-fill" style="width:${barWidth}%;"></div></div><div class="p pos" style="min-width:45px;text-align:right;">${it.perc.toFixed(1)}%</div></div>`; }).join('') + `</div>`;
-  }
-  function closeDetail(){ST.det=null;document.getElementById('detM').innerHTML='';document.body.style.overflow='';}
 
   // ==================== UPLOAD E PERSISTENZA ====================
   const DATA_STORAGE_PREFIX='ma_dataset_';
@@ -680,78 +383,110 @@
   function saveDatasetState(key){try{localStorage.setItem(datasetStorageKey(key),JSON.stringify(ST[key]||[]));}catch(e){}}
   function loadDatasetState(key){try{return JSON.parse(localStorage.getItem(datasetStorageKey(key))||'[]');}catch(e){return [];}}
   function clearDatasetState(key){try{localStorage.removeItem(datasetStorageKey(key));}catch(e){}}
-  function restoreDatasets(){DATASETS.forEach(d=>{const rows=loadDatasetState(d.key); if(Array.isArray(rows)&&rows.length) ST[d.key]=rows;});}
+  function restoreDatasets(){DATASETS.forEach(d=>{const rows=loadDatasetState(d.key); if(Array.isArray(rows)&&rows.length) ST[d.key]=rows;}); updateDatasetSummary();}
   function parseAndStore(key,text){
     const map={ov05:parseOv05,ggov25:parseGGOv25,mg13:parseMG13,ia:parseIA,plCards:parsePlCards,plShots:parsePlShots,quoteValore:parseQuoteValore,gz:parseGZ,dataMining:parseDataMining};
     if(!map[key])throw new Error('Dataset non gestito');
     const data=map[key](text); ST[key]=Array.isArray(data)?data:[];
     saveDatasetState(key);
-    if(key==='plCards'&&ST.market==='players'&&ST.plSub==='shots'&&!ST.plShots.length)ST.plSub='cards';
-    if(key==='plShots'&&ST.market==='players'&&!ST.plCards.length)ST.plSub='shots';
-    if(key==='dataMining') computeBacktestStats();
-    render();
-  }
-  function setUploadStatus(msg,type=''){
-    const el=document.getElementById('uploadStatus'); if(!el)return;
-    el.className='up-status'+(type?` ${type}`:''); el.textContent=msg;
-  }
-  function readFileAsText(file){
-    if(file && typeof file.text==='function') return file.text();
-    return new Promise((resolve,reject)=>{ const fr=new FileReader(); fr.onload=()=>resolve(String(fr.result||'')); fr.onerror=()=>reject(fr.error||new Error('Lettura file non riuscita')); fr.readAsText(file); });
+    ST.cache.clear();
+    updateDatasetSummary();
+    renderTable();
   }
   async function handleUploadInput(input){
     const key=input?.dataset?.target; const file=input?.files?.[0];
-    if(!key){setUploadStatus('Upload non valido: target mancante.','err');return;}
-    if(!file){setUploadStatus(`Nessun file selezionato per ${key}.`,'err');return;}
-    setUploadStatus(`Lettura file ${file.name} in corso...`);
+    if(!key||!file)return;
     try{
-      const raw=await readFileAsText(file); if(!raw||!raw.trim()) throw new Error('File vuoto o non leggibile');
-      parseAndStore(key,raw); const count=Array.isArray(ST[key])?ST[key].length:0;
-      if(!count) throw new Error('CSV letto ma nessuna riga valida trovata');
-      setUploadStatus(`Caricato ${file.name} in ${key}. Righe valide: ${count}.`,'ok');
-    }catch(err){ console.error(err); setUploadStatus(`Errore su ${file?.name||'file'} (${key}): ${err?.message||err}`,'err'); alert('Errore nel parsing del CSV.'); }
+      const raw=await file.text();
+      if(!raw||!raw.trim()) throw new Error('File vuoto');
+      parseAndStore(key,raw);
+    }catch(err){ alert('Errore nel parsing del CSV.'); }
     finally{input.value='';}
   }
-  function renderUploadGrid(){
-    const el=document.getElementById('uploadGrid');
-    el.innerHTML=DATASETS.map((d,i)=>{ const n=ST[d.key]?.length||0; const inputId=`file_${d.key}_${i}`;
-      return `<div class="upload-card"><input class="hid-file" id="${inputId}" type="file" accept=".csv,text/csv" data-target="${d.key}"><div class="upload-lbl">${escapeHtml(d.label)}</div><div class="upload-meta">${n?`<span class="loaded">${n} righe caricate</span>`:'Nessun file caricato'}<small>${escapeHtml(d.hint)}</small></div><div class="upload-actions"><button type="button" class="pick-btn" data-pick="${inputId}">Seleziona CSV</button>${n?`<button type="button" class="clear-btn" data-clear="${d.key}">Reset</button>`:''}</div></div>`;
+  function renderUploadArea(){
+    const el=document.getElementById('uploadArea');
+    el.innerHTML=DATASETS.map((d,i)=>{
+      const n=ST[d.key]?.length||0; const inputId=`file_${d.key}_${i}`;
+      return `<div style="background:#0f151c; padding:12px; border-radius:12px; min-width:180px;">
+        <div style="font-weight:600;">${d.label}</div>
+        <div style="font-size:0.8rem; color:#9ab3d0;">${n?`${n} righe`:'Nessun dato'}</div>
+        <div style="margin-top:8px; display:flex; gap:6px;">
+          <label class="file-label" for="${inputId}">📂 Seleziona</label>
+          <input type="file" id="${inputId}" accept=".csv,text/csv" data-target="${d.key}" style="display:none;" onchange="window.handleUploadInput(this)">
+          ${n?`<button class="file-label" onclick="window.clearDataset('${d.key}')">🗑 Reset</button>`:''}
+        </div>
+      </div>`;
     }).join('');
-    document.querySelectorAll('input[type="file"][data-target]').forEach(inp=>{inp.onchange=()=>handleUploadInput(inp);});
+  }
+  window.handleUploadInput = handleUploadInput;
+  window.clearDataset = function(key){ clearDatasetState(key); ST[key]=[]; ST.cache.clear(); renderUploadArea(); renderTable(); updateDatasetSummary(); };
+  function updateDatasetSummary(){
+    const total = DATASETS.reduce((s,d)=>s+(ST[d.key]?.length||0),0);
+    document.getElementById('datasetSummary').textContent = `${total} righe caricate`;
   }
 
-  // ==================== RENDER PRINCIPALE ====================
-  function render(){
-    document.querySelectorAll('.mtab').forEach(b=>b.classList.toggle('active',b.dataset.m===ST.market));
-    const totals=DATASETS.reduce((s,d)=>s+(ST[d.key]?.length||0),0);
-    document.getElementById('hdrInfo').textContent=`Dataset caricati: ${totals} righe`;
-    updateBacktestDisplay();
-    renderUploadGrid();
-    if (ST.market==='dashboard') renderDashboard();
-    else if (ST.market==='storico') renderStorico();
+  // ==================== ESPORTAZIONE ====================
+  function exportCsv(){
+    const rows = getFilteredResults();
+    if(!rows.length) return alert('Nessun dato da esportare.');
+    const headers = ['Ora','Partita','Score','Aff','Conferme'];
+    const csvRows = rows.map(r=>[r.ora||'', r.evento||r.match||r.nome||'', r.normScore.toFixed(0), r.aff||'', [r.m1?'M1':'', r.gzAlign?.aligned?'GZ':'', r.qvAlign?'1X2':'', r.dm?'DM':''].filter(Boolean).join(' ')]);
+    const csvContent = [headers, ...csvRows].map(row=>row.map(cell=>`"${String(cell).replace(/"/g,'""')}"`).join(',')).join('\n');
+    const blob = new Blob(['\uFEFF'+csvContent], {type:'text/csv;charset=utf-8;'});
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'match_analyzer_export.csv'; a.click();
+  }
+  function exportPdf(){
+    const rows = getFilteredResults();
+    if(!rows.length) return alert('Nessun dato da esportare.');
+    const jspdf = window.jspdf; if(!jspdf?.jsPDF) return alert('Libreria PDF non pronta.');
+    const doc = new jspdf.jsPDF({orientation:'portrait',unit:'pt',format:'a4'});
+    const title = `Match Analyzer - ${ST.currentMarket}`;
+    const head = [['Ora','Partita','Score','Aff','Conferme']];
+    const body = rows.map(r=>[r.ora||'', r.evento||r.match||r.nome||'', Math.round(r.normScore), r.aff||'', [r.m1?'M1':'', r.gzAlign?.aligned?'GZ':'', r.qvAlign?'1X2':'', r.dm?'DM':''].filter(Boolean).join(' ')]);
+    doc.setFillColor(11,13,18); doc.rect(0,0,595,70,'F'); doc.setTextColor(255,255,255); doc.setFontSize(16); doc.text(title,40,34);
+    doc.autoTable({startY:86,head,body,theme:'grid',styles:{fontSize:8},headStyles:{fillColor:[20,23,32]}});
+    doc.save(`${title.replace(/\s+/g,'-').toLowerCase()}.pdf`);
   }
 
-  function bindStatic(){
-    document.getElementById('mtabs').addEventListener('click',e=>{const b=e.target.closest('.mtab'); if(!b)return; ST.market=b.dataset.m; ST.q=''; render();});
-    document.addEventListener('keydown',e=>{if(e.key==='Escape'&&ST.det)closeDetail();});
-    document.getElementById('datasetToggle').addEventListener('click',()=>{const panel=document.getElementById('datasetPanel'),arrow=document.getElementById('toggleArrow'); panel.classList.toggle('open'); arrow.textContent=panel.classList.contains('open')?'▲':'▼';});
-    document.body.addEventListener('click',e=>{
-      const pick=e.target.closest('[data-pick]'); if(pick){document.getElementById(pick.dataset.pick).click(); return;}
-      const clear=e.target.closest('[data-clear]'); if(clear){clearDatasetState(clear.dataset.clear); ST[clear.dataset.clear]=[]; render(); return;}
-      const hs=e.target.closest('[data-hset]'); if(hs){setHistoryStatus(hs.dataset.hset,hs.dataset.val); return;}
-      const hd=e.target.closest('[data-hdel]'); if(hd){removeHistoryItem(hd.dataset.hdel); return;}
-      const hst=e.target.closest('[data-hstatus]'); if(hst){ST.histStatus=hst.dataset.hstatus; render(); return;}
-      const sort=e.target.closest('[data-sort]'); if(sort){ST.sortMode=sort.dataset.sort; render(); return;}
-      if(e.target.id==='histClearResolved'){clearHistoryResolved(); return;}
-      if(e.target.id==='histClearAllBtn'){clearAllHistory(); return;}
-      if(e.target.id==='histExportBtn'){exportHistory(); return;}
-    });
-    document.body.addEventListener('change',e=>{if(e.target.id==='histCatSel'){ST.histCategory=e.target.value; render();}});
-    document.body.addEventListener('input',e=>{if(e.target.id==='searchIn'){ST.q=e.target.value.trim(); render();}});
+  // ==================== STORICO (SEMPLIFICATO) ====================
+  function addSelectedToHistory(){
+    const rows = getFilteredResults();
+    const row = rows[ST.selectedRow];
+    if(!row) return alert('Seleziona una partita.');
+    const entry = {
+      id: Date.now()+'_'+Math.random().toString(36),
+      createdAt: new Date().toISOString(),
+      match: row.evento||row.match||row.nome,
+      market: ST.currentMarket,
+      score: row.normScore,
+      aff: row.aff,
+      status: 'pending'
+    };
+    ST.history.push(entry);
+    localStorage.setItem('ma_single_history', JSON.stringify(ST.history));
+    alert('Aggiunto allo storico!');
   }
 
-  function initApp(){ restoreDatasets(); bindStatic(); render(); }
-  initApp();
+  // ==================== BINDING E INIZIO ====================
+  function bindUI(){
+    document.getElementById('marketSelect').addEventListener('change', e=>{ ST.currentMarket=e.target.value; ST.cache.clear(); renderTable(); if(ST.selectedRow!==null) { const rows=getFilteredResults(); if(rows[ST.selectedRow]) renderDetail(rows[ST.selectedRow]); else ST.selectedRow=null; } });
+    document.getElementById('minAffSelect').addEventListener('change', e=>{ ST.filters.minAff=parseInt(e.target.value); ST.cache.clear(); renderTable(); });
+    document.getElementById('searchInput').addEventListener('input', e=>{ ST.filters.search=e.target.value; ST.cache.clear(); renderTable(); });
+    document.getElementById('filterGZ').addEventListener('change', e=>{ ST.filters.requireGZ=e.target.checked; ST.cache.clear(); renderTable(); });
+    document.getElementById('filter1X2').addEventListener('change', e=>{ ST.filters.require1X2=e.target.checked; ST.cache.clear(); renderTable(); });
+    document.getElementById('filterDM').addEventListener('change', e=>{ ST.filters.requireDM=e.target.checked; ST.cache.clear(); renderTable(); });
+    document.getElementById('exportCsvBtn').addEventListener('click', exportCsv);
+    document.getElementById('exportPdfBtn').addEventListener('click', exportPdf);
+    document.getElementById('addToHistoryBtn').addEventListener('click', addSelectedToHistory);
+  }
+
+  function init(){
+    restoreDatasets();
+    renderUploadArea();
+    bindUI();
+    renderTable();
+  }
+  init();
 })();
 </script>
 </body>
