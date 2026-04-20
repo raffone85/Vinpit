@@ -3,51 +3,46 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Analisi Convergenza Over 2.5 / Gol</title>
-    <!-- Papa Parse per parsing CSV -->
+    <title>Analisi Convergenza Over 2.5 / Gol - Completa</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
     <style>
-        * { box-sizing: border-box; font-family: 'Segoe UI', Roboto, system-ui, sans-serif; }
+        * { box-sizing: border-box; font-family: 'Segoe UI', Roboto, sans-serif; }
         body { background: #f5f7fc; margin: 0; padding: 24px; display: flex; flex-direction: column; align-items: center; }
         .container { max-width: 1400px; width: 100%; background: white; border-radius: 24px; box-shadow: 0 12px 30px rgba(0,0,0,0.08); padding: 28px 32px; }
-        h1 { font-weight: 600; font-size: 28px; margin-top: 0; margin-bottom: 8px; color: #1e293b; display: flex; align-items: center; gap: 10px; }
-        h1 small { font-size: 16px; font-weight: 400; color: #64748b; margin-left: 12px; }
+        h1 { font-weight: 600; font-size: 28px; margin-top: 0; margin-bottom: 8px; color: #1e293b; }
         .subtitle { color: #475569; margin-bottom: 28px; border-left: 4px solid #3b82f6; padding-left: 18px; }
-        .upload-area { border: 2px dashed #cbd5e1; border-radius: 20px; padding: 28px 20px; text-align: center; background: #fafcff; margin-bottom: 28px; transition: 0.2s; }
-        .upload-area:hover { border-color: #3b82f6; background: #f0f7ff; }
-        .file-label { display: inline-block; background: #3b82f6; color: white; border-radius: 40px; padding: 12px 28px; font-weight: 500; cursor: pointer; box-shadow: 0 4px 8px rgba(59,130,246,0.2); }
+        .upload-area { border: 2px dashed #cbd5e1; border-radius: 20px; padding: 28px; background: #fafcff; margin-bottom: 28px; text-align: center; }
+        .file-label { background: #3b82f6; color: white; border-radius: 40px; padding: 12px 28px; font-weight: 500; cursor: pointer; display: inline-block; }
         .file-label input { display: none; }
         .file-list { margin-top: 20px; font-size: 14px; color: #334155; }
-        .btn-analyze { background: #0f172a; color: white; border: none; padding: 14px 32px; border-radius: 40px; font-weight: 600; font-size: 16px; cursor: pointer; margin: 8px 0 20px; box-shadow: 0 6px 12px rgba(0,0,0,0.05); transition: 0.2s; }
-        .btn-analyze:hover { background: #1e293b; }
+        .btn-analyze { background: #0f172a; color: white; border: none; padding: 14px 32px; border-radius: 40px; font-weight: 600; font-size: 16px; cursor: pointer; margin: 8px 0 20px; }
         .btn-analyze:disabled { opacity: 0.5; cursor: not-allowed; }
         .status { margin: 16px 0; padding: 12px 18px; border-radius: 16px; background: #f1f5f9; }
         .table-container { overflow-x: auto; margin-top: 28px; border-radius: 18px; border: 1px solid #e2e8f0; }
         table { width: 100%; border-collapse: collapse; font-size: 14px; background: white; }
         th { background: #f8fafc; color: #1e293b; font-weight: 600; padding: 16px 12px; text-align: left; border-bottom: 2px solid #cbd5e1; }
         td { padding: 14px 12px; border-bottom: 1px solid #e2e8f0; vertical-align: top; }
-        tr:last-child td { border-bottom: none; }
         .badge { background: #3b82f6; color: white; border-radius: 30px; padding: 4px 12px; font-weight: 500; font-size: 13px; }
-        .score-high { font-weight: 700; color: #0f172a; background: #dbeafe; padding: 4px 10px; border-radius: 30px; display: inline-block; }
-        .footer-actions { display: flex; gap: 16px; margin-top: 24px; align-items: center; }
+        .score-high { font-weight: 700; color: #0f172a; background: #dbeafe; padding: 4px 10px; border-radius: 30px; }
+        .footer-actions { display: flex; gap: 16px; margin-top: 24px; }
         .btn-outline { background: white; border: 1px solid #cbd5e1; padding: 10px 20px; border-radius: 40px; font-weight: 500; cursor: pointer; }
         .note { font-size: 13px; color: #64748b; margin-top: 16px; }
     </style>
 </head>
 <body>
 <div class="container">
-    <h1>⚽ Over 2.5 / Gol · Analisi di Convergenza <small>Modello multi‑fase</small></h1>
-    <div class="subtitle">Carica i 5 file CSV richiesti. L'elaborazione avviene interamente nel browser.</div>
+    <h1>⚽ Over 2.5 / Gol · Analisi Completa <span style="font-size:16px; font-weight:400; margin-left:16px;">Fasi 1-2-3-4-5-6</span></h1>
+    <div class="subtitle">Carica i file CSV (incluso Ritardi Gol). Elaborazione locale, nessun dato inviato.</div>
 
     <div class="upload-area">
         <label class="file-label">
-            📂 Seleziona i file CSV
+            📂 Seleziona i file CSV (multiplo)
             <input type="file" id="csvFilesInput" accept=".csv,text/csv" multiple>
         </label>
         <div id="fileListDisplay" class="file-list">Nessun file selezionato</div>
     </div>
 
-    <div style="display: flex; gap: 16px; flex-wrap: wrap;">
+    <div style="display: flex; gap: 16px;">
         <button class="btn-analyze" id="analyzeBtn" disabled>🔍 Esegui Analisi Completa</button>
         <button class="btn-outline" id="clearBtn">🗑️ Cancella tutto</button>
     </div>
@@ -55,14 +50,14 @@
     <div id="statusArea" class="status">In attesa dei file...</div>
 
     <div id="resultsSection" style="display: none;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin: 20px 0 8px;">
+        <div style="display: flex; justify-content: space-between; margin: 20px 0 8px;">
             <h3 style="margin:0">🏆 Match Qualificati (Punteggio ≥8 e ≥3 fasi attive)</h3>
             <span id="matchCountBadge" class="badge"></span>
         </div>
         <div class="table-container">
             <table id="resultsTable">
                 <thead>
-                    <tr><th>Match</th><th>Punteggio Tot.</th><th>Fasi Coinvolte</th><th>Dettagli Fase 1</th><th>Dettagli Fase 2</th><th>Dettagli Fase 3</th><th>Fase 5 (OV25%)</th><th>Fase 6 (GZ)</th></tr>
+                    <tr><th>Match</th><th>Punteggio Tot.</th><th>Fasi</th><th>F1</th><th>F2</th><th>F3</th><th>F4 (Ritardi)</th><th>F5 (OV25)</th><th>F6 (GZ)</th></tr>
                 </thead>
                 <tbody></tbody>
             </table>
@@ -73,8 +68,9 @@
         </div>
     </div>
     <div class="note">
-        <strong>Fasi:</strong> 1) Partite GG Over2.5 · 2) Indice Gol Bio · 3) Differenziali Gol · 5) Data Mining (OV25>60%) · 6) Indice GZ<br>
-        *La Fase 4 (Ritardi) non è inclusa per mancanza colonne richieste. Punteggi calcolati secondo specifiche.
+        <strong>Fasi:</strong> 1) Partite GG Over2.5 · 2) Indice Gol Bio · 3) Differenziali Gol · <strong>4) Ritardi Gol (nuova)</strong> · 5) Data Mining · 6) Indice GZ<br>
+        <strong>Fase 4 (Ritardi):</strong> +1 se ritardo casa ≤3, +1 se ritardo ospite ≤3, +1 extra se entrambi ≤3.<br>
+        *Punteggi calcolati secondo specifiche. I file devono mantenere le intestazioni originali.
     </div>
 </div>
 
@@ -82,7 +78,7 @@
     (function(){
         "use strict";
 
-        // ---------- Stato globale ----------
+        // ---------- Stato ----------
         let uploadedFiles = [];
         const fileInput = document.getElementById('csvFilesInput');
         const fileListDisplay = document.getElementById('fileListDisplay');
@@ -93,146 +89,151 @@
         const resultsTbody = document.querySelector('#resultsTable tbody');
         const matchCountBadge = document.getElementById('matchCountBadge');
 
-        // Dataset parser
         let parsedData = {
-            fase1: null,      // Partite GG Over2.5
-            fase2: null,      // Indice Gol Bio
-            fase3: null,      // Differenziali Gol
-            fase5: null,      // Data Mining
-            fase6: null       // Indice GZ_ALL
+            fase1: null,  // Partite GG Over2.5
+            fase2: null,  // Indice Gol Bio
+            fase3: null,  // Differenziali Gol
+            fase4: null,  // Ritardi Gol
+            fase5: null,  // Data Mining
+            fase6: null   // Indice GZ
         };
 
-        // ---------- Helper: normalizza nome evento ----------
+        // ---------- Helpers ----------
         function normalizeEventName(raw) {
             if (!raw) return '';
-            // Rimuove spazi multipli, tab, newline, e trim
-            let cleaned = raw.replace(/\s+/g, ' ').trim();
-            // Rimuove eventuali caratteri strani all'inizio/fine
-            return cleaned;
+            return raw.replace(/\s+/g, ' ').trim();
         }
 
-        // ---------- Parsing file con Papa Parse ----------
         function parseCSV(file) {
             return new Promise((resolve, reject) => {
                 Papa.parse(file, {
                     header: true,
                     skipEmptyLines: true,
-                    delimiter: "",          // auto-detect
                     encoding: "UTF-8",
                     complete: (results) => {
-                        // Gestione errori
-                        if (results.errors.length > 0) {
-                            console.warn("Avvisi parsing", results.errors);
-                        }
-                        // Pulizia nomi colonne: trim e rimozione caratteri speciali
-                        const cleanData = results.data.map(row => {
+                        const clean = results.data.map(row => {
                             const newRow = {};
                             Object.keys(row).forEach(key => {
                                 const cleanKey = key.trim().replace(/^["']|["']$/g, '');
                                 let val = row[key];
-                                if (typeof val === 'string') {
-                                    val = val.trim();
-                                }
+                                if (typeof val === 'string') val = val.trim();
                                 newRow[cleanKey] = val;
                             });
                             return newRow;
-                        }).filter(row => Object.values(row).some(v => v !== '' && v !== null && v !== undefined));
-                        resolve(cleanData);
+                        }).filter(row => Object.values(row).some(v => v !== '' && v !== null));
+                        resolve(clean);
                     },
                     error: (err) => reject(err)
                 });
             });
         }
 
-        // Identificazione tipo file in base al nome
         function identifyFileType(fileName) {
-            const name = fileName.toLowerCase();
-            if (name.includes('partite gg over') || name.includes('partite gg over2.5') || name.includes('partite_gg_over')) return 'fase1';
-            if (name.includes('indice gol bio') || name.includes('indice_gol_bio')) return 'fase2';
-            if (name.includes('differenziali gol') || name.includes('differenziali_gol')) return 'fase3';
-            if (name.includes('data mining') || name.includes('data_mining')) return 'fase5';
-            if (name.includes('indice gz') || name.includes('indice_gz')) return 'fase6';
+            const n = fileName.toLowerCase();
+            if (n.includes('partite gg over')) return 'fase1';
+            if (n.includes('indice gol bio')) return 'fase2';
+            if (n.includes('differenziali gol')) return 'fase3';
+            if (n.includes('ritardi gol')) return 'fase4';
+            if (n.includes('data mining')) return 'fase5';
+            if (n.includes('indice gz')) return 'fase6';
             return 'unknown';
         }
 
-        // ---------- Funzioni di scoring per ogni fase ----------
-        
-        // Fase 1: Partite GG Over2.5
+        // ---------- Scoring Functions ----------
         function scoreFase1(row) {
-            let score = 0;
-            const details = [];
-            // IGBt
+            let score = 0, details = [];
             const igbt = parseFloat(row['IGBt']?.replace(',', '.')) || 0;
-            if (igbt >= 400) { score += 2; details.push(`IGBt≥400`); }
-            else if (igbt >= 300) { score += 1; details.push(`IGBt≥300`); }
-            // MGE
+            if (igbt >= 400) { score += 2; details.push('IGBt≥400'); }
+            else if (igbt >= 300) { score += 1; details.push('IGBt≥300'); }
             const mge = parseFloat(row['MGE']?.replace(',', '.')) || 0;
-            if (mge >= 2.8) { score += 1; details.push(`MGE≥2.8`); }
-            // Diff
+            if (mge >= 2.8) { score += 1; details.push('MGE≥2.8'); }
             const diff = parseFloat(row['Diff']?.replace(',', '.')) || 0;
-            if (diff < -0.6) { score += 3; details.push(`Diff<-0.6`); }
-            else if (diff >= -0.6 && diff < 0) { score += 1; details.push(`-0.6≤Diff<0`); }
-            // qOv2.5
+            if (diff < -0.6) { score += 3; details.push('Diff<-0.6'); }
+            else if (diff >= -0.6 && diff < 0) { score += 1; details.push('-0.6≤Diff<0'); }
             const qOv = parseFloat(row['qOv2.5']?.replace(',', '.')) || 999;
-            if (qOv < 1.9) { score += 1; details.push(`qOv2.5<1.9`); }
-            // S1-S2
+            if (qOv < 1.9) { score += 1; details.push('qOv<1.9'); }
             const s1s2 = parseFloat(row['S1-S2']?.replace(',', '.')) || 9999;
-            if (s1s2 < 300) { score += 1; details.push(`S1-S2<300`); }
-            // IGBc / IGBo >399
+            if (s1s2 < 300) { score += 1; details.push('S1-S2<300'); }
             const igbc = parseFloat(row['IGBc']?.replace(',', '.')) || 0;
             const igbo = parseFloat(row['IGBo']?.replace(',', '.')) || 0;
-            if (igbc > 399) { score += 1; details.push(`IGBc>399`); }
-            if (igbo > 399) { score += 1; details.push(`IGBo>399`); }
-
+            if (igbc > 399) { score += 1; details.push('IGBc>399'); }
+            if (igbo > 399) { score += 1; details.push('IGBo>399'); }
             return { score, details: details.join(', ') };
         }
 
-        // Fase 2: Indice Gol Bio
         function scoreFase2(row) {
-            let score = 0;
-            const details = [];
+            let score = 0, details = [];
             const igbh = parseFloat(row['IGBH']?.replace(',', '.')) || 0;
-            if (igbh >= 300) { score += 2; details.push(`IGBH≥300`); }
-            else if (igbh >= 200) { score += 1; details.push(`IGBH≥200`); }
-            
+            if (igbh >= 300) { score += 2; details.push('IGBH≥300'); }
+            else if (igbh >= 200) { score += 1; details.push('IGBH≥200'); }
             const diffH = parseFloat(row['Diff H']?.replace(',', '.')) || 0;
-            if (diffH < 0) { score += 1; details.push(`Diff H<0`); }
-            
+            if (diffH < 0) { score += 1; details.push('Diff H<0'); }
             const igba = parseFloat(row['IGBA']?.replace(',', '.')) || 0;
-            if (igba >= 300) { score += 2; details.push(`IGBA≥300`); }
-            else if (igba >= 200) { score += 1; details.push(`IGBA≥200`); }
-            
+            if (igba >= 300) { score += 2; details.push('IGBA≥300'); }
+            else if (igba >= 200) { score += 1; details.push('IGBA≥200'); }
             const diffA = parseFloat(row['Diff A']?.replace(',', '.')) || 0;
-            if (diffA < 0) { score += 3; details.push(`Diff A<0`); }
-            
+            if (diffA < 0) { score += 3; details.push('Diff A<0'); }
             return { score, details: details.join(', ') };
         }
 
-        // Fase 3: Differenziali Gol
         function scoreFase3(row) {
-            let score = 0;
-            const details = [];
+            let score = 0, details = [];
             const mge = parseFloat(row['MGE']?.replace(',', '.')) || 0;
-            if (mge > 3.0) { score += 2; details.push(`MGE>3.0`); }
-            else if (mge > 2.7 && mge <= 3.0) { score += 1; details.push(`MGE 2.7-3.0`); }
-            
+            if (mge > 3.0) { score += 2; details.push('MGE>3.0'); }
+            else if (mge > 2.7 && mge <= 3.0) { score += 1; details.push('MGE 2.7-3.0'); }
             const dg = parseFloat(row['DG']?.replace(',', '.')) || 0;
             const dgt = parseFloat(row['DGT']?.replace(',', '.')) || 0;
-            if (dg < 0) { score += 3; details.push(`DG<0`); }
-            if (dgt < 0) { score += 2; details.push(`DGT<0`); }
-            
+            if (dg < 0) { score += 3; details.push('DG<0'); }
+            if (dgt < 0) { score += 2; details.push('DGT<0'); }
             const qt = parseFloat(row['Qt']?.replace(',', '.')) || 0;
             const qr = parseFloat(row['Qr']?.replace(',', '.')) || 0;
-            if (qt > qr) { score += 1; details.push(`Qt>Qr`); }
-            
+            if (qt > qr) { score += 1; details.push('Qt>Qr'); }
             return { score, details: details.join(', ') };
         }
 
-        // Fase 5: Data Mining (OV25 > 60%)
-        function scoreFase5(row) {
+        function scoreFase4(row) {
+            // Estrazione euristica dei ritardi casa e ospite dal file Ritardi Gol
             let score = 0;
             const details = [];
-            // La colonna potrebbe essere "OV25" o "OV25%"
+            // I valori dopo il match: il primo numero intero è ritardo casa, poi dopo alcune percentuali c'è ritardo ospite
+            const values = Object.values(row).filter(v => v && v.trim() !== '').slice(4); // salta Ora,Paese,Lega,Match
+            if (values.length < 14) return { score: 0, details: 'Dati insufficienti' };
+            
+            // Il primo valore numerico intero (ritardo casa)
+            let ritardoCasa = null, ritardoOspite = null;
+            for (let i = 0; i < values.length; i++) {
+                const num = parseInt(values[i], 10);
+                if (!isNaN(num) && values[i] == num) { // è un intero
+                    if (ritardoCasa === null) ritardoCasa = num;
+                    else if (ritardoOspite === null && i > 6) { // il secondo intero dopo un po'
+                        ritardoOspite = num;
+                        break;
+                    }
+                }
+            }
+            // Fallback se non trovato: prendi il primo e l'ottavo valore numerico
+            if (ritardoCasa === null) {
+                const nums = values.map(v => parseFloat(v)).filter(n => !isNaN(n));
+                ritardoCasa = nums[0] || 99;
+                ritardoOspite = nums[7] || 99;
+            } else if (ritardoOspite === null) {
+                const nums = values.map(v => parseFloat(v)).filter(n => !isNaN(n));
+                ritardoOspite = nums[7] || 99;
+            }
+
+            const rc = ritardoCasa ?? 99;
+            const ro = ritardoOspite ?? 99;
+            details.push(`Rit.C=${rc}, Rit.O=${ro}`);
+            
+            if (rc <= 3) { score += 1; details.push('Rit.C≤3'); }
+            if (ro <= 3) { score += 1; details.push('Rit.O≤3'); }
+            if (rc <= 3 && ro <= 3) { score += 1; details.push('Entrambi≤3 (+1)'); }
+            
+            return { score, details: details.join(' ') };
+        }
+
+        function scoreFase5(row) {
+            let score = 0, details = [];
             let ov25Str = row['OV25'] || row['OV25%'] || '0';
             ov25Str = ov25Str.replace('%', '').replace(',', '.');
             const ov25 = parseFloat(ov25Str) || 0;
@@ -240,109 +241,95 @@
             return { score, details: details.join('') };
         }
 
-        // Fase 6: Indice GZ
         function scoreFase6(row) {
-            let score = 0;
-            const details = [];
+            let score = 0, details = [];
             const gz = parseFloat(row['GZ']?.replace(',', '.')) || 0;
             const gzha = parseFloat(row['GZha']?.replace(',', '.')) || 0;
-            if (gz > 5000) { score = 3; details.push(`GZ>5000`); }
-            else if (gz > 1000 && gz <= 5000) { score = 2; details.push(`GZ>1000`); }
-            else if (gz > 0 && gz <= 1000) { score = 1; details.push(`GZ>0`); }
-            else { details.push(`GZ≤0`); }
-            details.push(`(GZha=${gzha.toFixed(0)})`);
+            if (gz > 5000) { score = 3; details.push('GZ>5000'); }
+            else if (gz > 1000 && gz <= 5000) { score = 2; details.push('GZ>1000'); }
+            else if (gz > 0 && gz <= 1000) { score = 1; details.push('GZ>0'); }
+            else { details.push('GZ≤0'); }
+            details.push(`(ha=${gzha.toFixed(0)})`);
             return { score, details: details.join(' ') };
         }
 
-        // ---------- Unione dati e calcolo punteggio totale ----------
+        // ---------- Process All ----------
         function processAllData() {
-            // Mappa per aggregare i match
-            const matchesMap = new Map(); // key: nome normalizzato -> oggetto match
-
-            // Funzione per aggiungere dati da una fase
-            function addPhaseData(phaseData, phaseName, scorerFunc) {
+            const matchesMap = new Map();
+            function addPhase(phaseData, phaseName, scorer) {
                 if (!phaseData || !Array.isArray(phaseData)) return;
                 phaseData.forEach(row => {
                     let eventName = row['EVENTO'] || row['Match'] || row['EVENT'] || '';
                     eventName = normalizeEventName(eventName);
                     if (!eventName) return;
-                    
                     if (!matchesMap.has(eventName)) {
                         matchesMap.set(eventName, {
                             event: eventName,
-                            scores: { fase1:0, fase2:0, fase3:0, fase5:0, fase6:0 },
-                            details: { fase1:'', fase2:'', fase3:'', fase5:'', fase6:'' },
-                            raw: {}
+                            scores: { fase1:0, fase2:0, fase3:0, fase4:0, fase5:0, fase6:0 },
+                            details: { fase1:'', fase2:'', fase3:'', fase4:'', fase5:'', fase6:'' }
                         });
                     }
                     const match = matchesMap.get(eventName);
-                    const { score, details } = scorerFunc(row);
+                    const { score, details } = scorer(row);
                     match.scores[phaseName] = score;
                     match.details[phaseName] = details;
-                    // salva alcuni raw per debug
-                    match.raw[phaseName] = row;
                 });
             }
 
-            // Esegui scoring per ogni fase
-            addPhaseData(parsedData.fase1, 'fase1', scoreFase1);
-            addPhaseData(parsedData.fase2, 'fase2', scoreFase2);
-            addPhaseData(parsedData.fase3, 'fase3', scoreFase3);
-            addPhaseData(parsedData.fase5, 'fase5', scoreFase5);
-            addPhaseData(parsedData.fase6, 'fase6', scoreFase6);
+            addPhase(parsedData.fase1, 'fase1', scoreFase1);
+            addPhase(parsedData.fase2, 'fase2', scoreFase2);
+            addPhase(parsedData.fase3, 'fase3', scoreFase3);
+            addPhase(parsedData.fase4, 'fase4', scoreFase4);
+            addPhase(parsedData.fase5, 'fase5', scoreFase5);
+            addPhase(parsedData.fase6, 'fase6', scoreFase6);
 
-            // Calcola totale e filtra
             const qualified = [];
             for (let match of matchesMap.values()) {
-                const scores = match.scores;
-                const total = (scores.fase1||0) + (scores.fase2||0) + (scores.fase3||0) + (scores.fase5||0) + (scores.fase6||0);
-                const activePhases = Object.values(scores).filter(s => s > 0).length;
+                const s = match.scores;
+                const total = (s.fase1||0)+(s.fase2||0)+(s.fase3||0)+(s.fase4||0)+(s.fase5||0)+(s.fase6||0);
+                const active = Object.values(s).filter(v => v > 0).length;
                 match.total = total;
-                match.activePhases = activePhases;
-                
-                if (total >= 8 && activePhases >= 3) {
-                    qualified.push(match);
-                }
+                match.activePhases = active;
+                if (total >= 8 && active >= 3) qualified.push(match);
             }
-
-            // Ordina per punteggio totale decrescente
             qualified.sort((a,b) => b.total - a.total);
             return qualified;
         }
 
-        // ---------- Render tabella ----------
+        // ---------- Render ----------
         function renderResults(matches) {
             resultsTbody.innerHTML = '';
-            if (matches.length === 0) {
-                resultsTbody.innerHTML = '<tr><td colspan="8" style="text-align:center; padding:32px;">Nessun match qualificato con i criteri attuali.</td></tr>';
+            if (!matches.length) {
+                resultsTbody.innerHTML = '<tr><td colspan="9" style="text-align:center; padding:32px;">Nessun match qualificato.</td></tr>';
                 matchCountBadge.textContent = '0 match';
                 return;
             }
             matchCountBadge.textContent = `${matches.length} match`;
             matches.forEach(m => {
+                const fasi = [];
+                if (m.scores.fase1) fasi.push('1');
+                if (m.scores.fase2) fasi.push('2');
+                if (m.scores.fase3) fasi.push('3');
+                if (m.scores.fase4) fasi.push('4');
+                if (m.scores.fase5) fasi.push('5');
+                if (m.scores.fase6) fasi.push('6');
                 const tr = document.createElement('tr');
-                const fasiCoinvolte = [];
-                if (m.scores.fase1 > 0) fasiCoinvolte.push('1');
-                if (m.scores.fase2 > 0) fasiCoinvolte.push('2');
-                if (m.scores.fase3 > 0) fasiCoinvolte.push('3');
-                if (m.scores.fase5 > 0) fasiCoinvolte.push('5');
-                if (m.scores.fase6 > 0) fasiCoinvolte.push('6');
-                
                 tr.innerHTML = `
                     <td><strong>${m.event}</strong></td>
                     <td><span class="score-high">${m.total}</span></td>
-                    <td>${fasiCoinvolte.join(', ')}</td>
-                    <td>${m.details.fase1 || '-'} ${m.scores.fase1 ? `(${m.scores.fase1}pt)` : ''}</td>
-                    <td>${m.details.fase2 || '-'} ${m.scores.fase2 ? `(${m.scores.fase2}pt)` : ''}</td>
-                    <td>${m.details.fase3 || '-'} ${m.scores.fase3 ? `(${m.scores.fase3}pt)` : ''}</td>
+                    <td>${fasi.join(', ')}</td>
+                    <td>${m.details.fase1 || '-'} ${m.scores.fase1?`(${m.scores.fase1}pt)`:''}</td>
+                    <td>${m.details.fase2 || '-'} ${m.scores.fase2?`(${m.scores.fase2}pt)`:''}</td>
+                    <td>${m.details.fase3 || '-'} ${m.scores.fase3?`(${m.scores.fase3}pt)`:''}</td>
+                    <td>${m.details.fase4 || '-'} ${m.scores.fase4?`(${m.scores.fase4}pt)`:''}</td>
                     <td>${m.details.fase5 || '-'}</td>
-                    <td>${m.details.fase6 || '-'} ${m.scores.fase6 ? `(${m.scores.fase6}pt)` : ''}</td>
+                    <td>${m.details.fase6 || '-'} ${m.scores.fase6?`(${m.scores.fase6}pt)`:''}</td>
                 `;
                 resultsTbody.appendChild(tr);
             });
         }
 
-        // ---------- Avvia analisi ----------
+        // ---------- Analisi ----------
         async function runAnalysis() {
             if (uploadedFiles.length === 0) {
                 statusArea.innerText = '⚠️ Carica almeno un file CSV.';
@@ -350,9 +337,7 @@
             }
             statusArea.innerText = '⏳ Analisi in corso...';
             analyzeBtn.disabled = true;
-
-            // Reset parsed data
-            parsedData = { fase1: null, fase2: null, fase3: null, fase5: null, fase6: null };
+            parsedData = { fase1:null, fase2:null, fase3:null, fase4:null, fase5:null, fase6:null };
 
             try {
                 for (let file of uploadedFiles) {
@@ -364,32 +349,20 @@
                     const data = await parseCSV(file);
                     parsedData[type] = data;
                 }
-
-                // Verifica se abbiamo almeno un dataset
-                const hasData = Object.values(parsedData).some(d => d && d.length > 0);
-                if (!hasData) {
-                    statusArea.innerText = '❌ Nessun dato valido trovato nei file caricati.';
-                    analyzeBtn.disabled = false;
-                    return;
-                }
-
                 const qualified = processAllData();
                 renderResults(qualified);
                 resultsSection.style.display = 'block';
                 statusArea.innerText = `✅ Analisi completata. ${qualified.length} match qualificati.`;
-
-                // Salva i risultati in window per download
                 window.lastQualified = qualified;
-
             } catch (error) {
                 console.error(error);
-                statusArea.innerText = '❌ Errore durante l\'analisi: ' + error.message;
+                statusArea.innerText = '❌ Errore: ' + error.message;
             } finally {
                 analyzeBtn.disabled = false;
             }
         }
 
-        // ---------- Gestione UI ----------
+        // ---------- UI Helpers ----------
         function updateFileList() {
             if (uploadedFiles.length === 0) {
                 fileListDisplay.innerText = 'Nessun file selezionato';
@@ -410,60 +383,40 @@
             uploadedFiles = [];
             fileInput.value = '';
             updateFileList();
-            parsedData = { fase1: null, fase2: null, fase3: null, fase5: null, fase6: null };
+            parsedData = { fase1:null, fase2:null, fase3:null, fase4:null, fase5:null, fase6:null };
             resultsSection.style.display = 'none';
             statusArea.innerText = 'File cancellati. Carica nuovi CSV.';
         });
 
         analyzeBtn.addEventListener('click', runAnalysis);
 
-        // Download handlers
+        // Download
         document.getElementById('downloadHtmlBtn').addEventListener('click', function() {
-            if (!window.lastQualified || window.lastQualified.length===0) {
-                alert('Nessun risultato da esportare.');
-                return;
-            }
+            if (!window.lastQualified?.length) { alert('Nessun risultato.'); return; }
             let html = '<html><head><meta charset="UTF-8"><title>Report Over 2.5</title></head><body>';
-            html += '<h2>Report Analisi Convergenza Over 2.5</h2><table border="1" cellpadding="5">';
-            html += '<tr><th>Match</th><th>Punteggio</th><th>Fasi</th><th>F1</th><th>F2</th><th>F3</th><th>F5</th><th>F6</th></tr>';
+            html += '<h2>Report Analisi Convergenza</h2><table border="1" cellpadding="5">';
+            html += '<tr><th>Match</th><th>Tot</th><th>Fasi</th><th>F1</th><th>F2</th><th>F3</th><th>F4</th><th>F5</th><th>F6</th></tr>';
             window.lastQualified.forEach(m => {
                 html += `<tr><td>${m.event}</td><td>${m.total}</td><td>${Object.entries(m.scores).filter(([k,v])=>v>0).map(([k])=>k).join(',')}</td>`;
-                html += `<td>${m.details.fase1||''}</td><td>${m.details.fase2||''}</td><td>${m.details.fase3||''}</td><td>${m.details.fase5||''}</td><td>${m.details.fase6||''}</td></tr>`;
+                html += `<td>${m.details.fase1||''}</td><td>${m.details.fase2||''}</td><td>${m.details.fase3||''}</td><td>${m.details.fase4||''}</td><td>${m.details.fase5||''}</td><td>${m.details.fase6||''}</td></tr>`;
             });
             html += '</table></body></html>';
             const blob = new Blob([html], {type: 'text/html'});
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a'); a.href = url; a.download = 'report_over25.html'; a.click();
-            URL.revokeObjectURL(url);
+            const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'report_over25.html'; a.click();
         });
 
         document.getElementById('downloadCsvBtn').addEventListener('click', function() {
-            if (!window.lastQualified || window.lastQualified.length===0) {
-                alert('Nessun dato da esportare.');
-                return;
-            }
-            let csv = "Match,Punteggio Totale,Fasi Coinvolte,Dettagli Fase1,Dettagli Fase2,Dettagli Fase3,Fase5,Fase6\n";
+            if (!window.lastQualified?.length) { alert('Nessun dato.'); return; }
+            let csv = "Match,Punteggio Totale,Fasi Coinvolte,F1,F2,F3,F4,F5,F6\n";
             window.lastQualified.forEach(m => {
                 const fasi = Object.entries(m.scores).filter(([k,v])=>v>0).map(([k])=>k).join(';');
-                const row = [
-                    `"${m.event}"`,
-                    m.total,
-                    `"${fasi}"`,
-                    `"${m.details.fase1||''}"`,
-                    `"${m.details.fase2||''}"`,
-                    `"${m.details.fase3||''}"`,
-                    `"${m.details.fase5||''}"`,
-                    `"${m.details.fase6||''}"`
-                ];
+                const row = [`"${m.event}"`, m.total, `"${fasi}"`, `"${m.details.fase1||''}"`, `"${m.details.fase2||''}"`, `"${m.details.fase3||''}"`, `"${m.details.fase4||''}"`, `"${m.details.fase5||''}"`, `"${m.details.fase6||''}"`];
                 csv += row.join(',') + '\n';
             });
             const blob = new Blob(["\uFEFF" + csv], {type: 'text/csv;charset=utf-8;'});
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a'); a.href = url; a.download = 'report_over25.csv'; a.click();
-            URL.revokeObjectURL(url);
+            const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'report_over25.csv'; a.click();
         });
 
-        // Inizializza
         updateFileList();
     })();
 </script>
