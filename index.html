@@ -2445,9 +2445,23 @@ function renderBankroll(){
  const today = new Date().toDateString();
  if(b.startDay !== today){ b.startDay = today; b.pl_day = 0; }
  if(b.startWeek !== startOfWeekISO()){ b.startWeek = startOfWeekISO(); b.pl_week = 0; }
- const cards = '<div class="bk-cards"><div class="bk-card"><div class="lbl">Bankroll</div><div class="vl">'+fmtEur(b.total)+'</div></div><div class="bk-card"><div class="lbl">Segregato</div><div class="vl">'+fmtEur(b.segregated)+'</div></div><div class="bk-card"><div class="lbl">P/L oggi</div><div class="vl '+(b.pl_day>0?'pos':b.pl_day<0?'neg':'')+'">'+(b.pl_day>=0?'+':'')+fmtEur(b.pl_day)+'</div></div><div class="bk-card"><div class="lbl">P/L sett.</div><div class="vl '+(b.pl_week>0?'pos':b.pl_week<0?'neg':'')+'">'+(b.pl_week>=0?'+':'')+fmtEur(b.pl_week)+'</div></div></div>';
- const ctrl = '<div class="bk-ctrl"><h3>Configurazione</h3><div class="bk-row"><label>Bankroll</label><input type="number" id="bkTotal" value="'+b.total+'" min="10" step="10"></div><div class="bk-row"><label>Segregato</label><input type="number" id="bkSeg" value="'+b.segregated+'" min="10" step="10"></div><div class="bk-row"><label>Frazione Kelly</label><input type="range" id="kellyFrac" min="0.10" max="0.50" step="0.05" value="'+b.kellyFraction+'"><span class="out" id="kellyFracOut">'+b.kellyFraction.toFixed(2)+'</span></div><div class="bk-row"><label>Cap stake</label><input type="range" id="capPct" min="0.01" max="0.10" step="0.005" value="'+b.capPct+'"><span class="out" id="capPctOut">'+(b.capPct*100).toFixed(1)+'%</span></div><div class="bk-row" style="margin-top:10px"><button class="btn btn-primary" id="bkSave">Salva</button><button class="btn btn-ghost" id="bkResetWeek">Reset sett.</button></div></div>';
- main.innerHTML = cards + ctrl;
+ // Ricalcolo bankroll a partire dallo storico (sicurezza in caso di drift)
+ recomputeBankrollPL();
+ const totInit = b.totalInit!=null ? b.totalInit : b.total;
+ const segInit = b.segregatedInit!=null ? b.segregatedInit : b.segregated;
+ const plCumulato = b.segregated - segInit;
+ const plPct = segInit>0 ? (plCumulato/segInit)*100 : 0;
+ const cards = '<div class="bk-cards">'+
+  '<div class="bk-card" style="border-color:#3B82F6"><div class="lbl">Bankroll attuale</div><div class="vl">'+fmtEur(b.total)+'</div></div>'+
+  '<div class="bk-card" style="border-color:#3B82F6"><div class="lbl">Segregato attuale</div><div class="vl">'+fmtEur(b.segregated)+'</div></div>'+
+  '<div class="bk-card"><div class="lbl">P/L cumulato</div><div class="vl '+(plCumulato>0?'pos':plCumulato<0?'neg':'')+'">'+(plCumulato>=0?'+':'')+fmtEur(plCumulato)+'<small style="display:block;font-size:0.7rem;font-weight:normal">'+(plPct>=0?'+':'')+plPct.toFixed(1)+'%</small></div></div>'+
+  '<div class="bk-card"><div class="lbl">P/L oggi</div><div class="vl '+(b.pl_day>0?'pos':b.pl_day<0?'neg':'')+'">'+(b.pl_day>=0?'+':'')+fmtEur(b.pl_day)+'</div></div>'+
+  '<div class="bk-card"><div class="lbl">P/L sett.</div><div class="vl '+(b.pl_week>0?'pos':b.pl_week<0?'neg':'')+'">'+(b.pl_week>=0?'+':'')+fmtEur(b.pl_week)+'</div></div>'+
+  '</div>';
+ const initInfo = '<div style="background:#F8FAFC;border:1px solid #E2E8F0;border-radius:10px;padding:10px 14px;margin-bottom:14px;font-size:0.82rem;color:#475569;line-height:1.5"><strong style="color:#0F172A">Riferimento iniziale:</strong> Bankroll '+fmtEur(totInit)+' &middot; Segregato '+fmtEur(segInit)+'<br>Il bankroll attuale = iniziale + somma P/L delle pick chiuse. Se modifichi i valori sotto e clicchi "Salva", azzeri il riferimento.</div>';
+ const lossWarn = b.afterLossActive ? '<div style="background:#FEF2F2;border:1px solid #FCA5A5;border-radius:10px;padding:10px 14px;margin-bottom:14px;font-size:0.82rem;color:#991B1B;font-weight:600">&#9888; Anti-loss attivo: bankroll segregato sotto il 90% dell\'iniziale. Lo stake automatico viene ridotto al 75% per recovery prudente.</div>' : '';
+ const ctrl = '<div class="bk-ctrl"><h3>Configurazione</h3><div class="bk-row"><label>Bankroll iniziale</label><input type="number" id="bkTotal" value="'+totInit+'" min="10" step="10"></div><div class="bk-row"><label>Segregato iniziale</label><input type="number" id="bkSeg" value="'+segInit+'" min="10" step="10"></div><div class="bk-row"><label>Frazione Kelly</label><input type="range" id="kellyFrac" min="0.10" max="0.50" step="0.05" value="'+b.kellyFraction+'"><span class="out" id="kellyFracOut">'+b.kellyFraction.toFixed(2)+'</span></div><div class="bk-row"><label>Cap stake</label><input type="range" id="capPct" min="0.01" max="0.10" step="0.005" value="'+b.capPct+'"><span class="out" id="capPctOut">'+(b.capPct*100).toFixed(1)+'%</span></div><div class="bk-row" style="margin-top:10px"><button class="btn btn-primary" id="bkSave">Salva (azzera P/L)</button><button class="btn btn-ghost" id="bkResetWeek">Reset sett.</button></div></div>';
+ main.innerHTML = cards + initInfo + lossWarn + ctrl;
 }
 
 /* =================== PERFORMANCE TRACKING =================== */
@@ -2727,6 +2741,7 @@ function renderHeader(){
 }
 
 function render(){
+ if(S.history && S.history.length) recomputeBankrollPL();
  renderHeader(); renderUploadGrid();
  document.querySelectorAll('.nav-btn').forEach(b => b.classList.toggle('active', b.dataset.tab===S.ui.tab));
  const tab = S.ui.tab;
@@ -2867,14 +2882,24 @@ function removeHist(id){ if(!confirm('Eliminare?')) return; S.history = S.histor
 function recomputeBankrollPL(){
  const today = new Date().toDateString();
  const startWeek = startOfWeekISO();
- let pld=0, plw=0;
+ let pld=0, plw=0, plTotal=0;
  S.history.forEach(h => {
   if(h.status==='open') return;
   const d = new Date(h.savedAt);
   if(d.toDateString()===today) pld += h.profit||0;
   if(d.toISOString()>=startWeek) plw += h.profit||0;
+  plTotal += h.profit||0;
  });
- S.bankroll.pl_day = pld; S.bankroll.pl_week = plw;
+ S.bankroll.pl_day = pld;
+ S.bankroll.pl_week = plw;
+ // Calcolo bankroll attuale = bankroll iniziale + somma profitti/perdite chiuse
+ // S.bankroll.totalInit / segregatedInit memorizzano il valore "configurato" dall'utente
+ if(S.bankroll.totalInit==null) S.bankroll.totalInit = S.bankroll.total;
+ if(S.bankroll.segregatedInit==null) S.bankroll.segregatedInit = S.bankroll.segregated;
+ S.bankroll.total = S.bankroll.totalInit + plTotal;
+ S.bankroll.segregated = S.bankroll.segregatedInit + plTotal;
+ // Anti-loss recovery: se bankroll segregato e' sceso sotto 90% dell'iniziale, attiva afterLossActive (riduce stake del 25%)
+ S.bankroll.afterLossActive = S.bankroll.segregated < S.bankroll.segregatedInit * 0.90;
 }
 
 /* =================== PERSISTENZA =================== */
@@ -3046,7 +3071,12 @@ function bindEvents(){
   if(tgt.id==='bkSave'){
    const tot = parseFloat(document.getElementById('bkTotal').value)||1000;
    const seg = parseFloat(document.getElementById('bkSeg').value)||tot;
-   S.bankroll.total = tot; S.bankroll.segregated = seg;
+   // Salvo come valori "iniziali" di riferimento. Il bankroll attuale viene poi ricalcolato sommando i P/L chiusi.
+   S.bankroll.totalInit = tot;
+   S.bankroll.segregatedInit = seg;
+   S.bankroll.total = tot;
+   S.bankroll.segregated = seg;
+   recomputeBankrollPL();
    schedulePersist(); runDecisionEngine(); render(); showToast('Salvato', 'ok'); return;
   }
   if(tgt.id==='bkResetWeek'){ if(!confirm('Reset?')) return; S.bankroll.startWeek = startOfWeekISO(); S.bankroll.pl_week = 0; schedulePersist(); render(); return; }
